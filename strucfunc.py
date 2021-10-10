@@ -247,7 +247,7 @@ def test_strucfunc(n=50, func=strucfunc_python, **kwds):
     rslt = func(vmap=vels, wmap=bright, **kwds)
     return ['{} :: {}'.format(k, list(v)) for (k, v) in rslt.items()]
 
-def sosflog(df,dlog):
+def sosflog(df,dlog,c):
 
     df1 = pd.DataFrame(
     {'RA': df.X, 'DE': df.Y, 'V': df.RV, '_key': 1})
@@ -256,9 +256,10 @@ def sosflog(df,dlog):
 
     pairs = pd.merge(df1, df2, on='_key', suffixes=('', '_')).drop('_key', 1)
     pairs.index = pd.MultiIndex.from_product((df1.index, df2.index))
+    #pairs.head()
 
-    pairs.loc[:, 'dDE'] = (pairs.DE - pairs.DE_)
-    pairs.loc[:, 'dRA'] =(pairs.RA - pairs.RA_)*np.cos(np.radians(0.5*(pairs.DE + pairs.DE_)))
+    pairs.loc[:, 'dDE'] = c*(pairs.DE - pairs.DE_)
+    pairs.loc[:, 'dRA'] = c*(pairs.RA - pairs.RA_)*np.cos(np.radians(0.5*(pairs.DE + pairs.DE_)))
     pairs.loc[:, 's'] = np.hypot(pairs.dRA, pairs.dDE)
     pairs.loc[:, 'log_s'] = np.log10(pairs.s)
     pairs.loc[:, 'dV'] = pairs.V - pairs.V_
@@ -266,13 +267,52 @@ def sosflog(df,dlog):
     pairs.loc[:, 'log_dV2'] = np.log10(pairs.dV**2)
     pairs.loc[:, 'VV_mean'] = 0.5*(pairs.V + pairs.V_)
 
-    pairs = pairs[(pairs.dDE > 0.0)]# & (pairs.dRA > 0.0)]
+    pairs = pairs[(pairs.dDE > 0.0)]
+
+    #mask = (pairs.log_s > 0.0) & (pairs.log_dV2 > -3)
+    #ax = sns.jointplot(x='log_s', y='dV', data=pairs[mask], alpha=0.1, s=1, edgecolor='none',color="blue")
+    #ax.fig.set_size_inches(12, 12)
+
+    #mask = (pairs.log_s > 0.0) & (pairs.log_dV2 > -3)
+    #ax = sns.jointplot(x='log_s', y='log_dV2', data=pairs[mask], alpha=0.1, s=1, edgecolor='none',color="blue")
+    #ax.fig.set_size_inches(12, 12)
+
+    pairs.loc[:, 's_class'] = pd.Categorical((2*pairs.log_s + 0.5).astype('int'), ordered=True)
+    pairs.s_class[pairs.s_class == 0] = 1
+
+    #for j in range(7):
+    #print()
+    #print("s_class =", j)
+    #print(pairs[pairs.s_class == j][['dV2', 'log_s']].describe())
+    #pairs[pairs.s_class == j][['dV2', 'log_s']]
 
     sig2 = pairs.dV2.mean()
     sig2a = 2*np.var(df1.V)
 
+    #fig, axes = plt.subplots(6, 1, figsize=(10, 15), sharex=True)
+    #for sclass, ax in zip(range(1, 7), axes):
+        #b2mean = np.mean(pairs.dV2[pairs.s_class == sclass])
+        #b2std = np.std(pairs.dV2[pairs.s_class == sclass])
+        #b2mean2 = np.mean(pairs.log_dV2[pairs.s_class == sclass])
+        #n = np.sum(pairs.s_class == sclass)
+        #b2sem = b2std/np.sqrt(n)
+        #smean = np.mean(10**pairs.log_s[pairs.s_class == sclass])
+        #label = f"$s = {smean:.1f}''$"
+        #label += f", $N = {n}$"
+        #label += fr", $b^2 = {b2mean:.1f} \pm {b2sem:.1f}$"
+        #sns.distplot(pairs.log_dV2[pairs.s_class == sclass],
+        #                 norm_hist=True, kde=False, ax=ax,
+        #             label=label, bins=20,color="blue", hist_kws=dict(range=[-3.0, 3.0])
+        #            )
+        #ax.plot([np.log10(b2mean)], [0.2], 'o', color='k')
+        #ax.plot([np.log10(b2mean - b2sem), np.log10(b2mean + b2sem)], [0.2]*2, lw=3, color='k')
+        #ax.axvline(np.log10(sig2a), color='k', ls=':')
+        #ax.set(xlim=[-3.0, 3.0])
+        #ax.legend(loc='upper left')
+        #sns.despine()
+
     d_log_s = dlog
-    log_s_min = np.min(pairs["log_s"])
+    #log_s_min = np.min(pairs["log_s"])
     log_s_min = 1.0
     ils = ((pairs["log_s"] - log_s_min) / d_log_s).astype(int).rename("ils")
     ils[ils < 0] = 0
