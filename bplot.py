@@ -15,7 +15,8 @@ import numpy as np
 import seaborn as sns
 import lmfit
 import json
-#import astropy.units as u
+
+# import astropy.units as u
 import pandas as pd
 import corner
 import bfunc
@@ -36,7 +37,7 @@ def corner_plot(result_emcee, result_orig, source_name, suffix, data_ranges=None
         labels=[fancy_names[_] for _ in result_emcee.var_names],
         truths=truths,
         labelpad=0.2,
-        range=[0.995]*len(truths) if data_ranges is None else data_ranges,
+        range=[0.995] * len(truths) if data_ranges is None else data_ranges,
         color="#b04060",
         hist_kwargs=dict(color="k"),
         data_kwargs=dict(color="k"),
@@ -45,7 +46,7 @@ def corner_plot(result_emcee, result_orig, source_name, suffix, data_ranges=None
     fig.set_size_inches(15, 15)
     fig.tight_layout(h_pad=0, w_pad=0)
     fig.suptitle(source_name)
-    fig.savefig(f"corner-emcee-{suffix}.pdf");
+    fig.savefig(f"corner-emcee-{suffix}.pdf")
 
 
 def spread_span(
@@ -63,12 +64,19 @@ def spread_span(
     Orientation (horizontal or vertical) is controlled by orient
     """
     for prange, alpha, color in zip(pranges, alphas, colors):
-        if orient=="h":
-            ax.axhspan(*np.percentile(values, prange), alpha=alpha, color=color, **span_kwds)
+        if orient == "h":
+            ax.axhspan(
+                *np.percentile(values, prange), alpha=alpha, color=color, **span_kwds
+            )
         else:
-            ax.axvspan(*np.percentile(values, prange), alpha=alpha, color=color, **span_kwds)
+            ax.axvspan(
+                *np.percentile(values, prange), alpha=alpha, color=color, **span_kwds
+            )
 
-def strucfunc_plot(result_emcee, r, B, to_fit, source_name, suffix, box_size, large_scale):
+
+def strucfunc_plot(
+    result_emcee, r, B, to_fit, source_name, suffix, box_size, large_scale
+):
 
     whitebox = dict(facecolor="white", pad=5, edgecolor="0.5", linewidth=0.5)
     label_kwds = dict(ha="center", va="center", bbox=whitebox, zorder=100)
@@ -84,7 +92,7 @@ def strucfunc_plot(result_emcee, r, B, to_fit, source_name, suffix, box_size, la
 
     # Plot the data
     yerr = 1.0 / result_emcee.weights
-    data_points = ax.errorbar(r[to_fit], B[to_fit], yerr=yerr, fmt="o")
+    data_points = ax.errorbar(r[to_fit], B[to_fit], yerr=yerr, fmt="o", zorder=99)
     c_data = data_points[0].get_color()
     ax.annotate(
         "observed",
@@ -93,7 +101,7 @@ def strucfunc_plot(result_emcee, r, B, to_fit, source_name, suffix, box_size, la
         textcoords="offset points",
         color=c_data,
         arrowprops=dict(arrowstyle="->", color=c_data, shrinkB=8),
-        **label_kwds2
+        **label_kwds2,
     )
 
     # Plot the full model ˚including without instrumental effects
@@ -111,7 +119,7 @@ def strucfunc_plot(result_emcee, r, B, to_fit, source_name, suffix, box_size, la
         arrowprops=dict(arrowstyle="->", color=c_apparent, shrinkB=8),
         **label_kwds2,
     )
-    #ax.text(xmax / 1.5, Ba[-1], "model apparent", color=c_apparent, **label_kwds2)
+    # ax.text(xmax / 1.5, Ba[-1], "model apparent", color=c_apparent, **label_kwds2)
 
     # Plot the underlying model without instrumental effects
     Bu = bfunc.bfunc00s(xarr, best["r0"], best["sig2"], best["m"])
@@ -126,8 +134,7 @@ def strucfunc_plot(result_emcee, r, B, to_fit, source_name, suffix, box_size, la
         arrowprops=dict(arrowstyle="->", color=c_true, shrinkB=8),
         **label_kwds,
     )
-    #ax.text(xmax / 1.5, Bu[-1], "model true", color=c_true, **{**label_kwds2, "zorder": 99})
-
+    # ax.text(xmax / 1.5, Bu[-1], "model true", color=c_true, **{**label_kwds2, "zorder": 99})
 
     # Plot the fit results
     # result_emcee.plot_fit(ax=ax)
@@ -140,7 +147,9 @@ def strucfunc_plot(result_emcee, r, B, to_fit, source_name, suffix, box_size, la
             s0 = sample.s0
         except AttributeError:
             s0 = best["s0"]
-        Bsamp = bfunc.bfunc04s(xarr, sample.r0, sample.sig2, sample.m, s0, sample.noise, best["box_size"])
+        Bsamp = bfunc.bfunc04s(
+            xarr, sample.r0, sample.sig2, sample.m, s0, sample.noise, best["box_size"]
+        )
         ax.plot(xarr, Bsamp, alpha=0.05, color="orange")
         Busamp = bfunc.bfunc00s(xarr, sample.r0, sample.sig2, sample.m)
         ax.plot(xarr, Busamp, alpha=0.05, color="g")
@@ -152,7 +161,7 @@ def strucfunc_plot(result_emcee, r, B, to_fit, source_name, suffix, box_size, la
     except AttributeError:
         # Case where s0 parameter is frozen
         pass
-    #ax.text(best["s0"], 1.5 * ymin, r"$s_0$", **label_kwds)
+    # ax.text(best["s0"], 1.5 * ymin, r"$s_0$", **label_kwds)
     ax.annotate(
         r"$s_0$",
         (best["s0"], 1.5 * ymin),
@@ -186,20 +195,29 @@ def strucfunc_plot(result_emcee, r, B, to_fit, source_name, suffix, box_size, la
 
     if np.any(~to_fit):
         # Add in the points not included in fit
-        ax.plot(r[large_scale], B[large_scale], "o", color=c_data, mew=3, fillstyle="none")
+        ax.plot(
+            r[large_scale],
+            B[large_scale],
+            "o",
+            color=c_data,
+            mew=3,
+            fillstyle="none",
+            zorder=99,
+        )
         # Translucent overlay box to indicate the large scale values that are excluded from the fit
         ax.axvspan(box_size / 2, ymax, color="w", alpha=0.5, zorder=50)
 
-
-    ax.text(np.sqrt(xmin * xmax), ymax / 1.5, source_name, fontsize="large", **label_kwds)
+    ax.text(
+        np.sqrt(xmin * xmax), ymax / 1.5, source_name, fontsize="large", **label_kwds
+    )
     ax.set(
-        xscale = "log",
-        yscale = "log",
-        xlabel = "Separation: $r$ [pc]",
-        ylabel = r"Structure function: $B(r)$ [km$^{2}$/s$^{2}$]",
-        xlim = [xmin, xmax],
-        ylim = [ymin, ymax],
+        xscale="log",
+        yscale="log",
+        xlabel="Separation: $r$ [pc]",
+        ylabel=r"Structure function: $B(r)$ [km$^{2}$/s$^{2}$]",
+        xlim=[xmin, xmax],
+        ylim=[ymin, ymax],
     )
     sns.despine()
     fig.tight_layout()
-    fig.savefig(f"sf-emcee-{suffix}.pdf");
+    fig.savefig(f"sf-emcee-{suffix}.pdf")
