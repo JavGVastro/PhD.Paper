@@ -15,11 +15,25 @@ import numpy as np
 import seaborn as sns
 import lmfit
 import json
+from pathlib import Path
 
 # import astropy.units as u
 import pandas as pd
 import corner
 import bfunc
+
+FIGPATH = Path("Imgs")
+STYLE = {
+    "data label element": 3,
+    "model label element": 1,
+    "true model label element": 10,
+    "data label offset": (40, -20),
+    "model label offset": (20, -40),
+    "true model label offset": (-30, 60),
+}
+
+sns.set_color_codes()
+sns.set_context("talk")
 
 
 def corner_plot(result_emcee, result_orig, source_name, suffix, data_ranges=None):
@@ -46,7 +60,7 @@ def corner_plot(result_emcee, result_orig, source_name, suffix, data_ranges=None
     fig.set_size_inches(15, 15)
     fig.tight_layout(h_pad=0, w_pad=0)
     fig.suptitle(source_name)
-    fig.savefig(f"corner-emcee-{suffix}.pdf")
+    fig.savefig(FIGPATH / f"corner-emcee-{suffix}.pdf")
 
 
 def spread_span(
@@ -98,8 +112,8 @@ def strucfunc_plot(
     c_data = data_points[0].get_color()
     ax.annotate(
         "observed",
-        (r[3], B[3]),
-        xytext=(40, -20),
+        (r[STYLE["data label element"]], B[STYLE["data label element"]]),
+        xytext=STYLE["data label offset"],
         textcoords="offset points",
         color=c_data,
         arrowprops=dict(arrowstyle="->", color=c_data, shrinkB=8),
@@ -110,12 +124,13 @@ def strucfunc_plot(
     Ba = bfunc.bfunc04s(xarr, **best)
     line_apparent = ax.plot(xarr, Ba)
     c_apparent = line_apparent[0].get_color()
-    xa = 0.5 * (r[1] + r[2])
+    ia = STYLE["model label element"]
+    xa = 0.5 * (r[ia] + r[ia + 1])
     ya = bfunc.bfunc04s(xa, **best)
     ax.annotate(
         "model",
         (xa, ya),
-        xytext=(20, -40),
+        xytext=STYLE["model label offset"],
         textcoords="offset points",
         color=c_apparent,
         arrowprops=dict(arrowstyle="->", color=c_apparent, shrinkB=8),
@@ -129,8 +144,11 @@ def strucfunc_plot(
     c_true = line_true[0].get_color()
     ax.annotate(
         "model true",
-        (xarr[10], Bu[10]),
-        xytext=(-30, 60),
+        (
+            xarr[STYLE["true model label element"]],
+            Bu[STYLE["true model label element"]],
+        ),
+        xytext=STYLE["true model label offset"],
         textcoords="offset points",
         color=c_true,
         arrowprops=dict(arrowstyle="->", color=c_true, shrinkB=8),
@@ -195,6 +213,18 @@ def strucfunc_plot(
     spread_span(ax, result_emcee.flatchain.sig2, orient="h")
     ax.text(1.5 * xmin, best["sig2"], r"$\sigma^2$", **label_kwds)
 
+    ax.axhline(best["noise"], color="k", linestyle="dotted")
+    spread_span(ax, result_emcee.flatchain.noise, orient="h")
+    ax.annotate(
+        r"$B_\mathrm{noise}$",
+        (1.5 * xmin, best["noise"]),
+        xytext=(20, 40),
+        textcoords="offset points",
+        color="k",
+        arrowprops=dict(arrowstyle="->", color="k", shrinkB=2),
+        **label_kwds,
+    )
+
     if np.any(~to_fit):
         # Add in the points not included in fit
         ax.plot(
@@ -222,4 +252,4 @@ def strucfunc_plot(
     )
     sns.despine()
     fig.tight_layout()
-    fig.savefig(f"sf-emcee-{suffix}.pdf")
+    fig.savefig(FIGPATH / f"sf-emcee-{suffix}.pdf")
