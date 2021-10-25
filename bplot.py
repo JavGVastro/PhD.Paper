@@ -1,5 +1,5 @@
 """
-PLot models fort the paper
+PLot models for the paper
 
 Will Henney
 
@@ -75,7 +75,7 @@ def spread_span(
 
 
 def strucfunc_plot(
-    result_emcee, r, B, to_fit, source_name, suffix, box_size, large_scale
+    result_emcee, result_orig, r, B, to_fit, source_name, suffix, box_size, large_scale
 ):
 
     whitebox = dict(facecolor="white", pad=5, edgecolor="0.5", linewidth=0.5)
@@ -88,7 +88,9 @@ def strucfunc_plot(
 
     fig, ax = plt.subplots(figsize=(10, 10))
 
-    best = result_emcee.best_values
+    # best = result_emcee.best_values
+    # Use the original lev-marq fit for the "best" parameter values
+    best = result_orig.best_values
 
     # Plot the data
     yerr = 1.0 / result_emcee.weights
@@ -104,7 +106,7 @@ def strucfunc_plot(
         **label_kwds2,
     )
 
-    # Plot the full model ˚including without instrumental effects
+    # Plot the full model including instrumental effects
     Ba = bfunc.bfunc04s(xarr, **best)
     line_apparent = ax.plot(xarr, Ba)
     c_apparent = line_apparent[0].get_color()
@@ -196,8 +198,8 @@ def strucfunc_plot(
     if np.any(~to_fit):
         # Add in the points not included in fit
         ax.plot(
-            r[large_scale],
-            B[large_scale],
+            r[~to_fit],
+            B[~to_fit],
             "o",
             color=c_data,
             mew=3,
