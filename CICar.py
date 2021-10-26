@@ -8,7 +8,7 @@
 #       format_version: '1.5'
 #       jupytext_version: 1.11.1
 #   kernelspec:
-#     display_name: Python 3
+#     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
 # ---
@@ -51,7 +51,7 @@ box_size =  SFresults['box_size']
 pc_per_arcsec = pc
 
 # Merge first K points
-K = 2
+K = 1
 r[K] = np.mean(r[:K])
 B[K] = np.mean(B[:K])
 r = r[K:]
@@ -158,7 +158,10 @@ if hasattr(result_emcee, "acor"):
 bplot.corner_plot(result_emcee, result, name, data, data_ranges=[0.95, 0.99, 0.995, 0.995, 0.999]);
 #data_ranges=[0.95, 0.99, 0.995, 0.995, 0.999]
 
-bplot.strucfunc_plot(result_emcee, r, B, to_fit, name, data, box_size, large_scale)
+bplot.STYLE["data label element"] = 4
+bplot.STYLE["model label offset"] = (-60, 40)
+bplot.STYLE["true model label offset"] = (30, -60)
+bplot.strucfunc_plot(result_emcee, result, r, B, to_fit, name, data, box_size, large_scale)
 
 CIresults = {'result_emcee': result_emcee,
             'result' : result
@@ -169,3 +172,5 @@ pickle.dump(CIresults,f)
 f.close()
 
 print("--- %s seconds ---" % (time.time()-start_time))
+
+
