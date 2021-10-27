@@ -1,7 +1,6 @@
 # ---
 # jupyter:
 #   jupytext:
-#     formats: ipynb,py:light
 #     text_representation:
 #       extension: .py
 #       format_name: light
@@ -48,12 +47,12 @@ pix =  SFresults['pix']
 box_size =  SFresults['box_size']
 pc_per_arcsec = pc
 
-# Merge first K points
-K = 3
-r[K] = np.mean(r[:K])
-B[K] = np.mean(B[:K])
-r = r[K:]
-B = B[K:]
+# # Merge first K points
+# K = 1
+# r[K] = np.mean(r[:K])
+# B[K] = np.mean(B[:K])
+# r = r[K:]
+# B = B[K:]
 
 model = lmfit.Model(bfunc.bfunc04s)
 model.param_names
@@ -80,11 +79,11 @@ model.set_param_hint("box_size", value=box_size, vary=False)
 
 pd.DataFrame(model.param_hints)
 
-relative_uncertainty = 0.065
+relative_uncertainty = 0.05
 weights = 1.0 / (relative_uncertainty * B)
-large_scale = r > 0.5 * box_size
+large_scale = r > 0.60 * box_size
 weights[large_scale] /= 3.0
-#weights[:3] /= 3.0
+#weights[:3] /= 2.0
 
 to_fit = ~large_scale
 result = model.fit(B[to_fit], weights=weights[to_fit], r=r[to_fit])
@@ -151,13 +150,21 @@ if hasattr(result_emcee, "acor"):
         except IndexError:
             pass
 
-bplot.corner_plot(result_emcee, result, name, data);
+bplot.corner_plot(result_emcee, result, name, data,data_ranges=[0.95, 0.99, 0.995, 0.995, 0.999]);
 #data_ranges=[0.95, 0.99, 0.995, 0.995, 0.999]
 
-bplot.strucfunc_plot(result_emcee, r, B, to_fit, name, data, box_size, large_scale)
+bplot.strucfunc_plot(result_emcee, result, r, B, to_fit, name, data, box_size, large_scale)
 
 CIresults = {'result_emcee': result_emcee,
-            'result' : result
+            'result' : result,
+             'r' : r,
+             'B' : B,
+             'to_fit': to_fit,
+             'name' : name,
+             'data' : data,
+             'box_size' : box_size,
+             'large_scale' : large_scale
+             
           }
 
 f = open('Results//CI' + data +'.pkl',"wb")
