@@ -50,10 +50,10 @@ pc =  SFresults['pc']
 box_size =  SFresults['box_size']
 pc_per_arcsec = pc
 
-# Merge first K points
+# Merge first K + 1 points
 K = 1
-r[K] = np.mean(r[:K])
-B[K] = np.mean(B[:K])
+r[K] = np.mean(r[:K+1])
+B[K] = np.mean(B[:K+1])
 r = r[K:]
 B = B[K:]
 
@@ -86,7 +86,7 @@ relative_uncertainty = 0.05
 weights = 1.0 / (relative_uncertainty * B)
 large_scale = r > 0.35 * box_size
 weights[large_scale] /= 3.0
-weights[:5] /= 3.0
+weights[:14] /= 3.0
 
 to_fit = ~large_scale
 result = model.fit(B[to_fit], weights=weights[to_fit], r=r[to_fit])
