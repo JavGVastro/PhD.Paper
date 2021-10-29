@@ -36,31 +36,45 @@ sns.set_color_codes()
 sns.set_context("talk")
 
 
-def corner_plot(result_emcee, result_orig, source_name, suffix, data_ranges=None):
+def corner_plot(
+    result_emcee, result_orig, source_name, suffix, data_ranges=None, also_reverse=False
+):
+    """
+    Make a corner plot of parameter correlations from model fit
+
+    Optionally, make a second reflected plot if also_reverse=True
+    """
     fancy_names = {
         "r0": "Corr. length:\n" + r"$r_0$ [parsec]",
         "sig2": "Vel. variance:\n" + r"$\sigma^2$ [km$^2$ s$^{-1}$]",
-        "m": "Power-law slope:\n" + r"$m$",
+        "m": "Power-law\n" + r"slope: $m$",
         "s0": "RMS seeing:\n" + r"$s_0$ [parsec]",
         "noise": "Noise:\n" + r"[km$^2$ s$^{-1}$]",
     }
-    # We need to remove the frozen parameters from the list before passing it as the truths argument
+    # We need to remove the frozen parameters from the list before
+    # passing it as the truths argument
     truths = [_.value for _ in result_orig.params.values() if _.vary]
-    fig = corner.corner(
-        result_emcee.flatchain,
-        labels=[fancy_names[_] for _ in result_emcee.var_names],
-        truths=truths,
-        labelpad=0.2,
-        range=[0.995] * len(truths) if data_ranges is None else data_ranges,
-        color="#b04060",
-        hist_kwargs=dict(color="k"),
-        data_kwargs=dict(color="k"),
-    )
-    sns.despine()
-    fig.set_size_inches(15, 15)
-    fig.tight_layout(h_pad=0, w_pad=0)
-    fig.suptitle(source_name)
-    fig.savefig(FIGPATH / f"corner-emcee-{suffix}.pdf")
+    figfile_and_reverse = [[f"corner-emcee-{suffix}.pdf", False]]
+    if also_reverse:
+        # Optionally make a second plot that is mirrored about the diagonal
+        figfile_and_reverse.append([f"corner-emcee-{suffix}-rev.pdf", True])
+    for figfile, reverse in figfile_and_reverse[::-1]:
+        fig = corner.corner(
+            result_emcee.flatchain,
+            labels=[fancy_names[_] for _ in result_emcee.var_names],
+            truths=truths,
+            labelpad=0.4,
+            range=[0.995] * len(truths) if data_ranges is None else data_ranges,
+            color="#b04060",
+            hist_kwargs=dict(color="k"),
+            data_kwargs=dict(color="k"),
+            reverse=reverse,
+        )
+        sns.despine()
+        fig.set_size_inches(10, 10)
+        fig.tight_layout(h_pad=0, w_pad=0)
+        # fig.suptitle(source_name)
+        fig.savefig(FIGPATH / figfile)
 
 
 def spread_span(
