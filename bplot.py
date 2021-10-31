@@ -37,7 +37,13 @@ sns.set_context("talk")
 
 
 def corner_plot(
-    result_emcee, result_orig, source_name, suffix, data_ranges=None, also_reverse=False
+    result_emcee,
+    result_orig,
+    source_name,
+    suffix,
+    data_ranges=None,
+    also_reverse=False,
+    **corner_kwds,
 ):
     """
     Make a corner plot of parameter correlations from model fit
@@ -69,9 +75,11 @@ def corner_plot(
             hist_kwargs=dict(color="k"),
             data_kwargs=dict(color="k"),
             reverse=reverse,
+            max_n_ticks=4,
+            **corner_kwds,
         )
         sns.despine()
-        fig.set_size_inches(10, 10)
+        # fig.set_size_inches(10, 10)
         fig.tight_layout(h_pad=0, w_pad=0)
         # fig.suptitle(source_name)
         fig.savefig(FIGPATH / figfile)
@@ -103,7 +111,15 @@ def spread_span(
 
 
 def strucfunc_plot(
-    result_emcee, result_orig, r, B, to_fit, source_name, suffix, box_size, large_scale
+    result_emcee,
+    result_orig,
+    r,
+    B,
+    to_fit,
+    source_name,
+    suffix,
+    box_size,
+    large_scale,
 ):
 
     whitebox = dict(facecolor="white", pad=5, edgecolor="0.5", linewidth=0.5)
