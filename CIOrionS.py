@@ -188,7 +188,7 @@ bplot.corner_plot(
     name,
     data,
     data_ranges=[0.95, 0.99, 0.995, 0.995, 0.999],
-    also_reverse=True,
+    also_reverse=False,
 )
 
 # + tags=[]
