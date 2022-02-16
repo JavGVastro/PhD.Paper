@@ -8,7 +8,7 @@
 #       format_version: '1.5'
 #       jupytext_version: 1.11.1
 #   kernelspec:
-#     display_name: Python 3 (ipykernel)
+#     display_name: Python 3
 #     language: python
 #     name: python3
 # ---
@@ -61,7 +61,7 @@ pc_per_arcsec
 # B = B[K:]
 # -
 
-model = lmfit.Model(bfunc.bfunc04s)
+model = lmfit.Model(bfunc.bfunc03s)
 model.param_names
 
 # +
@@ -83,7 +83,7 @@ model.set_param_hint(
 model.set_param_hint("noise", value=0.5 * B.min(), min=0.0, max=3 * B.min())
 
 # box_size is fixed
-model.set_param_hint("box_size", value=box_size, vary=False)
+# model.set_param_hint("box_size", value=box_size, vary=False)
 # -
 
 pd.DataFrame(model.param_hints)
@@ -116,14 +116,14 @@ ax.plot(r[large_scale], B[large_scale], "o")
 
 # Dotted lines for 2 x rms seeing and for box size
 ax.axvline(2 * result.params["s0"].value, color="k", linestyle="dotted")
-ax.axvline(result.params["box_size"].value, color="k", linestyle="dotted")
+ax.axvline(box_size, color="k", linestyle="dotted")
 
 # Dashed lines for best-fit r0 and sig2
 ax.axvline(result.params["r0"].value, color="k", linestyle="dashed")
 ax.axhline(result.params["sig2"].value, color="k", linestyle="dashed")
 
 # Gray box to indicate the large scale values that are excluded from the fit
-ax.axvspan(result.params["box_size"].value / 2, r[-1], color="k", alpha=0.05, zorder=-1)
+ax.axvspan(box_size / 2, r[-1], color="k", alpha=0.05, zorder=-1)
 
 ax.set(
     xscale="log",
@@ -168,11 +168,15 @@ if hasattr(result_emcee, "acor"):
             pass
 
 bplot.corner_plot(
-    result_emcee, result, name, data, data_ranges=[0.95, 0.99, 0.995, 0.995, 0.999]
+    result_emcee, result_emcee, name, data, data_ranges=[0.95, 0.99, 0.995, 0.995, 0.999]
 )
 
 bplot.strucfunc_plot(
     result_emcee, result, r, B, to_fit, name, data, box_size, large_scale
+)
+
+bplot.strucfunc_plot(
+    result_emcee, result_emcee, r, B, to_fit, name, data, box_size, large_scale
 )
 
 CIresults = {"result_emcee": result_emcee, "result": result}
@@ -181,4 +185,5 @@ f = open("Results//CI" + data + ".pkl", "wb")
 pickle.dump(CIresults, f)
 f.close()
 
+# + tags=[]
 print("--- %s seconds ---" % (time.time() - start_time))
