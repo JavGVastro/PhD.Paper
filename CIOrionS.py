@@ -13,10 +13,13 @@
 #     name: python3
 # ---
 
+# + tags=[]
 import time
 
+# + tags=[]
 start_time = time.time()
 
+# + tags=[]
 import cmasher as cmr
 from matplotlib import pyplot as plt
 import numpy as np
@@ -30,18 +33,24 @@ import corner
 from scipy import interpolate
 import pickle
 import bplot
+# -
 
 # Data load and region parameters
 
+# + tags=[]
 data = "OrionS"
 
+# + tags=[]
 name = "Orion"
 
+# + tags=[]
 pickle_in = open("Results//SF" + data + ".pkl", "rb")
 SFresults = pickle.load(pickle_in)
 
+# + tags=[]
 mask = SFresults["SF"]["N pairs"] > 0
 
+# + tags=[]
 B = SFresults["b2"][mask]
 r = SFresults["s"][mask]
 pc = SFresults["pc"]
@@ -49,6 +58,7 @@ pix = SFresults["pix"]
 box_size = SFresults["box_size"]
 pc_per_arcsec = pc
 
+# + tags=[]
 # Merge first K points
 K = 3
 r[K] = np.mean(r[:K])
@@ -56,10 +66,11 @@ B[K] = np.mean(B[:K])
 r = r[K:]
 B = B[K:]
 
-model = lmfit.Model(bfunc.bfunc04s)
+# + tags=[]
+model = lmfit.Model(bfunc.bfunc03s)
 model.param_names
 
-# +
+# + tags=[]
 # Correlation length between 1/10 and 2 x box_size
 model.set_param_hint("r0", value=0.1 * box_size, min=0.01 * box_size, max=2 * box_size)
 
@@ -78,23 +89,26 @@ model.set_param_hint(
 model.set_param_hint("noise", value=0.5 * B.min(), min=0.0, max=3 * B.min())
 
 # box_size is fixed
-model.set_param_hint("box_size", value=box_size, vary=False)
-# -
+#model.set_param_hint("box_size", value=box_size, vary=False)
 
+# + tags=[]
 pd.DataFrame(model.param_hints)
 
+# + tags=[]
 relative_uncertainty = 0.02
 weights = 1.0 / (relative_uncertainty * B)
 large_scale = r > 0.5 * box_size
 weights[large_scale] /= 8.0
 # weights[:3] /= 3.0
 
+# + tags=[]
 to_fit = ~large_scale
 result = model.fit(B[to_fit], weights=weights[to_fit], r=r[to_fit])
 
+# + tags=[]
 result
 
-# +
+# + tags=[]
 fig, ax = plt.subplots(figsize=(12, 12))
 
 # Plot the underlying model without instrumental effects
@@ -111,14 +125,14 @@ ax.plot(r[large_scale], B[large_scale], "o")
 
 # Dotted lines for 2 x rms seeing and for box size
 ax.axvline(2 * result.params["s0"].value, color="k", linestyle="dotted")
-ax.axvline(result.params["box_size"].value, color="k", linestyle="dotted")
+ax.axvline(box_size, color="k", linestyle="dotted")
 
 # Dashed lines for best-fit r0 and sig2
 ax.axvline(result.params["r0"].value, color="k", linestyle="dashed")
 ax.axhline(result.params["sig2"].value, color="k", linestyle="dashed")
 
 # Gray box to indicate the large scale values that are excluded from the fit
-ax.axvspan(result.params["box_size"].value / 2, r[-1], color="k", alpha=0.05, zorder=-1)
+ax.axvspan(box_size / 2, r[-1], color="k", alpha=0.05, zorder=-1)
 
 ax.set(
     xscale="log",
@@ -131,12 +145,14 @@ sns.despine()
 
 # emcee
 
+# + tags=[]
 emcee_kws = dict(
     steps=5000, burn=500, thin=50, is_weighted=True, progress=False, workers=16
 )
 emcee_params = result.params.copy()
 # emcee_params.add('__lnsigma', value=np.log(0.1), min=np.log(0.001), max=np.log(2.0))
 
+# + tags=[]
 result_emcee = model.fit(
     data=B[to_fit],
     r=r[to_fit],
@@ -147,12 +163,15 @@ result_emcee = model.fit(
     fit_kws=emcee_kws,
 )
 
+# + tags=[]
 result_emcee
 
+# + tags=[]
 plt.plot(result_emcee.acceptance_fraction, "o")
 plt.xlabel("walker")
 plt.ylabel("acceptance fraction")
 
+# + tags=[]
 if hasattr(result_emcee, "acor"):
     print("Autocorrelation time for the parameters:")
     print("----------------------------------------")
@@ -162,23 +181,35 @@ if hasattr(result_emcee, "acor"):
         except IndexError:
             pass
 
+# + tags=[]
 bplot.corner_plot(
     result_emcee,
     result,
     name,
     data,
     data_ranges=[0.95, 0.99, 0.995, 0.995, 0.999],
-    also_reverse=True,
+    also_reverse=False,
 )
 
+# + tags=[]
 bplot.strucfunc_plot(
     result_emcee, result, r, B, to_fit, name, data, box_size, large_scale
 )
 
+# + tags=[]
 CIresults = {"result_emcee": result_emcee, "result": result}
 
+# + tags=[]
 f = open("Results//CI" + data + ".pkl", "wb")
 pickle.dump(CIresults, f)
 f.close()
 
+# + tags=[]
 print("--- %s seconds ---" % (time.time() - start_time))
+# -
+
+# The following cell can be run if the functions in the `bplot` module are edited and we want to avoid having to restart the kernel.
+
+# + tags=[]
+# from importlib import reload
+# reload(bplot)

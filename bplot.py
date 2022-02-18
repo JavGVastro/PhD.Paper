@@ -120,6 +120,8 @@ def strucfunc_plot(
     suffix,
     box_size,
     large_scale,
+    func=bfunc.bfunc03s,
+    func00=bfunc.bfunc00s,
 ):
 
     whitebox = dict(facecolor="white", pad=5, edgecolor="0.5", linewidth=0.5)
@@ -151,12 +153,12 @@ def strucfunc_plot(
     )
 
     # Plot the full model including instrumental effects
-    Ba = bfunc.bfunc04s(xarr, **best)
+    Ba = func(xarr, **best)
     line_apparent = ax.plot(xarr, Ba)
     c_apparent = line_apparent[0].get_color()
     ia = STYLE["model label element"]
     xa = 0.5 * (r[ia] + r[ia + 1])
-    ya = bfunc.bfunc04s(xa, **best)
+    ya = func(xa, **best)
     ax.annotate(
         "model",
         (xa, ya),
@@ -169,7 +171,7 @@ def strucfunc_plot(
     # ax.text(xmax / 1.5, Ba[-1], "model apparent", color=c_apparent, **label_kwds2)
 
     # Plot the underlying model without instrumental effects
-    Bu = bfunc.bfunc00s(xarr, best["r0"], best["sig2"], best["m"])
+    Bu = func00(xarr, best["r0"], best["sig2"], best["m"])
     line_true = ax.plot(xarr, Bu, linestyle="dashed")
     c_true = line_true[0].get_color()
     ax.annotate(
@@ -197,11 +199,17 @@ def strucfunc_plot(
             s0 = sample.s0
         except AttributeError:
             s0 = best["s0"]
-        Bsamp = bfunc.bfunc04s(
-            xarr, sample.r0, sample.sig2, sample.m, s0, sample.noise, best["box_size"]
+        Bsamp = func(
+            xarr,
+            sample.r0,
+            sample.sig2,
+            sample.m,
+            s0,
+            sample.noise,
+            # best["box_size"]
         )
         ax.plot(xarr, Bsamp, alpha=0.05, color="orange")
-        Busamp = bfunc.bfunc00s(xarr, sample.r0, sample.sig2, sample.m)
+        Busamp = func00(xarr, sample.r0, sample.sig2, sample.m)
         ax.plot(xarr, Busamp, alpha=0.05, color="g")
 
     # Dotted lines for 2 x rms seeing and for box size
@@ -222,8 +230,8 @@ def strucfunc_plot(
         **label_kwds,
     )
 
-    ax.axvline(best["box_size"], color="k", linestyle="dotted")
-    ax.text(best["box_size"], 1.5 * ymin, r"$L$", **label_kwds)
+    ax.axvline(box_size, color="k", linestyle="dotted")
+    ax.text(box_size, 1.5 * ymin, r"$L$", **label_kwds)
 
     # Dashed lines for best-fit r0 and sig2
     ax.axvline(best["r0"], color="k", linestyle="dashed")

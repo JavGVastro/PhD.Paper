@@ -33,9 +33,9 @@ import bplot
 
 # Data load and region parameters
 
-data = "N346"
+data = "OrionLH2"
 
-name = "NGC 346"
+name = "Orion Large"
 
 pickle_in = open("Results//SF" + data + ".pkl", "rb")
 SFresults = pickle.load(pickle_in)
@@ -45,16 +45,16 @@ mask = SFresults["SF"]["N pairs"] > 0
 B = SFresults["b2"][mask]
 r = SFresults["s"][mask]
 pc = SFresults["pc"]
-pix = SFresults["pix"]
+# pix =  SFresults['pix']
 box_size = SFresults["box_size"]
 pc_per_arcsec = pc
 
-# Merge first K points
-K = 3
-r[K] = np.mean(r[:K])
-B[K] = np.mean(B[:K])
-r = r[K:]
-B = B[K:]
+# # Merge first K points
+# K = 3
+# r[K] = np.mean(r[:K])
+# B[K] = np.mean(B[:K])
+# r = r[K:]
+# B = B[K:]
 
 model = lmfit.Model(bfunc.bfunc03s)
 model.param_names
@@ -83,9 +83,9 @@ model.set_param_hint("noise", value=0.5 * B.min(), min=0.0, max=3 * B.min())
 
 pd.DataFrame(model.param_hints)
 
-relative_uncertainty = 0.035
+relative_uncertainty = 0.075
 weights = 1.0 / (relative_uncertainty * B)
-large_scale = r > 0.8 * box_size
+large_scale = r > 0.85 * box_size
 weights[large_scale] /= 3.0
 # weights[:3] /= 3.0
 
@@ -132,7 +132,7 @@ sns.despine()
 # emcee
 
 emcee_kws = dict(
-    steps=5000, burn=500, thin=50, is_weighted=True, progress=False, workers=16
+    steps=10000, burn=500, thin=50, is_weighted=True, progress=False, workers=16
 )
 emcee_params = result.params.copy()
 # emcee_params.add('__lnsigma', value=np.log(0.1), min=np.log(0.001), max=np.log(2.0))
@@ -163,12 +163,16 @@ if hasattr(result_emcee, "acor"):
             pass
 
 bplot.corner_plot(
-    result_emcee, result, name, data, data_ranges=[0.95, 0.99, 0.995, 0.995, 0.999]
+    result_emcee, result_emcee, name, data, data_ranges=[0.95, 0.99, 0.995, 0.995, 0.999]
 )
 # data_ranges=[0.95, 0.99, 0.995, 0.995, 0.999]
 
 bplot.strucfunc_plot(
     result_emcee, result, r, B, to_fit, name, data, box_size, large_scale
+)
+
+bplot.strucfunc_plot(
+    result_emcee, result_emcee, r, B, to_fit, name, data, box_size, large_scale
 )
 
 CIresults = {
@@ -183,9 +187,10 @@ CIresults = {
     "large_scale": large_scale,
 }
 
+data = "OrionLH"
+
 f = open("Results//CI" + data + ".pkl", "wb")
 pickle.dump(CIresults, f)
 f.close()
 
-# + tags=[]
 print("--- %s seconds ---" % (time.time() - start_time))
