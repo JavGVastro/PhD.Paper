@@ -37,7 +37,7 @@ from turbustat.simulator import make_3dfield
 from turb_utils import make_extended
 import seaborn as sns
 import sys
-sys.path.append("../muse-strucfunc")
+sys.path.append("..")
 import strucfunc
 
 sns.set_color_codes()
@@ -467,7 +467,7 @@ def values2arrays(d):
 
 # Try and load the structure function from JSON files.  If that fails, then recalculate the structure functions and save to JSON files.
 
-use_cached_strucfunc = True
+use_cached_strucfunc = False
 
 if use_cached_strucfunc:
     sfs_npt_s = {
