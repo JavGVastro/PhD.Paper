@@ -37,7 +37,7 @@ from turbustat.simulator import make_3dfield
 from turb_utils import make_extended
 import seaborn as sns
 import sys
-sys.path.append("../muse-strucfunc")
+sys.path.append("..")
 import strucfunc
 
 sns.set_color_codes()
@@ -81,8 +81,8 @@ def taper(arr, scale):
 
 # + [markdown] tags=[]
 # Function to add a periodic undulation to the fluctuations:
+# -
 
-# +
 def undulate(arr, wavelength=128, angle=45.0 * u.deg, amplitude=1.0):
     ny, nx = arr.shape
     xx, yy = np.meshgrid(
@@ -93,8 +93,6 @@ def undulate(arr, wavelength=128, angle=45.0 * u.deg, amplitude=1.0):
     undulation = amplitude * np.sin(2 * np.pi * u.radian * ss / wavelength)
     return arr + undulation
 
-
-# -
 
 # ## Idealized fluctuaton field
 
@@ -324,7 +322,6 @@ ax.set(
 #
 #
 
-sys.path.append("../JavierGVastro/PhD.Paper")
 import bfunc
 
 # Choose some parameters for the model strucfunc that we want to demonstrate
