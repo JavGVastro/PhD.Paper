@@ -626,6 +626,169 @@ fig.savefig("fake-finite-box-effect.pdf")
 
 # We find that the same function: $1 - \exp(-x / 3.6)$ is an adequate fit to both the $r_0$ and the $\sigma^2$ behaviors.
 
+# ## Fit the model to the finite box results
+#
+# To see if we can still recover the true parameters.
+
+import lmfit
+import bfunc
+import pandas as pd
+
+
+# ### Apply to the mean structure functions
+#
+# We really want to be applying to the individual sub-images and then calulate the mean later.  But, to start with I will just work with what we already have, which is the means.
+
+def setup_model_params(model, box_size):
+    # Correlation length between 1/10 and 2 x box_size
+    model.set_param_hint("r0", value=0.1 * box_size, min=0.01 * box_size, max=2 * box_size)
+    # sig2 between 1/4 and 2 x max value of B(r)
+    model.set_param_hint("sig2", value=0.5 * B.max(), min=0.25 * B.max(), max=2 * B.max())
+    # m between 1/2 and 5/3
+    model.set_param_hint("m", value=1.0, min=0.5, max=2.0)   
+
+
+def fit_models_to_splits(splits):
+    model = lmfit.Model(bfunc.bfunc00s)
+    setup_model_params(model, 256)
+    fdata = {
+        "n": [],
+        "L_over_r0": [],
+        "r0mean": [],
+        "r0sig": [],
+        "sig2mean": [],
+        "sig2sig": [],
+        "mmean": [],
+        "msig": [],
+        
+    }
+    for ii in splits.keys():
+        fdata["n"].append(256 / ii)
+        split = splits[ii]
+        r, B = split["r"], split["Bmean"]
+        result = model.fit(B, r=r)
+        for v in "r0", "sig2", "m":
+            fdata[f"{v}mean"].append(result.params[v].value)
+            fdata[f"{v}sig"].append(result.params[v].stderr)
+    fdata = values2arrays(fdata)
+    _split = splits[1]
+    true_r0 = np.interp(1.0, _split["Bmean"][:-4], _split["r"][:-4])
+    fdata["r0mean"] /= true_r0
+    fdata["r0sig"] /= true_r0
+    fdata["true_r0"] = true_r0
+    fdata["L_over_r0"] = fdata["n"] / true_r0
+    return fdata
+
+
+fdata = fit_models_to_splits(splits)
+
+fdata
+
+fdata_m07 = fit_models_to_splits(splits_m07)
+fdata_m07
+
+fdata_m15 = fit_models_to_splits(splits_m15)
+fdata_m15
+
+fdata_r16 = fit_models_to_splits(splits_r16)
+fdata_r16
+
+# Make a plot, just like the previous one, except this time showing the model-derived `sigma2` and `r0`, instead of the empirically derived ones. 
+
+# +
+fig, (ax1, ax2) = plt.subplots(
+    2,
+    1,
+    sharex=True,
+    sharey=True,
+    figsize=(8, 8),
+)
+for data in [
+    fdata_r16,
+    fdata,
+    fdata_m15,
+    fdata_m07,
+]:
+    x = data["L_over_r0"]
+    ax1.plot(x, data["r0mean"], linestyle="none", marker="o")
+#    ax1.fill_between(
+#        x,
+#        data["r0mean"] - data["r0sig"],
+#        data["r0mean"] + data["r0sig"],
+#        alpha=0.15,
+#        lw=0,
+#        zorder=-1,
+#    )
+    ax2.plot(x, data["sig2mean"], linestyle="none", marker="o")
+#    ax2.fill_between(
+#        x,
+#        data["sig2mean"] - data["sig2sig"],
+#        data["sig2mean"] + data["sig2sig"],
+#        alpha=0.15,
+#        lw=0,
+#        zorder=-1,
+#    )
+xgrid = np.logspace(-0.5, 1.7, 200)
+for ax in [ax1, ax2]:
+    ax.axvline(1.0, color="k", linestyle="dotted")
+    ax.axhline(1.0, color="k", linestyle="dotted")
+    ax.plot(
+        xgrid,
+        finite_box_effect(xgrid, scale=3.6),
+        color="k",
+        linestyle="dashed",
+    )
+
+
+ax1.set(
+    ylabel=r"Model fit $r_0$ / true $r_0$",
+)
+ax2.set(
+    xscale="log",
+    # yscale="log",
+    # xlim=[1, 300],
+    # ylim=[0, None],
+    xlabel=r"Box size / correlation length: $L\, /\, r_0$",
+    ylabel=r"Model fit $\sigma^2$ / true $\sigma^2$",
+)
+sns.despine()
+fig.tight_layout()
+fig.savefig("fake-finite-box-fits.pdf")
+# -
+
+# **This has worked really well!**
+#
+# We see that the model fitting works much better than the empirical measurement for determining the $\sigma^2$ and the $r_0$. It gives reliable values so long as $L / r_0$ is larger than about 3. This gives us a whole half dex of advantage over the empirical values, which require $L / r_0 > 10$ to be accurate. 
+#
+# So, I know longer feel the need to do the model fitting to the individual strucfuncs. I think this is good enough.
+
+# ### Pilot study on individual models
+#
+# *This is what I did first to explore how it would work*
+#
+# We will use the basic model `bfunc00s`, since there is no need to include the seeing or noise, and that will cut down on the number of parameters.
+
+model = lmfit.Model(bfunc.bfunc00s)
+
+sorted(splits.keys())
+
+split = splits[32]
+r, B = split["r"], split["Bmean"]
+
+setup_model_params(model, 256)
+
+pd.DataFrame(model.param_hints)
+
+result = model.fit(B, r=r)
+
+result
+
+true_r0, m
+
+result.values
+
+result.params["r0"].stderr
+
 # ## Fake emissivity and velocity cubes
 #
 # There is not such a rush to do these now, given that the pure velocity maps worked so well.
