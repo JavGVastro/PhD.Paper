@@ -81,7 +81,9 @@ def corner_plot(
         sns.despine()
         # fig.set_size_inches(10, 10)
         fig.tight_layout(h_pad=0, w_pad=0)
-        # fig.suptitle(source_name)
+        #fig.suptitle(source_name)
+        fig.text(0.5, 0.95, source_name, color='black',
+        bbox=dict(facecolor='none', edgecolor='black', pad=5.0))
         fig.savefig(FIGPATH / figfile)
 
 
@@ -275,7 +277,7 @@ def strucfunc_plot(
             zorder=99,
         )
         # Translucent overlay box to indicate the large scale values that are excluded from the fit
-        ax.axvspan(box_size / 2, ymax, color="w", alpha=0.5, zorder=50)
+        ax.axvspan(box_size / 2, ymax*3, color="w", alpha=0.5, zorder=50)
 
     ax.text(
         np.sqrt(xmin * xmax), ymax / 1.5, source_name, fontsize="large", **label_kwds
