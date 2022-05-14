@@ -72,12 +72,13 @@ model.set_param_hint("r0", value=0.1 * box_size, min=0.01 * box_size, max=2 * bo
 # sig2 between 1/4 and 2 x max value of B(r)
 model.set_param_hint("sig2", value=0.5 * B.max(), min=0.25 * B.max(), max=2 * B.max())
 
-# m between 1/2 and 5/3
-model.set_param_hint("m", value=1.0, min=0.5, max=2.0)
+# m pegged at 1.0
+model.set_param_hint("m", value=1.0, vary=False)
 
-# Seeing RMS between 0.1 and 1.5 arcsec
+
+# Seeing pegged at ZERO
 model.set_param_hint(
-    "s0", value=0.5 * pc_per_arcsec, min=0.1 * pc_per_arcsec, max=1.5 * pc_per_arcsec
+    "s0", value=0.0 * pc_per_arcsec, vary=False,
 )
 
 # Noise cannot be much larger than smallest B(r)
@@ -95,8 +96,8 @@ large_scale = r > 0.5 * box_size
 weights[large_scale] /= 3.0
 weights[:3] /= 2.0
 
-#to_fit = r <= 0.5 * box_size
-to_fit = ~large_scale
+to_fit = r <= 0.7 * box_size
+#to_fit = ~large_scale
 result = model.fit(B[to_fit], weights=weights[to_fit], r=r[to_fit])
 
 result
@@ -117,7 +118,7 @@ result.plot_fit(ax=ax)
 ax.plot(r[large_scale], B[large_scale], "o")
 
 # Dotted lines for 2 x rms seeing and for box size
-ax.axvline(2 * result.params["s0"].value, color="k", linestyle="dotted")
+#ax.axvline(2 * result.params["s0"].value, color="k", linestyle="dotted")
 ax.axvline(box_size, color="k", linestyle="dotted")
 
 # Dashed lines for best-fit r0 and sig2
@@ -143,7 +144,7 @@ sns.despine()
 # emcee
 
 emcee_kws = dict(
-    steps=50000, burn=500, thin=50, is_weighted=True, progress=False, workers=16
+    steps=3000, burn=500, thin=50, is_weighted=True, progress=False, workers=16
 )
 emcee_params = result.params.copy()
 # emcee_params.add('__lnsigma', value=np.log(0.1), min=np.log(0.001), max=np.log(2.0))
@@ -174,9 +175,14 @@ if hasattr(result_emcee, "acor"):
             pass
 
 bplot.corner_plot(
-    result_emcee, result_emcee, name, data, data_ranges=[0.95, 0.99, 0.995, 0.995, 0.999]
+    result_emcee, result_emcee, name, data, data_ranges=[0.95, 0.99, 0.999]
 )
 # data_ranges=[0.95, 0.99, 0.995, 0.995, 0.999]
+
+# +
+# import importlib
+# importlib.reload(bplot)
+# -
 
 bplot.strucfunc_plot(
     result_emcee, result, r, B, to_fit, name, data, box_size, large_scale
@@ -205,3 +211,5 @@ pickle.dump(CIresults, f)
 f.close()
 
 print("--- %s seconds ---" % (time.time() - start_time))
+
+

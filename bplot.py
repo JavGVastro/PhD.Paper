@@ -81,9 +81,14 @@ def corner_plot(
         sns.despine()
         # fig.set_size_inches(10, 10)
         fig.tight_layout(h_pad=0, w_pad=0)
-        #fig.suptitle(source_name)
-        fig.text(0.5, 0.95, source_name, color='black',
-        bbox=dict(facecolor='none', edgecolor='black', pad=5.0))
+        # fig.suptitle(source_name)
+        fig.text(
+            0.5,
+            0.95,
+            source_name,
+            color="black",
+            bbox=dict(facecolor="none", edgecolor="black", pad=5.0),
+        )
         fig.savefig(FIGPATH / figfile)
 
 
@@ -201,36 +206,39 @@ def strucfunc_plot(
             s0 = sample.s0
         except AttributeError:
             s0 = best["s0"]
+        try:
+            m = sample.m
+        except AttributeError:
+            m = best["m"]
         Bsamp = func(
             xarr,
             sample.r0,
             sample.sig2,
-            sample.m,
+            m,
             s0,
             sample.noise,
             # best["box_size"]
         )
         ax.plot(xarr, Bsamp, alpha=0.05, color="orange")
-        Busamp = func00(xarr, sample.r0, sample.sig2, sample.m)
+        Busamp = func00(xarr, sample.r0, sample.sig2, m)
         ax.plot(xarr, Busamp, alpha=0.05, color="g")
 
     # Dotted lines for 2 x rms seeing and for box size
-    ax.axvline(best["s0"], color="k", linestyle="dotted")
     try:
         spread_span(ax, result_emcee.flatchain.s0, orient="v")
+        ax.axvline(best["s0"], color="k", linestyle="dotted")
+        ax.annotate(
+            r"$s_0$",
+            (best["s0"], 1.5 * ymin),
+            xytext=(-40, 0),
+            textcoords="offset points",
+            color="k",
+            arrowprops=dict(arrowstyle="->", color="k", shrinkB=2),
+            **label_kwds,
+        )
     except AttributeError:
         # Case where s0 parameter is frozen
         pass
-    # ax.text(best["s0"], 1.5 * ymin, r"$s_0$", **label_kwds)
-    ax.annotate(
-        r"$s_0$",
-        (best["s0"], 1.5 * ymin),
-        xytext=(-40, 0),
-        textcoords="offset points",
-        color="k",
-        arrowprops=dict(arrowstyle="->", color="k", shrinkB=2),
-        **label_kwds,
-    )
 
     ax.axvline(box_size, color="k", linestyle="dotted")
     ax.text(box_size, 1.5 * ymin, r"$L$", **label_kwds)
@@ -255,10 +263,15 @@ def strucfunc_plot(
 
     ax.axhline(best["noise"], color="k", linestyle="dotted")
     spread_span(ax, result_emcee.flatchain.noise, orient="h")
+    if best["noise"] > 0.5 * best["sig2"]:
+        # Avoid collision of labels
+        ytext = -40
+    else:
+        ytext = 40
     ax.annotate(
         r"$B_\mathrm{noise}$",
         (1.5 * xmin, best["noise"]),
-        xytext=(20, 40),
+        xytext=(20, ytext),
         textcoords="offset points",
         color="k",
         arrowprops=dict(arrowstyle="->", color="k", shrinkB=2),
@@ -277,7 +290,7 @@ def strucfunc_plot(
             zorder=99,
         )
         # Translucent overlay box to indicate the large scale values that are excluded from the fit
-        ax.axvspan(box_size / 2, ymax*3, color="w", alpha=0.5, zorder=50)
+        ax.axvspan(box_size / 2, ymax * 3, color="w", alpha=0.5, zorder=50)
 
     ax.text(
         np.sqrt(xmin * xmax), ymax / 1.5, source_name, fontsize="large", **label_kwds
