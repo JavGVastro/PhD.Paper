@@ -49,10 +49,10 @@ pix = SFresults["pix"]
 box_size = SFresults["box_size"]
 pc_per_arcsec = pc
 
-# # Merge first K points
-# K = 1
-# r[K] = np.mean(r[:K])
-# B[K] = np.mean(B[:K])
+# # Merge first K + 1 points
+# K = 2
+# r[K] = np.mean(r[: K + 1])
+# B[K] = np.mean(B[: K + 1])
 # r = r[K:]
 # B = B[K:]
 
@@ -61,10 +61,10 @@ model.param_names
 
 # +
 # Correlation length between 1/10 and 2 x box_size
-model.set_param_hint("r0", value=0.1 * box_size, min=0.01 * box_size, max=2 * box_size)
+model.set_param_hint("r0", value=0.1 * box_size, min=0.01 * box_size, max=2.0 * box_size)
 
 # sig2 between 1/4 and 2 x max value of B(r)
-model.set_param_hint("sig2", value=0.5 * B.max(), min=0.25 * B.max(), max=2 * B.max())
+model.set_param_hint("sig2", value=0.5 * B.max(), min=0.25 * B.max(), max=2.0 * B.max())
 
 # m between 1/2 and 5/3
 model.set_param_hint("m", value=1.0, min=0.5, max=2.0)
@@ -85,11 +85,12 @@ pd.DataFrame(model.param_hints)
 
 relative_uncertainty = 0.05
 weights = 1.0 / (relative_uncertainty * B)
-large_scale = r > 0.60 * box_size
-weights[large_scale] /= 3.0
-# weights[:3] /= 2.0
+large_scale = r > 0.45 * box_size
+#weights[large_scale] /= 1.5
+weights[:3] /= 2.0
 
-to_fit = ~large_scale
+to_fit = r <= 0.6 * box_size
+#to_fit = ~large_scale
 result = model.fit(B[to_fit], weights=weights[to_fit], r=r[to_fit])
 
 result
@@ -129,10 +130,14 @@ ax.set(
 sns.despine()
 # -
 
+
+
+
+
 # emcee
 
 emcee_kws = dict(
-    steps=15000, burn=500, thin=50, is_weighted=True, progress=False, workers=16
+    steps=50000, burn=500, thin=50, is_weighted=True, progress=False, workers=16
 )
 emcee_params = result.params.copy()
 # emcee_params.add('__lnsigma', value=np.log(0.1), min=np.log(0.001), max=np.log(2.0))
@@ -169,6 +174,10 @@ bplot.corner_plot(
 # data_ranges=[0.95, 0.99, 0.995, 0.995, 0.999]
 # -
 
+result_emcee.flatchain['r0'].mean()
+
+result_emcee.flatchain['r0'].median()
+
 bplot.strucfunc_plot(
     result_emcee, result, r, B, to_fit, name, data, box_size, large_scale
 )
@@ -186,8 +195,8 @@ CIresults = {
     "name": name,
     "data": data,
     "box_size": box_size,
-    "large_scale": large_scale,
-}
+    "large_scale": large_scale
+          }
 
 f = open("Results//CI" + data + ".pkl", "wb")
 pickle.dump(CIresults, f)

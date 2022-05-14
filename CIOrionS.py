@@ -89,7 +89,7 @@ model.set_param_hint(
 model.set_param_hint("noise", value=0.5 * B.min(), min=0.0, max=3 * B.min())
 
 # box_size is fixed
-#model.set_param_hint("box_size", value=box_size, vary=False)
+# model.set_param_hint("box_size", value=box_size, vary=False)
 
 # + tags=[]
 pd.DataFrame(model.param_hints)
@@ -98,7 +98,7 @@ pd.DataFrame(model.param_hints)
 relative_uncertainty = 0.02
 weights = 1.0 / (relative_uncertainty * B)
 large_scale = r > 0.5 * box_size
-weights[large_scale] /= 8.0
+#weights[large_scale] /= 8.0
 # weights[:3] /= 3.0
 
 # + tags=[]
@@ -147,7 +147,7 @@ sns.despine()
 
 # + tags=[]
 emcee_kws = dict(
-    steps=5000, burn=500, thin=50, is_weighted=True, progress=False, workers=16
+    steps=50000, burn=500, thin=50, is_weighted=True, progress=False, workers=16
 )
 emcee_params = result.params.copy()
 # emcee_params.add('__lnsigma', value=np.log(0.1), min=np.log(0.001), max=np.log(2.0))
@@ -196,8 +196,23 @@ bplot.strucfunc_plot(
     result_emcee, result, r, B, to_fit, name, data, box_size, large_scale
 )
 
+# +
+#bplot.strucfunc_plot(
+#    result_emcee, result_emcee, r, B, to_fit, name, data, box_size, large_scale
+#)
+
 # + tags=[]
-CIresults = {"result_emcee": result_emcee, "result": result}
+CIresults = {'result_emcee': result_emcee,
+            'result' : result,
+             'r' : r,
+             'B' : B,
+             'to_fit': to_fit,
+             'name' : name,
+             'data' : data,
+             'box_size' : box_size,
+             'large_scale' : large_scale
+             
+          }
 
 # + tags=[]
 f = open("Results//CI" + data + ".pkl", "wb")
