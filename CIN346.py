@@ -56,15 +56,27 @@ B[K] = np.mean(B[:K])
 r = r[K:]
 B = B[K:]
 
+relative_uncertainty = 0.04
+weights = 1.0 / (relative_uncertainty * B)
+large_scale = r > 0.8 * box_size
+#weights[large_scale] /= 2.5
+#weights[:1] /= 2.0
+
 model = lmfit.Model(bfunc.bfunc03s)
 model.param_names
+
+#to_fit = r <= 0.8 * box_size
+to_fit = ~large_scale
+
+
+
 
 # +
 # Correlation length between 1/10 and 2 x box_size
 model.set_param_hint("r0", value=0.1 * box_size, min=0.01 * box_size, max=2 * box_size)
 
 # sig2 between 1/4 and 2 x max value of B(r)
-model.set_param_hint("sig2", value=0.5 * B.max(), min=0.25 * B.max(), max=2 * B.max())
+model.set_param_hint("sig2", value=0.5 * B.max(), min=0.25 * B[to_fit].max(), max=2 * B[to_fit].max())
 
 # m between 1/2 and 5/3
 model.set_param_hint("m", value=1.0, min=0.5, max=2.0)
@@ -83,13 +95,6 @@ model.set_param_hint("noise", value=0.5 * B.min(), min=0.0, max=3 * B.min())
 
 pd.DataFrame(model.param_hints)
 
-relative_uncertainty = 0.035
-weights = 1.0 / (relative_uncertainty * B)
-large_scale = r > 0.8 * box_size
-weights[large_scale] /= 3.0
-# weights[:3] /= 3.0
-
-to_fit = ~large_scale
 result = model.fit(B[to_fit], weights=weights[to_fit], r=r[to_fit])
 
 result
@@ -132,7 +137,7 @@ sns.despine()
 # emcee
 
 emcee_kws = dict(
-    steps=5000, burn=500, thin=50, is_weighted=True, progress=False, workers=16
+    steps=50000, burn=500, thin=50, is_weighted=True, progress=False, workers=16
 )
 emcee_params = result.params.copy()
 # emcee_params.add('__lnsigma', value=np.log(0.1), min=np.log(0.001), max=np.log(2.0))
@@ -171,6 +176,10 @@ bplot.strucfunc_plot(
     result_emcee, result, r, B, to_fit, name, data, box_size, large_scale
 )
 
+bplot.strucfunc_plot(
+    result_emcee, result_emcee, r, B, to_fit, name, data, box_size, large_scale
+)
+
 CIresults = {
     "result_emcee": result_emcee,
     "result": result,
@@ -181,7 +190,8 @@ CIresults = {
     "data": data,
     "box_size": box_size,
     "large_scale": large_scale,
-}
+    'pc': pc
+          }
 
 f = open("Results//CI" + data + ".pkl", "wb")
 pickle.dump(CIresults, f)

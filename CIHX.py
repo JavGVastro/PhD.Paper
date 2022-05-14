@@ -53,23 +53,21 @@ pc_per_arcsec
 
 # Don't merge any points. That is only necessary for the MUSE sources.
 
-# +
-# K = 3
-# r[K] = np.mean(r[:K])
-# B[K] = np.mean(B[:K])
-# r = r[K:]
-# B = B[K:]
-# -
+#  K = 0
+#  r[K] = np.mean(r[:K])
+#  B[K] = np.mean(B[:K])
+#  r = r[K:]
+#  B = B[K:]
 
 model = lmfit.Model(bfunc.bfunc03s)
 model.param_names
 
 # +
 # Correlation length between 1/10 and 2 x box_size
-model.set_param_hint("r0", value=0.1 * box_size, min=0.01 * box_size, max=2 * box_size)
+model.set_param_hint("r0", value=0.1 * box_size, min=0.05 * box_size, max=2.0 * box_size)
 
 # sig2 between 1/4 and 2 x max value of B(r)
-model.set_param_hint("sig2", value=0.5 * B.max(), min=0.25 * B.max(), max=2 * B.max())
+model.set_param_hint("sig2", value=0.5 * B.max(), min=0.25 * B.max(), max=2.0 * B.max())
 
 # m between 1/2 and 5/3
 model.set_param_hint("m", value=1.0, min=0.5, max=2.0)
@@ -84,17 +82,20 @@ model.set_param_hint("noise", value=0.5 * B.min(), min=0.0, max=3 * B.min())
 
 # box_size is fixed
 # model.set_param_hint("box_size", value=box_size, vary=False)
+
+
 # -
 
 pd.DataFrame(model.param_hints)
 
-relative_uncertainty = 0.025
+relative_uncertainty = 0.0325
 weights = 1.0 / (relative_uncertainty * B)
-large_scale = r > 0.2 * box_size
-weights[large_scale] /= 3.0
-weights[:5] /= 3.0
+large_scale = r > 0.25 * box_size
+weights[large_scale] /= 2.0
+weights[:4] /= 2.0
 
 to_fit = r <= 0.5 * box_size
+#to_fit = ~large_scale
 result = model.fit(B[to_fit], weights=weights[to_fit], r=r[to_fit])
 
 result
@@ -134,10 +135,12 @@ ax.set(
 sns.despine()
 # -
 
+
+
 # emcee
 
 emcee_kws = dict(
-    steps=5000, burn=500, thin=50, is_weighted=True, progress=False, workers=16
+    steps=50000, burn=500, thin=50, is_weighted=True, progress=False, workers=16
 )
 emcee_params = result.params.copy()
 # emcee_params.add('__lnsigma', value=np.log(0.1), min=np.log(0.001), max=np.log(2.0))
@@ -168,18 +171,29 @@ if hasattr(result_emcee, "acor"):
             pass
 
 bplot.corner_plot(
-    result_emcee, result_emcee, name, data, data_ranges=[0.95, 0.99, 0.995, 0.995, 0.999]
+    result_emcee, result_emcee, name, data, data_ranges=[0.95, 0.97, 0.995, 0.997, 0.999]
 )
 
 bplot.strucfunc_plot(
     result_emcee, result, r, B, to_fit, name, data, box_size, large_scale
 )
 
-bplot.strucfunc_plot(
-    result_emcee, result_emcee, r, B, to_fit, name, data, box_size, large_scale
-)
+# +
+#bplot.strucfunc_plot(
+#    result_emcee, result_emcee, r, B, to_fit, name, data, box_size, large_scale
+#)
+# -
 
-CIresults = {"result_emcee": result_emcee, "result": result}
+CIresults = {'result_emcee': result_emcee,
+            'result' : result,
+             'r' : r,
+             'B' : B,
+             'to_fit': to_fit,
+             'name' : name,
+             'data' : data,
+             'box_size' : box_size,
+             'large_scale' : large_scale
+          }
 
 f = open("Results//CI" + data + ".pkl", "wb")
 pickle.dump(CIresults, f)

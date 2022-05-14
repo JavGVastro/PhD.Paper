@@ -17,19 +17,24 @@ import time
 
 start_time = time.time()
 
+# +
 import cmasher as cmr
 from matplotlib import pyplot as plt
 import numpy as np
 import seaborn as sns
 import lmfit
-import json
 import astropy.units as u
-import bfunc
 import pandas as pd
 import corner
 from scipy import interpolate
+
 import pickle
+import json
+
 import bplot
+import bfunc
+
+# -
 
 # Data load and region parameters
 
@@ -85,13 +90,22 @@ model.set_param_hint("noise", value=0.5 * B.min(), min=0.0, max=3 * B.min())
 
 pd.DataFrame(model.param_hints)
 
-relative_uncertainty = 0.05
+# +
+#relative_uncertainty = 0.15
+#weights = 1.0 / (relative_uncertainty * B)
+#large_scale = r > 0.2 * box_size
+#weights[large_scale] /= 1.25
+#weights[:14] /= 1.5
+# -
+
+relative_uncertainty = 0.055
 weights = 1.0 / (relative_uncertainty * B)
 large_scale = r > 0.35 * box_size
 weights[large_scale] /= 3.0
 weights[:14] /= 3.0
 
-to_fit = ~large_scale
+to_fit = r <= 0.5 * box_size
+#to_fit = ~large_scale
 result = model.fit(B[to_fit], weights=weights[to_fit], r=r[to_fit])
 
 result
@@ -128,14 +142,17 @@ ax.set(
     xlabel="r [pc]",
     ylabel=r"B(r) [km$^{2}$/s$^{2}$]",
 )
+
 sns.despine()
 # -
+
+
 
 
 # emcee
 
 emcee_kws = dict(
-    steps=5000, burn=500, thin=50, is_weighted=True, progress=False, workers=16
+    steps=50000, burn=500, thin=50, is_weighted=True, progress=False, workers=16
 )
 emcee_params = result.params.copy()
 # emcee_params.add('__lnsigma', value=np.log(0.1), min=np.log(0.001), max=np.log(2.0))
@@ -166,7 +183,7 @@ if hasattr(result_emcee, "acor"):
             pass
 
 bplot.corner_plot(
-    result_emcee, result, name, data, data_ranges=[0.95, 0.99, 0.995, 0.995, 0.999]
+    result_emcee, result, name, data, data_ranges=[0.95, 0.99, 0.995, 0.997, 0.999]
 )
 # data_ranges=[0.95, 0.99, 0.995, 0.995, 0.999]
 
@@ -177,9 +194,24 @@ bplot.strucfunc_plot(
     result_emcee, result, r, B, to_fit, name, data, box_size, large_scale
 )
 
+# +
+#bplot.strucfunc_plot(
+#    result_emcee, result_emcee, r, B, to_fit, name, data, box_size, large_scale
+#)
+# -
 
 
-CIresults = {"result_emcee": result_emcee, "result": result}
+
+CIresults = {'result_emcee': result_emcee,
+            'result' : result,
+             'r' : r,
+             'B' : B,
+             'to_fit': to_fit,
+             'name' : name,
+             'data' : data,
+             'box_size' : box_size,
+             'large_scale' : large_scale
+          }
 
 f = open("Results//CI" + data + ".pkl", "wb")
 pickle.dump(CIresults, f)
@@ -187,3 +219,6 @@ f.close()
 
 # + tags=[]
 print("--- %s seconds ---" % (time.time() - start_time))
+# -
+
+
