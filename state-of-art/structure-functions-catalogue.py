@@ -116,6 +116,8 @@ plt.loglog(DataH[17].pc,DataH[17].S,marker='.',color='darkorange',alpha=0.75, ma
 #plt.loglog(DataH[18].pc,DataH[18].S,marker='o',color='red',alpha=0.75, markersize=10, label=  DataNH[18])
 #plt.loglog(DataH[20].pc,DataH[20].S,marker='o',color='red',alpha=0.75, markersize=10, label=  DataNH[20])
 plt.loglog(DataH[25].pc*0.006,DataH[25].S,marker='s',color='green',alpha=0.75, markersize=7, label=  DataNH[25])
+plt.loglog(DataH[26].pc*0.363,DataH[26].S**2,marker='^',color='green',alpha=0.75, markersize=7, label=  DataNH[26])
+
 
     
 ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
@@ -287,13 +289,14 @@ plt.loglog(r_M8,B_M8,marker='o',color='red',alpha=0.75, markersize=5)
 plt.loglog(DataH[9].pc,DataH[9].S,marker='X',color='purple',alpha=0.75, markersize=7, label=  DataNH[9])
 plt.loglog(DataH[10].pc,DataH[10].S,marker='X',color='purple',alpha=0.75, markersize=7, label=  DataNH[10])
 plt.loglog(DataH[25].pc*0.006,DataH[25].S,marker='s',color='green',alpha=0.75, markersize=7, label=  DataNH[25])
+plt.loglog(DataH[26].pc*0.363,DataH[26].S**2,marker='^',color='green',alpha=0.75, markersize=7, label=  DataNH[26])
 
 
 ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
 plt.tick_params(which='both', labelright=False, direction='in', right=True,  top=True)
 plt.grid(which='minor')
 plt.title('M8')
-plt.legend()
+plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))    
 fig.savefig('plots/comp-M8.pdf', 
               bbox_inches='tight')
 
@@ -340,7 +343,7 @@ mask = SFresults[samples_results[0][i]]["SF"]["N pairs"] > 0
 plt.loglog(SFresults[samples_results[0][i]]['s'][mask],SFresults[samples_results[0][i]]['b2'][mask])
 
 
-get_ipython().system('jupyter nbconvert --to script --no-prompt s.ipynb')
+get_ipython().system('jupyter nbconvert --to script --no-prompt structure-functions-catalogue.ipynb')
 
 
 print("--- %s seconds ---" % (time.time()-start_time))
