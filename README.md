@@ -1,22 +1,22 @@
-Recent changes (Updated methods)
+**Recent changes (Updated methods)**
 
-	• Add emission lines:
-		○ N604: O
-		○ Orion: N O S
-		○ Dor: N
-		○ N346: N S
-		○ EON: N O S
-		○ Carina:
-		○ Lagoon:
-	• Change format of the results: 
-		○ .pkl -> .json
-	• File names:
-		○ Instrument - region - emission line
-	• All notebooks now have .py files.
-	• Paths to input and output data in .txt. File within each folder.
-	• Physical properties table in .csv file
-	• Added weigthed structure functions .
-	• Hanel  H O N S radial velocity maps now on .fits files.
+**• Add emission lines:** \
+	- N604: O\
+	- Orion: N O S\
+	- Dor: N\
+	- N346: N S\
+	- EON: N O S\
+	- Carina:\
+	- Lagoon:\
+**• Change format of the results:** \
+	- .pkl -> .json\
+**• File names:** \
+	- Instrument - region - emission line\
+**• All notebooks now have .py files.\
+• Paths to input and output data in .txt. File within each folder.\
+• Physical properties table in .csv file\
+• Added weigthed structure functions .\
+• Hanel  H O N S radial velocity maps now on .fits files.**
 
 # PhD.Thesis
 
