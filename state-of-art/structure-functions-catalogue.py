@@ -6,21 +6,21 @@ start_time=time.time()
 
 
 from pathlib import Path
+
 import numpy as np
 import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import itertools
-#from scipy import stats
-#import statsmodels.api as sm
-#from statsmodels.sandbox.regression.predstd import wls_prediction_std
-#from scipy.stats import linregress
-import pickle
+import json
 
 
 plt.rcParams["font.family"]="Times New Roman"
 plt.rcParams["font.size"]="10"
+
+
+datapath_names = Path(open("path-name-list.txt", "r").read()).expanduser()
 
 
 # Previous structure functions
@@ -79,7 +79,7 @@ plt.rcParams["font.size"]="10"
 
 Sample='galactic-regions'
 
-samples=pd.read_csv('name-list//'+Sample+'.csv',header=None)
+samples=pd.read_csv(str(datapath_names) + '/' + Sample+'.csv',header=None)
 
 DataNH=dict()
 DataH=dict()
@@ -137,7 +137,7 @@ fig.savefig('plots/funciones-ghr.pdf',
 
 Sample='extragalactic-regions'
 
-samples1=pd.read_csv('name-list//'+Sample+'.csv',header=None)
+samples1=pd.read_csv(str(datapath_names) + '/' + Sample+'.csv',header=None)
 
 DataNG=dict()
 DataG=dict()
@@ -187,28 +187,43 @@ fig.savefig('plots/funciones-gehr.pdf',
 
 # Comparison with our results
 
-results_path = Path(r"~/Documents/Aeon/GitHub/PhD.Paper/Results/").expanduser()
+datapath_names = Path(open("path-name-list.txt", "r").read()).expanduser()
 
 
-samples_results=pd.read_csv(results_path/'file-names.csv',header=None)
+samples=pd.read_csv(str(datapath_names) +'//sample-names.csv',header=None)
+samples
 
 
-SFresults = {}
-
-for i in range(len(samples_results)):
-    pickle_in = open(str(results_path) + '/SF' + samples_results[0][i] + '.pkl',"rb")
-    df = pickle.load(pickle_in)
-    SFresults[samples_results[0][i]] = df
+Names=pd.read_csv(str(datapath_names) +'//formal-names.csv',header=None)
+Names
 
 
-samples_results
 
 
-# NGC 604
 
-mask = SFresults[samples_results[0][0]]["SF"]["N pairs"] > 0
-B_604 = SFresults[samples_results[0][0]]["b2"][mask]
-r_604 = SFresults[samples_results[0][0]]["s"][mask]
+results_path = Path(r"~/Documents/Aeon/PhD/python/git-hub/result-files").expanduser()
+
+
+data = {}
+Results = {}
+
+for i in range(len(samples)):
+    data[samples[0][i]] = json.load(open(str(results_path) + '/' + samples[0][i] + ".json"))
+
+
+
+
+
+
+
+
+
+
+
+# - NGC 604
+
+B_604 = data[samples[0][0]]['B']
+r_604 = data[samples[0][0]]['r']
 
 
 fig, ax=plt.subplots(figsize=(6,6))
@@ -228,9 +243,8 @@ fig.savefig('plots/comp-604.pdf',
 
 # 30 Doradus
 
-mask = SFresults[samples_results[0][4]]["SF"]["N pairs"] > 0
-B_Dor = SFresults[samples_results[0][4]]["b2"][mask]
-r_Dor = SFresults[samples_results[0][4]]["s"][mask]
+B_Dor = data[samples[0][9]]['B']
+r_Dor = data[samples[0][9]]['r']
 
 
 fig, ax=plt.subplots(figsize=(6,6))
@@ -253,9 +267,8 @@ fig.savefig('plots/comp-30Dor.pdf',
 
 # NGC 595
 
-mask = SFresults[samples_results[0][1]]["SF"]["N pairs"] > 0
-B_595 = SFresults[samples_results[0][1]]["b2"][mask]
-r_595 = SFresults[samples_results[0][1]]["s"][mask]
+B_595 =  data[samples[0][2]]['B']
+r_595 =  data[samples[0][2]]['B']
 
 
 fig, ax=plt.subplots(figsize=(6,6))
@@ -277,70 +290,37 @@ fig.savefig('plots/comp-595.pdf',
 
 # M8
 
-#mask = SFresults[samples_results[0][7]]["SF"]["N pairs"] > 0
-B_M8 = SFresults[samples_results[0][7]]["b2"]#[mask]
-r_M8 = SFresults[samples_results[0][7]]["s"]#[mask]
+# #mask = SFresults[samples_results[0][7]]["SF"]["N pairs"] > 0
+# B_M8 = SFresults[samples_results[0][7]]["b2"]#[mask]
+# r_M8 = SFresults[samples_results[0][7]]["s"]#[mask]
 
-
-fig, ax=plt.subplots(figsize=(6,6))
-
-
-plt.loglog(r_M8,B_M8,marker='o',color='red',alpha=0.75, markersize=5)
-plt.loglog(DataH[9].pc,DataH[9].S,marker='X',color='purple',alpha=0.75, markersize=7, label=  DataNH[9])
-plt.loglog(DataH[10].pc,DataH[10].S,marker='X',color='purple',alpha=0.75, markersize=7, label=  DataNH[10])
-plt.loglog(DataH[25].pc*0.006,DataH[25].S,marker='s',color='green',alpha=0.75, markersize=7, label=  DataNH[25])
-plt.loglog(DataH[26].pc*0.363,DataH[26].S**2,marker='^',color='green',alpha=0.75, markersize=7, label=  DataNH[26])
-
-
-ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
-plt.tick_params(which='both', labelright=False, direction='in', right=True,  top=True)
-plt.grid(which='minor')
-plt.title('M8')
-plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))    
-fig.savefig('plots/comp-M8.pdf', 
-              bbox_inches='tight')
-
+# fig, ax=plt.subplots(figsize=(6,6))
+# 
+# 
+# plt.loglog(r_M8,B_M8,marker='o',color='red',alpha=0.75, markersize=5)
+# plt.loglog(DataH[9].pc,DataH[9].S,marker='X',color='purple',alpha=0.75, markersize=7, label=  DataNH[9])
+# plt.loglog(DataH[10].pc,DataH[10].S,marker='X',color='purple',alpha=0.75, markersize=7, label=  DataNH[10])
+# plt.loglog(DataH[25].pc*0.006,DataH[25].S,marker='s',color='green',alpha=0.75, markersize=7, label=  DataNH[25])
+# plt.loglog(DataH[26].pc*0.363,DataH[26].S**2,marker='^',color='green',alpha=0.75, markersize=7, label=  DataNH[26])
+# 
+# 
+# ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
+# plt.tick_params(which='both', labelright=False, direction='in', right=True,  top=True)
+# plt.grid(which='minor')
+# plt.title('M8')
+# plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))    
+# fig.savefig('plots/comp-M8.pdf', 
+#               bbox_inches='tight')
 
 
 
 
-B={}
-r={}
+# 
 
 
 
 
 
-i=0
-mask = SFresults[samples_results[0][i]]["SF"]["N pairs"] > 0
-plt.loglog(SFresults[samples_results[0][i]]['s'][mask],SFresults[samples_results[0][i]]['b2'][mask])
-i=1
-mask = SFresults[samples_results[0][i]]["SF"]["N pairs"] > 0
-plt.loglog(SFresults[samples_results[0][i]]['s'][mask],SFresults[samples_results[0][i]]['b2'][mask])
-i=2
-mask = SFresults[samples_results[0][i]]["SF"]["N pairs"] > 0
-plt.loglog(SFresults[samples_results[0][i]]['s'][mask],SFresults[samples_results[0][i]]['b2'][mask])
-i=3
-mask = SFresults[samples_results[0][i]]["SF"]["N pairs"] > 0
-plt.loglog(SFresults[samples_results[0][i]]['s'][mask],SFresults[samples_results[0][i]]['b2'][mask])
-i=4
-mask = SFresults[samples_results[0][i]]["SF"]["N pairs"] > 0
-plt.loglog(SFresults[samples_results[0][i]]['s'][mask],SFresults[samples_results[0][i]]['b2'][mask])
-i=5
-#mask = SFresults[samples_results[0][i]]["SF"]["N pairs"] > 0
-plt.loglog(SFresults[samples_results[0][i]]['s'],SFresults[samples_results[0][i]]['b2'])
-i=6
-mask = SFresults[samples_results[0][i]]["SF"]["N pairs"] > 0
-plt.loglog(SFresults[samples_results[0][i]]['s'][mask],SFresults[samples_results[0][i]]['b2'][mask])
-i=7
-#mask = SFresults[samples_results[0][i]]["SF"]["N pairs"] > 0
-plt.loglog(SFresults[samples_results[0][i]]['s'],SFresults[samples_results[0][i]]['b2'])
-i=8
-mask = SFresults[samples_results[0][i]]["SF"]["N pairs"] > 0
-plt.loglog(SFresults[samples_results[0][i]]['s'][mask],SFresults[samples_results[0][i]]['b2'][mask])
-i=9
-mask = SFresults[samples_results[0][i]]["SF"]["N pairs"] > 0
-plt.loglog(SFresults[samples_results[0][i]]['s'][mask],SFresults[samples_results[0][i]]['b2'][mask])
 
 
 get_ipython().system('jupyter nbconvert --to script --no-prompt structure-functions-catalogue.ipynb')

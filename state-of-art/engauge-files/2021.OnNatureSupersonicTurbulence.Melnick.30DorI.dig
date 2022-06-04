@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE engauge>
+<Document VersionNumber="12.1" AxesPointsRequired="0">
+    <Image Width="762" Height="286"><![CDATA[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]]></Image>
+    <CoordSystem>
+        <General CursorSize="3" ExtraPrecision="1"/>
+        <Coords Type="0" TypeString="Cartesian" Coords="0" ScaleXTheta="1" ScaleXThetaString="Log" ScaleYRadius="1" ScaleYRadiusString="Log" UnitsX="0" UnitsXString="Número" UnitsY="0" UnitsYString="Número" UnitsTheta="0" UnitsThetaString="Degrees (DDD.DDDDD)" UnitsRadius="0" UnitsRadiusString="Número" UnitsDate="3" UnitsDateString="YYYY/MM/DD" UnitsTime="2" UnitsTimeString="HH:MM:SS"/>
+        <DigitizeCurve CursorInnerRadius="5" CursorLineWidth="2" CursorSize="1" CursorStandardCross="True"/>
+        <Export PointsSelectionFunctions="0" PointsSelectionFunctionsString="Interpolar todas las curvas" PointsIntervalFunctions="10" PointsIntervalUnitsFunctions="1" PointsSelectionRelations="0" PointsSelectionRelationsString="Interpolar" PointsIntervalUnitsRelations="1" PointsIntervalRelations="10" LayoutFunctions="0" LayoutFunctionsString="Todo por línea" Delimiter="0" OverrideCsvTsv="False" DelimiterString="Comas" ExtrapolateOutsideEndpoints="True" Header="1" HeaderString="Sencillo" XLabel="x">
+            <CurveNamesNotExported/>
+        </Export>
+        <AxesChecker Mode="1" Seconds="3" LineColor="6"/>
+        <GridDisplay Stable="True" DisableX="0" CountX="11" StartX="0" StepX="10" StopX="100" DisableY="0" CountY="11" StartY="0" StepY="1" StopY="10" Color="0" ColorString="Black"/>
+        <GridRemoval Stable="False" DefinedGridLines="False" CloseDistance="10" CoordDisableX="0" CoordDisableXString="Cuenta" CountX="27" StartX="39.3232" StepX="2.77287" StopX="111.418" CoordDisableY="0" CoordDisableYString="Cuenta" CountY="6" StartY="0.143516" StepY="2.47422" StopY="12.5146"/>
+        <PointMatch PointSize="48" ColorAccepted="4" ColorAcceptedString="Green" ColorCandidate="7" ColorCandidateString="Yellow" ColorRejected="6" ColorRejectedString="Red"/>
+        <Segments PointSeparation="25" MinLength="2" FillCorners="False" LineWidth="4" LineColor="4" LineColorString="Green"/>
+        <Curve CurveName="Axes">
+            <ColorFilter CurveName="Axes" Mode="2" ModeString="Intensidad" IntensityLow="0" IntensityHigh="50" ForegroundLow="0" ForegroundHigh="10" HueLow="180" HueHigh="360" SaturationLow="50" SaturationHigh="100" ValueLow="0" ValueHigh="50"/>
+            <CurveStyle CurveName="Axes">
+                <LineStyle Width="0" Color="8" ColorString="Transparent" ConnectAs="4" ConnectAsString="conecte salto para la curva eje"/>
+                <PointStyle Radius="10" LineWidth="1" Color="6" ColorString="Red" Shape="1" ShapeString="Cruzar"/>
+            </CurveStyle>
+            <CurvePoints>
+                <Point Identifier="Axes&#9;point&#9;55" Ordinal="1" IsAxisPoint="True" IsXOnly="False" Index="90">
+                    <PositionScreen X="101" Y="285"/>
+                    <PositionGraph X="1" Y="0.1"/>
+                </Point>
+                <Point Identifier="Axes&#9;point&#9;57" Ordinal="2" IsAxisPoint="True" IsXOnly="False" Index="90">
+                    <PositionScreen X="673" Y="285"/>
+                    <PositionGraph X="100" Y="0.1"/>
+                </Point>
+                <Point Identifier="Axes&#9;point&#9;59" Ordinal="3" IsAxisPoint="True" IsXOnly="False" Index="90">
+                    <PositionScreen X="101" Y="85"/>
+                    <PositionGraph X="1" Y="10"/>
+                </Point>
+            </CurvePoints>
+        </Curve>
+        <CurvesGraphs>
+            <Curve CurveName="S">
+                <ColorFilter CurveName="S" Mode="2" ModeString="Intensidad" IntensityLow="0" IntensityHigh="50" ForegroundLow="0" ForegroundHigh="10" HueLow="180" HueHigh="360" SaturationLow="50" SaturationHigh="100" ValueLow="0" ValueHigh="50"/>
+                <CurveStyle CurveName="S">
+                    <LineStyle Width="1" Color="1" ColorString="Blue" ConnectAs="0" ConnectAsString="liso función"/>
+                    <PointStyle Radius="10" LineWidth="1" Color="1" ColorString="Blue" Shape="1" ShapeString="Cruzar"/>
+                </CurveStyle>
+                <CurvePoints>
+                    <Point Identifier="S&#9;point&#9;60" Ordinal="0" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="133" Y="158"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;61" Ordinal="1" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="294.5" Y="150"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;62" Ordinal="2" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="368.5" Y="145"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;63" Ordinal="3" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="418" Y="145"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;64" Ordinal="4" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="455" Y="143.5"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;65" Ordinal="5" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="483.5" Y="143"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;66" Ordinal="6" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="508" Y="145.5"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;67" Ordinal="7" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="529.5" Y="146"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;68" Ordinal="8" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="547" Y="145.5"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;69" Ordinal="9" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="563.5" Y="146.5"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;70" Ordinal="10" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="578" Y="147"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;71" Ordinal="11" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="592" Y="148"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;72" Ordinal="12" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="604.5" Y="150"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;73" Ordinal="13" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="615" Y="152"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;74" Ordinal="14" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="625" Y="153"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;75" Ordinal="15" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="635" Y="152"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;76" Ordinal="16" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="644" Y="154"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;77" Ordinal="17" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="653" Y="154"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;78" Ordinal="18" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="661" Y="155.5"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;79" Ordinal="19" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="669" Y="156"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;80" Ordinal="20" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="675.5" Y="157.5"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;81" Ordinal="21" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="683" Y="159.5"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;82" Ordinal="22" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="689.5" Y="162"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;83" Ordinal="23" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="695.5" Y="163.5"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;84" Ordinal="24" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="701.5" Y="164.5"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;85" Ordinal="25" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="707" Y="167"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;86" Ordinal="26" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="713" Y="170.5"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;87" Ordinal="27" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="718" Y="172"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;88" Ordinal="28" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="724" Y="174"/>
+                    </Point>
+                    <Point Identifier="S&#9;point&#9;89" Ordinal="29" IsAxisPoint="False" IsXOnly="False" Index="90">
+                        <PositionScreen X="729.5" Y="177.5"/>
+                    </Point>
+                </CurvePoints>
+            </Curve>
+        </CurvesGraphs>
+    </CoordSystem>
+</Document>
