@@ -1,5 +1,11 @@
 **Recent changes (Updated methods)**
 
+**• Use a separate folder for each step in the pipeline:** \
+observations to velocity fileds: otv-files\
+strufture functions: sf-files\
+confidence intervals: ci-files\
+**• Paths to input and output data in .txt. File within each folder.**\
+-This is done just one time\
 **• Add emission lines:** \
 	- N604: O\
 	- Orion: N O S\
@@ -13,8 +19,7 @@
 **• File names:** \
 	- Instrument - region - emission line\
 **• All notebooks now have .py files.\
-• Paths to input and output data in .txt. File within each folder.\
-• Physical properties table in .csv file\
+• Physical properties table in .csv file.\
 • Added weigthed structure functions .\
 • Hanel  H O N S radial velocity maps now on .fits files.**
 
