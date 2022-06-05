@@ -23,11 +23,11 @@ confidence intervals: ci-filename\
 **• Change format of the results:** \
 	- .pkl -> .json\
 
-**• All notebooks now have .py files.\**
+**• All notebooks now have .py files.**\
 
-**• Physical properties table in .csv file.\**
+**• Physical properties table in .csv file.**\
 
-**• Added weigthed structure functions .\**
+**• Added weigthed structure functions .**\
 
 **• Hanel  H O N S radial velocity maps now on .fits files.**
 
