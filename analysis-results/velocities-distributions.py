@@ -17,7 +17,7 @@ samples=pd.read_csv(str(datapath_names) +'//sample-names.csv',header=None)
 samples
 
 
-Names=pd.read_csv('name-list//formal-names.csv',header=None)
+Names=pd.read_csv(str(datapath_names) +'//formal-names.csv',header=None)
 Names
 
 

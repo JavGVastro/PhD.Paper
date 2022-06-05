@@ -22,7 +22,7 @@ samples=pd.read_csv(str(datapath_names) +'//sample-names.csv',header=None)
 samples
 
 
-Names=pd.read_csv('name-list//formal-names.csv',header=None)
+Names=pd.read_csv(str(datapath_names) +'//formal-names.csv',header=None)
 Names
 
 
@@ -206,7 +206,7 @@ s1f.round(4)
 s1f.drop(1)
 
 
-marker_sample = ['o','o','o','o','o','^','^','^','^','s','s','s','s','s','^','^','^','^']
+marker_sample = ['o','o','o','o','o','^','^','^','^','s','s','s','s','s','^','^','^','^','^']
 
 
 fig, ax = plt.subplots(figsize=(7, 7))
