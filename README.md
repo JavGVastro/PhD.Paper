@@ -15,7 +15,7 @@ confidence intervals: ci-filename\
 	- N604: H O\
 	- Orion: H N O S\
 	- Dor: H N\
-	- N346: H N S\
+	- N346: H O S\
 	- EON: H N O S\
 	- Carina: H\
 	- Lagoon: H N S
