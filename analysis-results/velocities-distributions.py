@@ -10,7 +10,10 @@ import matplotlib.pyplot as plt
 import json
 
 
-samples=pd.read_csv('name-list//sample-names.csv',header=None)
+datapath_names = Path(open("path-name-list.txt", "r").read()).expanduser()
+
+
+samples=pd.read_csv(str(datapath_names) +'//sample-names.csv',header=None)
 samples
 
 

@@ -201,7 +201,7 @@ Names
 
 
 
-results_path = Path(r"~/Documents/Aeon/PhD/python/git-hub/result-files").expanduser()
+results_path = Path(r"~/Documents/Aeon/GitHub/PhD.Paper/result-files").expanduser()
 
 
 data = {}
@@ -268,7 +268,7 @@ fig.savefig('plots/comp-30Dor.pdf',
 # NGC 595
 
 B_595 =  data[samples[0][2]]['B']
-r_595 =  data[samples[0][2]]['B']
+r_595 =  data[samples[0][2]]['r']
 
 
 fig, ax=plt.subplots(figsize=(6,6))
@@ -290,27 +290,29 @@ fig.savefig('plots/comp-595.pdf',
 
 # M8
 
-# #mask = SFresults[samples_results[0][7]]["SF"]["N pairs"] > 0
-# B_M8 = SFresults[samples_results[0][7]]["b2"]#[mask]
-# r_M8 = SFresults[samples_results[0][7]]["s"]#[mask]
+#mask = SFresults[samples_results[0][7]]["SF"]["N pairs"] > 0
+B_M8 = data[samples[0][18]]['B']
+r_M8 =data[samples[0][18]]['r']
 
-# fig, ax=plt.subplots(figsize=(6,6))
-# 
-# 
-# plt.loglog(r_M8,B_M8,marker='o',color='red',alpha=0.75, markersize=5)
-# plt.loglog(DataH[9].pc,DataH[9].S,marker='X',color='purple',alpha=0.75, markersize=7, label=  DataNH[9])
-# plt.loglog(DataH[10].pc,DataH[10].S,marker='X',color='purple',alpha=0.75, markersize=7, label=  DataNH[10])
-# plt.loglog(DataH[25].pc*0.006,DataH[25].S,marker='s',color='green',alpha=0.75, markersize=7, label=  DataNH[25])
-# plt.loglog(DataH[26].pc*0.363,DataH[26].S**2,marker='^',color='green',alpha=0.75, markersize=7, label=  DataNH[26])
-# 
-# 
-# ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
-# plt.tick_params(which='both', labelright=False, direction='in', right=True,  top=True)
-# plt.grid(which='minor')
-# plt.title('M8')
-# plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))    
-# fig.savefig('plots/comp-M8.pdf', 
-#               bbox_inches='tight')
+
+fig, ax=plt.subplots(figsize=(6,6))
+
+
+plt.loglog(r_M8,B_M8,marker='o',color='red',alpha=0.75, markersize=5)
+plt.loglog(DataH[9].pc,DataH[9].S,marker='X',color='purple',alpha=0.75, markersize=7, label=  DataNH[9])
+plt.loglog(DataH[10].pc,DataH[10].S,marker='X',color='purple',alpha=0.75, markersize=7, label=  DataNH[10])
+plt.loglog(DataH[25].pc*0.006,DataH[25].S,marker='s',color='green',alpha=0.75, markersize=7, label=  DataNH[25])
+plt.loglog(DataH[26].pc*0.363,DataH[26].S**2,marker='^',color='green',alpha=0.75, markersize=7, label=  DataNH[26])
+
+
+ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
+plt.tick_params(which='both', labelright=False, direction='in', right=True,  top=True)
+plt.grid(which='minor')
+plt.title('M8')
+plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))    
+fig.savefig('plots/comp-M8.pdf', 
+              bbox_inches='tight')
+
 
 
 

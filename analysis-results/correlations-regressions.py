@@ -41,7 +41,10 @@ from logerr import logify
 # Load Table with physical properties
 
 physical_data = pd.read_table('property-regions-data.csv', delimiter=',')
-physical_data = physical_data.drop(physical_data .index[[5,7]])
+physical_data = physical_data.drop(physical_data .index[[5]])
+
+
+physical_data 
 
 
 # Path names
@@ -50,7 +53,7 @@ datapath_names = Path(open("path-name-list.txt", "r").read()).expanduser()
 
 
 samples=pd.read_csv(str(datapath_names) +'//sample-names-corr.csv',header=None)
-Names=pd.read_csv('name-list//formal-names-corr.csv',header=None)
+Names=pd.read_csv(str(datapath_names) +'//formal-names-corr.csv',header=None)
 
 
 # Load Results
