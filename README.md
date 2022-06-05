@@ -1,27 +1,35 @@
 **Recent changes (Updated methods)**
 
 **• Use a separate folder for each step in the pipeline:** \
-observations to velocity fileds: otv-files\
-strufture functions: sf-files\
-confidence intervals: ci-files\
-**• Paths to input and output data in .txt. File within each folder.**\
--This is done just one time\
-**• Add emission lines:** \
-	- N604: O\
-	- Orion: N O S\
-	- Dor: N\
-	- N346: N S\
-	- EON: N O S\
-	- Carina:\
-	- Lagoon:\
-**• Change format of the results:** \
-	- .pkl -> .json\
+observations to velocity fileds: otv-filename\
+strufture functions: sf-filename\
+confidence intervals: ci-filename\
+
 **• File names:** \
 	- Instrument - region - emission line\
-**• All notebooks now have .py files.\
-• Physical properties table in .csv file.\
-• Added weigthed structure functions .\
-• Hanel  H O N S radial velocity maps now on .fits files.**
+	
+**• Paths to input and output data in .txt. File within each folder.**\
+-This is done just one time\
+
+**• Add emission lines:** \
+	- N604: H O\
+	- Orion: H N O S\
+	- Dor: H N\
+	- N346: H N S\
+	- EON: H N O S\
+	- Carina:\
+	- Lagoon: H N S\
+	
+**• Change format of the results:** \
+	- .pkl -> .json\
+
+**• All notebooks now have .py files.\**
+
+**• Physical properties table in .csv file.\**
+
+**• Added weigthed structure functions .\**
+
+**• Hanel  H O N S radial velocity maps now on .fits files.**
 
 # PhD.Thesis
 
