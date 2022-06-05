@@ -202,20 +202,31 @@ data_export_list = {
         'name': name_export, 
         'pc' : pc,
         's0' : s0,
-        'pix' : pix,
+ #       'pix' : pix,
          name_export : np.array(data[m]),
       }
 data_export_list
 
 
+class MyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        else:
+            return super(MyEncoder, self).default(obj)
 
 
-
-
-
-
-
+jsonfilename =name_export +"-l.json"
+with open(datapath_res/jsonfilename, "w") as f:
+    json.dump(data_export_list, fp=f, indent=3, cls=MyEncoder)
 
 
 print("--- %s seconds ---" % (time.time()-start_time))
+
+
+get_ipython().system('jupyter nbconvert --to script --no-prompt otv-FLA-M8-H.ipynb')
 
