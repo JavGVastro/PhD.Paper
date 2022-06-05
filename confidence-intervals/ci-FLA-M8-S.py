@@ -43,13 +43,13 @@ datapath_res= Path(path_res).expanduser()
 
 # Data load and region parameters
 
-data = "M8N"
+data = "M8S"
 
 
-name = "Lagoon [NII]"
+name = "Lagoon [SII]"
 
 
-name_in = 'FLA-M8-N'
+name_in = 'FLA-M8-S'
 
 
 data_in = json.load(open(str(datapath_data) + '/sf-' + name_in + ".json"))
@@ -398,5 +398,5 @@ with open(datapath_res/jsonfilename, "w") as f:
 print("--- %s seconds ---" % (time.time() - start_time))
 
 
-get_ipython().system('jupyter nbconvert --to script --no-prompt ci-FLA-M8-N.ipynb')
+get_ipython().system('jupyter nbconvert --to script --no-prompt ci-FLA-M8-S.ipynb')
 

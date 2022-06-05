@@ -74,7 +74,7 @@ df=df[m]
 
 
 sns.pairplot(df[m],
-             vars=["RV[NII]6584", "sig[NII]6584", "Norm[NII]6584"],
+             vars=["RV[SII]6731", "sig[SII]6731", "Norm[SII]6731"],
              diag_kind='hist',
              plot_kws=dict(alpha=0.3, s=10, edgecolor='none', color="blue"),
              diag_kws=dict(bins=20, color="blue"),
@@ -82,21 +82,21 @@ sns.pairplot(df[m],
 
 
 fig, ax = plt.subplots()
-plt.scatter(np.log10(df["RV[NII]6584"]),df["sig[NII]6584"], alpha=0.1, color='k', label='M8')
+plt.scatter(np.log10(df["RV[SII]6731"]),df["sig[SII]6731"], alpha=0.1, color='k', label='M8')
 
 ax.set_xlabel('Log I')
 ax.set_ylabel('$σ_{LOS}$ [km/s]')
 plt.legend()
 
 fig, ax = plt.subplots()
-plt.scatter(np.log10(df["Norm[NII]6584"]),df["RV[NII]6584"], alpha=0.1, color='k', label='M8')
+plt.scatter(np.log10(df["Norm[SII]6731"]),df["RV[SII]6731"], alpha=0.1, color='k', label='M8')
 
 ax.set_xlabel('Log I')
 ax.set_ylabel('centroid velocity [km/s]')
 plt.legend()
 
 fig, ax = plt.subplots()
-plt.scatter(df["RV[NII]6584"],df["sig[NII]6584"], alpha=0.1, color='k', label='M8')
+plt.scatter(df["RV[SII]6731"],df["sig[SII]6731"], alpha=0.1, color='k', label='M8')
 
 ax.set_ylabel('$σ_{LOS}$ [km/s]')
 ax.set_xlabel('centroid velocity [km/s]')
@@ -108,8 +108,8 @@ plt.rcParams["font.size"]="17"
 df.describe()
 
 
-df2 = df[['RAdeg', 'DEdeg', 'RV[NII]6584','Norm[NII]6584','sig[NII]6584']].copy()
-df2.rename(columns = {'RAdeg' : 'X', 'DEdeg' : 'Y', 'RV[NII]6584' : 'RV','Norm[NII]6584':'I','sig[NII]6584':'Sig',}, inplace = True)
+df2 = df[['RAdeg', 'DEdeg', 'RV[SII]6731','Norm[SII]6731','sig[SII]6731']].copy()
+df2.rename(columns = {'RAdeg' : 'X', 'DEdeg' : 'Y', 'RV[SII]6731' : 'RV','Norm[SII]6731':'I','sig[SII]6731':'Sig',}, inplace = True)
 df2.describe()
 
 
@@ -158,8 +158,8 @@ def mark_points(ax):
 with sns.axes_style("darkgrid"):
     fig, ax = plt.subplots(figsize=(12, 6))
     scat = ax.scatter(df.RAdeg, df.DEdeg, 
-                      s=0.0015*((df['Norm[NII]6584'])), 
-                      c=df['RV[NII]6584'],cmap='coolwarm' 
+                      s=0.0015*((df['Norm[SII]6731'])), 
+                      c=df['RV[SII]6731'],cmap='coolwarm' 
                      )
     fig.colorbar(scat, ax=[ax])
     #mark_points(ax)
@@ -189,10 +189,10 @@ for i,type in enumerate(types):
 
 with sns.axes_style("darkgrid"):
     fig, ax = plt.subplots(figsize=(12, 6))
-    scat = ax.scatter(df.RAdeg, df.DEdeg, s=100, c=np.log10(df['Norm[NII]6584']), cmap='inferno', vmin=3.5, vmax=5.5)
+    scat = ax.scatter(df.RAdeg, df.DEdeg, s=100, c=np.log10(df['Norm[SII]6731']), cmap='inferno', vmin=3.5, vmax=5.5)
     fig.colorbar(scat, ax=ax).set_label("log10(F)")
     mark_points(ax)
-    ax.set_title('H alpha brightness')
+    ax.set_title('S brightness')
     ax.axis('equal')
     ax.axis([270.5, 271.7, -24.6, -24])
     ax.invert_xaxis()
@@ -228,5 +228,5 @@ with open(datapath_res/jsonfilename, "w") as f:
 print("--- %s seconds ---" % (time.time()-start_time))
 
 
-get_ipython().system('jupyter nbconvert --to script --no-prompt otv-FLA-M8-N.ipynb')
+get_ipython().system('jupyter nbconvert --to script --no-prompt otv-FLA-M8-S.ipynb')
 
