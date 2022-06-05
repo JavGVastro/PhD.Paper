@@ -1,7 +1,7 @@
 **Recent changes (Updated methods)**
 
 **• Use a separate folder for each step in the pipeline:** \
-observations to velocity fileds: otv-filename\
+observations to velocity fields: otv-filename\
 strufture functions: sf-filename\
 confidence intervals: ci-filename\
 
@@ -9,7 +9,7 @@ confidence intervals: ci-filename\
 	- Instrument - region - emission line\
 	
 **• Paths to input and output data in .txt. File within each folder.**\
--This is done just one time\
+-This need to be done just one time
 
 **• Add emission lines:** \
 	- N604: H O\
@@ -17,17 +17,17 @@ confidence intervals: ci-filename\
 	- Dor: H N\
 	- N346: H N S\
 	- EON: H N O S\
-	- Carina:\
-	- Lagoon: H N S\
+	- Carina: H\
+	- Lagoon: H N S
 	
 **• Change format of the results:** \
-	- .pkl -> .json\
+	- .pkl -> .json
 
-**• All notebooks now have .py files.**\
+**• All notebooks now have .py files.**
 
-**• Physical properties table in .csv file.**\
+**• Physical properties table in .csv file.**
 
-**• Added weigthed structure functions .**\
+**• Added weigthed structure functions .**
 
 **• Hanel  H O N S radial velocity maps now on .fits files.**
 
