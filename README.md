@@ -6,7 +6,7 @@ strufture functions: sf-filename\
 confidence intervals: ci-filename\
 
 **• File names:** \
-	- Instrument - region - emission line\
+	- Instrument - region - emission line
 	
 **• Paths to input and output data in .txt. File within each folder.**\
 -This need to be done just one time
