@@ -62,121 +62,131 @@ df = tab.to_pandas()
 df.describe()
 
 
+int_b="[NII]Nb"
+int_r="[NII]Nr"
+
+
+rv_b="[NII]RVb"
+rv_r="[NII]RVr"
+
+
+sig_b="[NII]sigmab"
+sig_r="[NII]sigmar"
+
+
+m= tab["[NII]sigmab"] > 5
+
+
 fig, [axb, axr, axd] = plt.subplots(3, 1, sharex=True)
-axb.hist(tab["HaRVb"], label='Blue comp')
-axr.hist(tab["HaRVr"], color='r', label='Red comp')
-axd.hist(tab["HaRVr"] - tab["HaRVb"], color='g', label='Delta')
+axb.hist(tab["[NII]RVb"][m], label='Blue comp')
+axr.hist(tab["[NII]RVr"][m], color='r', label='Red comp')
+axd.hist(tab["[NII]RVr"][m] - tab["[NII]RVb"][m], color='g', label='Delta')
 for ax in axb, axr, axd:
     ax.legend()
 axd.set(xlabel='Velocity')
 
 
-df = df.assign(Ha_dV=df['HaRVr'] - df['HaRVb'])
+df = df.assign(Ha_dV=df["[NII]RVr"] - df["[NII]RVb"])
 df = df.assign(Ha_close=(df['Ha_dV'] < 15.0).astype('S5') )
-df = df.assign(Ha_rb_ratio=np.log10(df['HaNr']/df['HaNb']))
+df = df.assign(Ha_rb_ratio=np.log10(df['[NII]Nr']/df['[NII]Nb']))
 
 
 # Blue component
 
-sns.pairplot(df, 
-             vars=["HaRVb", "HaNb", "Hasigmab"], 
+sns.pairplot(df[m], 
+             vars=["[NII]RVb", "[NII]Nb", "[NII]sigmab"], 
              diag_kind='hist', hue="Ha_close", 
              plot_kws=dict(alpha=0.2, s=10, edgecolor='none'),
              diag_kws=dict(bins=20),
             )
 
 
-fig, ax = plt.subplots()
-plt.scatter(np.log10(df.HaNb),df.Hasigmab, alpha=0.1, color='k', label='CarB')
-
-ax.set_xlabel('Log I')
-ax.set_ylabel('$σ_{LOS}$ [km/s]')
-plt.legend()
-
-fig, ax = plt.subplots()
-plt.scatter(np.log10(df.HaNb),df.HaRVb, alpha=0.1, color='k', label='CarB')
-
-ax.set_xlabel('Log I')
-ax.set_ylabel('centroid velocity [km/s]')
-plt.legend()
-
-fig, ax = plt.subplots()
-plt.scatter(df.HaRVb,df.Hasigmab, alpha=0.1, color='k', label='CarB')
-
-ax.set_ylabel('$σ_{LOS}$ [km/s]')
-ax.set_xlabel('centroid velocity [km/s]')
-plt.legend()
-
-plt.rcParams["font.size"]="17"
-
-#fig.savefig('CarinaBlue.pdf', bbox_inches='tight')
-
+# fig, ax = plt.subplots()
+# plt.scatter(np.log10(df.HaNb),df.Hasigmab, alpha=0.1, color='k', label='CarB')
+# 
+# ax.set_xlabel('Log I')
+# ax.set_ylabel('$σ_{LOS}$ [km/s]')
+# plt.legend()
+# 
+# fig, ax = plt.subplots()
+# plt.scatter(np.log10(df.HaNb),df.HaRVb, alpha=0.1, color='k', label='CarB')
+# 
+# ax.set_xlabel('Log I')
+# ax.set_ylabel('centroid velocity [km/s]')
+# plt.legend()
+# 
+# fig, ax = plt.subplots()
+# plt.scatter(df.HaRVb,df.Hasigmab, alpha=0.1, color='k', label='CarB')
+# 
+# ax.set_ylabel('$σ_{LOS}$ [km/s]')
+# ax.set_xlabel('centroid velocity [km/s]')
+# plt.legend()
+# 
+# plt.rcParams["font.size"]="17"
+# 
+# #fig.savefig('CarinaBlue.pdf', bbox_inches='tight')
 
 # Red Component
 
-mask = df['Hasigmar'] > 35.0
-df = df[~mask]
+# mask = df['Hasigmar'] > 35.0
+# df = df[~mask]
+# 
 
+# df.dropna(inplace=True)
 
-df.dropna(inplace=True)
+# sns.pairplot(df, 
+#              vars=["HaRVr", "HaNr", "Hasigmar"], 
+#              diag_kind='hist', hue="Ha_close",
+#              plot_kws=dict(alpha=0.3, s=10, edgecolor='none'),
+#              diag_kws=dict(bins=20),
+#             )
 
+# fig, ax = plt.subplots()
+# plt.scatter(np.log10(df.HaNr),df.Hasigmar, alpha=0.1, color='k', label='CarR')
+# 
+# ax.set_xlabel('Log I')
+# ax.set_ylabel('$σ_{LOS}$ [km/s]')
+# 
+# plt.legend()
+# 
+# fig, ax = plt.subplots()
+# plt.scatter(np.log10(df.HaNr),df.HaRVr, alpha=0.1, color='k', label='CarR')
+# 
+# plt.legend()
+# 
+# ax.set_xlabel('Log I')
+# ax.set_ylabel('centroid velocity [km/s]')
+# 
+# fig, ax = plt.subplots()
+# plt.scatter(df.HaRVr,df.Hasigmar, alpha=0.1, color='k', label='CarR')
+# 
+# ax.set_ylabel('$σ_{LOS}$ [km/s]')
+# ax.set_xlabel('centroid velocity [km/s]')
+# plt.legend()
+# 
+# plt.rcParams["font.size"]="17"
+# 
+# #fig.savefig('CarinaRed.pdf', bbox_inches='tight')
 
-sns.pairplot(df, 
-             vars=["HaRVr", "HaNr", "Hasigmar"], 
-             diag_kind='hist', hue="Ha_close",
-             plot_kws=dict(alpha=0.3, s=10, edgecolor='none'),
-             diag_kws=dict(bins=20),
-            )
-
-
-fig, ax = plt.subplots()
-plt.scatter(np.log10(df.HaNr),df.Hasigmar, alpha=0.1, color='k', label='CarR')
-
-ax.set_xlabel('Log I')
-ax.set_ylabel('$σ_{LOS}$ [km/s]')
-
-plt.legend()
-
-fig, ax = plt.subplots()
-plt.scatter(np.log10(df.HaNr),df.HaRVr, alpha=0.1, color='k', label='CarR')
-
-plt.legend()
-
-ax.set_xlabel('Log I')
-ax.set_ylabel('centroid velocity [km/s]')
-
-fig, ax = plt.subplots()
-plt.scatter(df.HaRVr,df.Hasigmar, alpha=0.1, color='k', label='CarR')
-
-ax.set_ylabel('$σ_{LOS}$ [km/s]')
-ax.set_xlabel('centroid velocity [km/s]')
-plt.legend()
-
-plt.rcParams["font.size"]="17"
-
-#fig.savefig('CarinaRed.pdf', bbox_inches='tight')
-
-
-plt.figure(figsize=(20, 4))
-
-plt.subplot(131)
-plt.scatter(df.HaRVb,df.Hasigmab, alpha=0.075, color='k', label='blue')
-plt.xlabel('centroid velocity [km/s]')
-plt.ylabel('$σ_{LOS}$ [km/s]')
-plt.legend()
-
-plt.subplot(132)
-plt.scatter(df.HaRVr,df.Hasigmar, alpha=0.075, color='k', label='red')
-plt.xlabel('centroid velocity [km/s]')
-plt.ylabel('$σ_{LOS}$ [km/s]')
-plt.legend()
-
-plt.show()
-
-plt.rcParams["font.size"]="17"
-
-#fig.savefig('CarinaLOSvsPOS.pdf', bbox_inches='tight')
-
+# plt.figure(figsize=(20, 4))
+# 
+# plt.subplot(131)
+# plt.scatter(df.HaRVb,df.Hasigmab, alpha=0.075, color='k', label='blue')
+# plt.xlabel('centroid velocity [km/s]')
+# plt.ylabel('$σ_{LOS}$ [km/s]')
+# plt.legend()
+# 
+# plt.subplot(132)
+# plt.scatter(df.HaRVr,df.Hasigmar, alpha=0.075, color='k', label='red')
+# plt.xlabel('centroid velocity [km/s]')
+# plt.ylabel('$σ_{LOS}$ [km/s]')
+# plt.legend()
+# 
+# plt.show()
+# 
+# plt.rcParams["font.size"]="17"
+# 
+# #fig.savefig('CarinaLOSvsPOS.pdf', bbox_inches='tight')
 
 # Combining Components
 
@@ -202,10 +212,16 @@ def combine_moments(f1, v1, s1, f2, v2, s2, return_skew=False):
 
 
 fHa, vHa, sHa, gHa = combine_moments(
-    df.HaNr, df.HaRVr, df.Hasigmar, 
-    df.HaNb, df.HaRVb, df.Hasigmab,
+    df["[NII]Nr"],df["[NII]RVr"],df["[NII]sigmar"],
+    df["[NII]Nb"],df["[NII]RVb"],df["[NII]sigmab"],
     return_skew=True
 )
+
+
+
+
+
+
 
 
 dfHa = pd.DataFrame(
@@ -240,7 +256,7 @@ def mark_points(ax):
 
 with sns.axes_style("whitegrid"):
     fig, ax = plt.subplots(figsize=(12, 12))
-    scat = ax.scatter(df.RAdeg, df.DEdeg, s=100, c=df.HaNb, cmap='gray_r', vmin=0.0, vmax=4e5)
+    scat = ax.scatter(df.RAdeg, df.DEdeg, s=100, c=df['[NII]Nb'], cmap='gray_r', vmin=0.0, vmax=4e5)
     fig.colorbar(scat, ax=ax)
     mark_points(ax)
     ax.invert_xaxis()
@@ -250,7 +266,7 @@ with sns.axes_style("whitegrid"):
 
 with sns.axes_style("whitegrid"):
     fig, ax = plt.subplots(figsize=(12, 12))
-    scat = ax.scatter(df.RAdeg, df.DEdeg, s=100, c=df.HaNr, cmap='gray_r', vmin=0.0, vmax=4e5)
+    scat = ax.scatter(df.RAdeg, df.DEdeg, s=100, c=df['[NII]Nr'], cmap='gray_r', vmin=0.0, vmax=4e5)
     fig.colorbar(scat, ax=ax)
     mark_points(ax)
     ax.invert_xaxis()
@@ -291,8 +307,8 @@ with sns.axes_style("darkgrid"):
     axr.set_aspect(2.0)
     axb.invert_xaxis()
     axb.set_aspect(2.0)  
-    axr.set_title('H alpha red layer velocity')
-    axb.set_title('H alpha blue layer velocity')
+    axr.set_title('red layer velocity')
+    axb.set_title('blue layer velocity')
 
 
 with sns.axes_style("darkgrid"):
@@ -376,10 +392,10 @@ with open(datapath_res/jsonfilename, "w") as f:
     json.dump(data_export_list, fp=f, indent=3, cls=MyEncoder)
 
 
-get_ipython().system('jupyter nbconvert --to script --no-prompt otv-FLA-Car-H.ipynb')
+get_ipython().system('jupyter nbconvert --to script --no-prompt otv-FLA-Car-N.ipynb')
 
 
-# Matrix Form
+# 
 
 
 
