@@ -35,7 +35,7 @@ confidence intervals: ci-filename\
 
 En este repositorio se encuentra la metodología utilizada en el trabajo de doctorado
 **'Turbulencia en el medio interestelar'** de la ESFM,IPN (CDMX, México). 
-Esta metodología consiste en el procesamiento de observaciones astronomicas (instrumentos: ISIS y TAURUS) 
+Esta metodología consiste en el procesamiento de observaciones astronomicas
 previamente reducidas para la obtención de muestras de 
 datos utiles y la aplicación de diferentes análisis estadísticos a las observaciones.
 
