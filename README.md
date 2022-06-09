@@ -3,13 +3,13 @@
 **• Use a separate folder for each step in the pipeline:** \
 observations to velocity fields: otv-filename\
 strufture functions: sf-filename\
-confidence intervals: ci-filename\
+confidence intervals: ci-filename
 
 **• File names:** \
 	- Instrument - region - emission line
 	
 **• Paths to input and output data in .txt. File within each folder.**\
--This need to be done just one time
+-This needs to be done just one time
 
 **• Add emission lines:** \
 	- N604: H O\
@@ -17,7 +17,7 @@ confidence intervals: ci-filename\
 	- Dor: H N\
 	- N346: H O S\
 	- EON: H N O S\
-	- Carina: H\
+	- Carina: H N S\
 	- Lagoon: H N S
 	
 **• Change format of the results:** \
