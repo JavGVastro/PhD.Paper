@@ -211,19 +211,60 @@ for i in range(len(samples)):
     data[samples[0][i]] = json.load(open(str(results_path) + '/' + samples[0][i] + ".json"))
 
 
+# - Orion
+
+B_Orion = data[samples[0][5]]['B']
+r_Orion = data[samples[0][5]]['r']
+B_Orion_N = data[samples[0][6]]['B']
+r_Orion_N = data[samples[0][6]]['r']
+B_Orion_O = data[samples[0][7]]['B']
+r_Orion_O = data[samples[0][7]]['r']
+B_Orion_S = data[samples[0][8]]['B']
+r_Orion_S = data[samples[0][8]]['r']
+
+
+B_EON = data[samples[0][14]]['B']
+r_EON = data[samples[0][14]]['r']
+B_EON_N = data[samples[0][15]]['B']
+r_EON_N = data[samples[0][15]]['r']
+B_EON_O = data[samples[0][16]]['B']
+r_EON_O = data[samples[0][16]]['r']
+B_EON_S = data[samples[0][17]]['B']
+r_EON_S = data[samples[0][17]]['r']
+
+
+fig, ax=plt.subplots(figsize=(6,6))
+
+plt.loglog(r_Orion,B_Orion,marker='o',color='red',alpha=0.75, markersize=5, label= 'Ha')
+plt.loglog(r_Orion_O,B_Orion_O,marker='o',color='blue',alpha=0.75, markersize=5, label= 'O')
+plt.loglog(r_Orion_N,B_Orion_N,marker='o',color='orange',alpha=0.75, markersize=5, label= 'N')
+plt.loglog(r_Orion_S,B_Orion_S,marker='o',color='green',alpha=0.75, markersize=5, label= 'S')
+
+
+plt.loglog(r_EON,B_EON,marker='o',color='red',alpha=0.75, markersize=5, )
+plt.loglog(r_EON_O,B_EON_O,marker='o',color='blue',alpha=0.75, markersize=5,)
+plt.loglog(r_EON_N,B_EON_N,marker='o',color='orange',alpha=0.75, markersize=5, )
+plt.loglog(r_EON_S,B_EON_S,marker='o',color='green',alpha=0.75, markersize=5,)
 
 
 
-
-
-
-
+ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
+plt.tick_params(which='both', labelright=False, direction='in', right=True,  top=True)
+plt.grid(which='minor')
+plt.title('Orion')
+plt.legend()
+#fig.savefig('plots/comp-604.pdf', 
+#              bbox_inches='tight')
 
 
 # - NGC 604
 
 B_604 = data[samples[0][0]]['B']
 r_604 = data[samples[0][0]]['r']
+
+
+B_604_O = data[samples[0][1]]['B']
+r_604_O = data[samples[0][1]]['r']
 
 
 fig, ax=plt.subplots(figsize=(6,6))
@@ -241,10 +282,33 @@ fig.savefig('plots/comp-604.pdf',
               bbox_inches='tight')
 
 
+fig, ax=plt.subplots(figsize=(6,6))
+
+plt.loglog(r_604,B_604,marker='o',color='red',alpha=0.75, markersize=5, label= 'Ha')
+plt.loglog(r_604_O,B_604_O,marker='o',color='blue',alpha=0.75, markersize=5, label= 'O')
+
+
+
+ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
+plt.tick_params(which='both', labelright=False, direction='in', right=True,  top=True)
+plt.grid(which='minor')
+plt.title('NGC 604')
+plt.legend()
+fig.savefig('plots/comp-604.pdf', 
+              bbox_inches='tight')
+
+
+
+
+
 # 30 Doradus
 
 B_Dor = data[samples[0][9]]['B']
 r_Dor = data[samples[0][9]]['r']
+
+
+B_Dor_N = data[samples[0][10]]['B']
+r_Dor_N = data[samples[0][10]]['r']
 
 
 fig, ax=plt.subplots(figsize=(6,6))
@@ -263,6 +327,26 @@ plt.legend()
 
 fig.savefig('plots/comp-30Dor.pdf', 
               bbox_inches='tight')
+
+
+fig, ax=plt.subplots(figsize=(6,6))
+
+plt.loglog(r_Dor,B_Dor,marker='o',color='red',alpha=0.75, markersize=5)
+plt.loglog(r_Dor_N,B_Dor_N,marker='o',color='orange',alpha=0.75, markersize=5)
+
+
+ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
+plt.tick_params(which='both', labelright=False, direction='in', right=True,  top=True)
+plt.grid(which='minor')
+plt.title('30 Doradus')
+plt.legend()
+
+#fig.savefig('plots/comp-30Dor.pdf', 
+#              bbox_inches='tight')
+
+
+B_Dor = data[samples[0][9]]['B']
+r_Dor = data[samples[0][9]]['r']
 
 
 # NGC 595
@@ -293,6 +377,10 @@ fig.savefig('plots/comp-595.pdf',
 #mask = SFresults[samples_results[0][7]]["SF"]["N pairs"] > 0
 B_M8 = data[samples[0][18]]['B']
 r_M8 =data[samples[0][18]]['r']
+B_M8_N = data[samples[0][19]]['B']
+r_M8_N =data[samples[0][19]]['r']
+B_M8_S = data[samples[0][20]]['B']
+r_M8_S =data[samples[0][20]]['r']
 
 
 fig, ax=plt.subplots(figsize=(6,6))
@@ -314,7 +402,45 @@ fig.savefig('plots/comp-M8.pdf',
               bbox_inches='tight')
 
 
+fig, ax=plt.subplots(figsize=(6,6))
 
+
+plt.loglog(r_M8,B_M8,marker='o',color='red',alpha=0.75, markersize=5)
+plt.loglog(r_M8_N,B_M8_N,marker='o',color='orange',alpha=0.75, markersize=5)
+plt.loglog(r_M8_S,B_M8_S,marker='o',color='green',alpha=0.75, markersize=5)
+
+ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
+plt.tick_params(which='both', labelright=False, direction='in', right=True,  top=True)
+plt.grid(which='minor')
+plt.title('M8')
+plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))    
+#fig.savefig('plots/comp-M8.pdf', 
+#              bbox_inches='tight')
+
+
+#mask = SFresults[samples_results[0][7]]["SF"]["N pairs"] > 0
+B_Car = data[samples[0][21]]['B']
+r_Car =data[samples[0][21]]['r']
+B_Car_N = data[samples[0][22]]['B']
+r_Car_N =data[samples[0][22]]['r']
+B_Car_S = data[samples[0][23]]['B']
+r_Car_S =data[samples[0][23]]['r']
+
+
+fig, ax=plt.subplots(figsize=(6,6))
+
+
+plt.loglog(r_Car,B_Car,marker='o',color='red',alpha=0.75, markersize=5)
+plt.loglog(r_Car_N,B_Car_N,marker='o',color='orange',alpha=0.75, markersize=5)
+plt.loglog(r_Car_S,B_Car_S,marker='o',color='green',alpha=0.75, markersize=5)
+
+ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
+plt.tick_params(which='both', labelright=False, direction='in', right=True,  top=True)
+plt.grid(which='minor')
+plt.title('Carina)
+plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))    
+#fig.savefig('plots/comp-M8.pdf', 
+#              bbox_inches='tight')
 
 
 # 
