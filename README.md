@@ -14,8 +14,8 @@ confidence intervals: ci-filename
 **• Added emission lines:** \
 	- NGC 604: H O\
 	- NGC 595: H\
-	- Hubble X\
-	- Hubble V\
+	- Hubble X: H\
+	- Hubble V: H\
 	- Orion: H N O S\
 	- Dor: H N\
 	- NGC 346: H O S\
