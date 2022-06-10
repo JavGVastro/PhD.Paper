@@ -5,7 +5,7 @@ observations to velocity fields: otv-filename\
 strufture functions: sf-filename\
 confidence intervals: ci-filename
 
-**• Change file names:** \
+**• Changed file names:** \
 Instrument - region - emission line
 	
 **• Paths to input and output data in .txt file within each folder.**\
