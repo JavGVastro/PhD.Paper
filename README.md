@@ -1,6 +1,6 @@
 **Recent changes (Updated methods)**
 
-**• Use a separate folder for each step in the pipeline:** \
+**• Used a separate folder for each step in the pipeline:** \
 observations to velocity fields: otv-filename\
 strufture functions: sf-filename\
 confidence intervals: ci-filename
@@ -23,7 +23,7 @@ Instrument - region - emission line
 	- Carina: H N S\
 	- Lagoon: H N S
 	
-**• Change the format of the results:** \
+**• Changed the format of the results:** \
 	- .pkl -> .json
 
 **• All notebooks now have .py files.**
