@@ -5,13 +5,13 @@ observations to velocity fields: otv-filename\
 strufture functions: sf-filename\
 confidence intervals: ci-filename
 
-**• File names:** \
+**• Change file names:** \
 	- Instrument - region - emission line
 	
-**• Paths to input and output data in .txt. File within each folder.**\
+**• Paths to input and output data in .txt file within each folder.**\
 -This needs to be done just one time
 
-**• Add emission lines:** \
+**• Added emission lines:** \
 	- N604: H O\
 	- Orion: H N O S\
 	- Dor: H N\
@@ -20,7 +20,7 @@ confidence intervals: ci-filename
 	- Carina: H N S\
 	- Lagoon: H N S
 	
-**• Change format of the results:** \
+**• Change the format of the results:** \
 	- .pkl -> .json
 
 **• All notebooks now have .py files.**
