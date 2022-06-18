@@ -41,7 +41,7 @@ from logerr import logify
 # Load Table with physical properties
 
 physical_data = pd.read_table('property-regions-data.csv', delimiter=',')
-physical_data = physical_data.drop(physical_data .index[[5]])
+#physical_data = physical_data.drop(physical_data .index[[5]])
 
 
 physical_data 
@@ -114,27 +114,29 @@ pc = [[0]*(1) for i in range(len(samples))]
 box_size = [[0]*(1) for i in range(len(samples))]
 
 
+results_='results_1sig'
+
 for i in range(len(samples)):    
     
-    sig2[i] = data[samples[0][i]]['results_2sig']['sig2'][0]
-    sig2s2p[i] = data[samples[0][i]]['results_2sig']['sig2'][1]
-    sig2s2m[i] = data[samples[0][i]]['results_2sig']['sig2'][2]
+    sig2[i] = data[samples[0][i]][results_]['sig2'][0]
+    sig2s2p[i] = data[samples[0][i]][results_]['sig2'][1]
+    sig2s2m[i] = data[samples[0][i]][results_]['sig2'][2]
     
-    r0[i]    = data[samples[0][i]]['results_2sig']['r0'][0]
-    r0s2p[i] = data[samples[0][i]]['results_2sig']['r0'][1]
-    r0s2m[i] = data[samples[0][i]]['results_2sig']['r0'][2]
+    r0[i]    = data[samples[0][i]][results_]['r0'][0]
+    r0s2p[i] = data[samples[0][i]][results_]['r0'][1]
+    r0s2m[i] = data[samples[0][i]][results_]['r0'][2]
     
-    m[i]    = data[samples[0][i]]['results_2sig']['m'][0]
-    ms2p[i] = data[samples[0][i]]['results_2sig']['m'][1]
-    ms2m[i] = data[samples[0][i]]['results_2sig']['m'][2]
+    m[i]    = data[samples[0][i]][results_]['m'][0]
+    ms2p[i] = data[samples[0][i]][results_]['m'][1]
+    ms2m[i] = data[samples[0][i]][results_]['m'][2]
     
-    bn[i]    = data[samples[0][i]]['results_2sig']['noise'][0]
-    bns2p[i] = data[samples[0][i]]['results_2sig']['noise'][1]
-    bns2m[i] = data[samples[0][i]]['results_2sig']['noise'][2]
+    bn[i]    = data[samples[0][i]][results_]['noise'][0]
+    bns2p[i] = data[samples[0][i]][results_]['noise'][1]
+    bns2m[i] = data[samples[0][i]][results_]['noise'][2]
     
-    s0[i]    = data[samples[0][i]]['results_2sig']['s0'][0]
-    s0s2p[i] = data[samples[0][i]]['results_2sig']['s0'][1]
-    s0s2m[i] = data[samples[0][i]]['results_2sig']['s0'][2]
+    s0[i]    = data[samples[0][i]][results_]['s0'][0]
+    s0s2p[i] = data[samples[0][i]][results_]['s0'][1]
+    s0s2m[i] = data[samples[0][i]][results_]['s0'][2]
     
     box_size[i] = data[samples[0][i]]['properties']['box_size']
     pc[i] = data[samples[0][i]]['properties']['pc']
@@ -578,8 +580,8 @@ ax.errorbar(X, Y, xerr=Xe, yerr=Ye, ls=" ", elinewidth=0.4, alpha=1.0, c="k",zor
 
 marker=itertools.cycle(('o','o','o','o','s','^','s','^','^'))
 
-for i in [0,1,2,3,4,6,8]:
-#for i in range(len(samples)):
+#for i in [0,1,2,3,4,6,8]:
+for i in range(len(samples)):
     ax.scatter(X[i], Y[i], marker=next(marker), s=250,zorder=5, c ='k')
     
 ax.text(.05, .95,'log $r_0$ = (' 
@@ -594,6 +596,9 @@ ax.set(
 )
 
 plt.savefig('Imgs//corr-rvsS.pdf', bbox_inches='tight')
+
+
+
 
 
 tab3 = ['log $r_0$','log $S$',np.round(dfchain["beta"].mean(),2),np.round(dfchain["beta"].std(),2),
@@ -635,8 +640,8 @@ fig, ax = plt.subplots(figsize=(10, 10))
 ax.errorbar(X, Y, xerr=Xe, yerr=Ye, ls=" ", elinewidth=0.4, alpha=1.0, c="k",zorder=10)
 
 marker=itertools.cycle(('o','o','o','o','s','^','s','^','^'))
-for i in [0,1,2,3,4,6,8]:
-#for i in range(len(samples)):
+#for i in [0,1,2,3,4,6,8]:
+for i in range(len(samples)):
     ax.scatter(X[i], Y[i], marker=next(marker), s=150,zorder=5, c ='k')
     
 
@@ -711,7 +716,7 @@ ax.text(.05, .95,'log L(H) = ('
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
-#    xlim=[-0.2, 0.8], ylim=[-0.2, 0.8],
+    ylim=[37, 39.75], xlim=[0, 1.35],
     ylabel=r"log L(H) [erg s^-1]", xlabel=r"log $\sigma$ [km/s]",
 )
 
@@ -768,7 +773,7 @@ ax.text(.05, .95,'log $m$ = ('
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
-#    xlim=[-0.2, 0.8], ylim=[-0.2, 0.8],
+   xlim=[-1.0, 3.0], ylim=[0.5, 1.5],
     xlabel=r"log Dist [kpc]", ylabel=r"log $m$",
 )
 
@@ -824,7 +829,7 @@ ax.text(.05, .95,'log $\sigma$ = ('
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
-    xlim=[0.7, 1.6], ylim=[0.0, 1.5],
+    xlim=[0.7, 1.6], ylim=[0.2, 1.4],
     xlabel=r"log $\sigma_{LOS}$[km/s]", ylabel=r"log $\sigma$ [km/s]",
 )
 
@@ -882,7 +887,7 @@ ax.text(.05, .95,'log $\sigma_{LOS}$ = ('
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
-#    xlim=[-0.2, 0.8], ylim=[-0.2, 0.8],
+    ylim=[0.7, 1.6], xlim=[0.2, 1.4],
     xlabel=r"log $\sigma$[km/s]", ylabel=r"log $\sigma_{LOS}$ [km/s]",
 )
 
@@ -937,7 +942,7 @@ ax.text(.05, .95,'$\sigma_{LOS}$ = ('
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
-#    xlim=[-0.2, 0.8], ylim=[-0.2, 0.8],
+    xlim=[0, 25], ylim=[0, 35],
     xlabel=r"$\sigma$[km/s]", ylabel=r"$\sigma_{LOS}$ [km/s]",
 )
 
@@ -959,8 +964,8 @@ fig, ax = plt.subplots(figsize=(10, 10))
 ax.errorbar(X, Y, xerr=Xe, yerr=Ye, ls="", elinewidth=0.4, alpha=1.0, c="k")
 
 marker=itertools.cycle(('o','o','o','o','s','^','s','^','^'))
-for i in [0,1,2,3,4,6,8]:
-#for i in range(len(samples)):
+#for i in [0,1,2,3,4,6,8]:
+for i in range(len(samples)):
     ax.scatter(X[i], Y[i], marker=next(marker), s=150,zorder=5, c ='k')
 
 #ax.plot(xgrid,xgrid*results.params[1]+results.params[0],linestyle='-',color='k')
@@ -972,7 +977,8 @@ for i in [0,1,2,3,4,6,8]:
 
 
 ax.plot(xgrid,xgrid*1+0,linestyle='dotted',color='k')
-ax.plot(xgrid,xgrid*2+0,linestyle='dashed',color='k')
+ax.plot(xgrid,xgrid*2+0,linestyle='solid',color='k')
+ax.plot(xgrid,xgrid*1.04+8.15,linestyle='dashed',color='k', label= 'Lagrois & Joncas (2011)')
 
 
  
@@ -983,11 +989,15 @@ ax.plot(xgrid,xgrid*2+0,linestyle='dashed',color='k')
 #        + ')',  color='k', transform=ax.transAxes)
         
 ax.set(
-    xlim=[0, 20], ylim=[0, 40],
+    xlim=[0, 25], ylim=[0, 35],
  xlabel=r"$\sigma_{pos}$ [km/s]", ylabel=r"$\sigma_{los}$ [km/s]",
 )
+plt.legend(loc='upper left')    
 
 plt.savefig('Imgs/corr-los-vs-pos.pdf', bbox_inches='tight')
+
+
+
 
 
 results.params
@@ -1040,7 +1050,7 @@ ax.text(.05, .95,'log $\sigma$ = ('
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
-#    xlim=[-0.2, 0.8], ylim=[-0.2, 0.8],
+    xlim=[0.5, 3.0], ylim=[0.2, 1.4],
     xlabel=r"$S$[km/s]", ylabel=r"$\sigma$ [km/s]",
 )
 

@@ -203,10 +203,16 @@ s1f.insert(loc=0, column='Region', value=Names)
 s1f.round(4)
 
 
-s1f.drop(1)
+results_paper = s1f.drop([1,6,7,8,10,12,13,15,16,17,19,20,22,23])
 
 
-marker_sample = ['o','o','o','o','o','^','^','^','^','s','s','s','s','s','^','^','^','^','^']
+results_paper.sort_values(by=['sig2'], ascending=False)
+
+
+xx= s0f.drop([1,6,7,8,10,12,13,15,16,17,19,20,22,23])
+
+
+xx
 
 
 fig, ax = plt.subplots(figsize=(7, 7))
