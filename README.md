@@ -1,26 +1,29 @@
 **Recent changes (Updated methods)**
 
-**• Use a separate folder for each step in the pipeline:** \
+**• Used a separate folder for each step in the pipeline:** \
 observations to velocity fields: otv-filename\
 strufture functions: sf-filename\
 confidence intervals: ci-filename
 
-**• File names:** \
-	- Instrument - region - emission line
+**• Changed file names:** \
+Instrument - region - emission line
 	
-**• Paths to input and output data in .txt. File within each folder.**\
+**• Paths to input and output data in .txt file within each folder.**\
 -This needs to be done just one time
 
-**• Add emission lines:** \
-	- N604: H O\
+**• Added emission lines:** \
+	- NGC 604: H O\
+	- NGC 595: H\
+	- Hubble X: H\
+	- Hubble V: H\
 	- Orion: H N O S\
 	- Dor: H N\
-	- N346: H O S\
+	- NGC 346: H O S\
 	- EON: H N O S\
 	- Carina: H N S\
 	- Lagoon: H N S
 	
-**• Change format of the results:** \
+**• Changed the format of the results:** \
 	- .pkl -> .json
 
 **• All notebooks now have .py files.**
