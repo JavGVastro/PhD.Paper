@@ -114,7 +114,7 @@ pc = [[0]*(1) for i in range(len(samples))]
 box_size = [[0]*(1) for i in range(len(samples))]
 
 
-results_='results_1sig'
+results_='results_2sig'
 
 for i in range(len(samples)):    
     
