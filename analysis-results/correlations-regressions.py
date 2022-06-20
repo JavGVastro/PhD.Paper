@@ -735,6 +735,9 @@ tab5
 X, Xe, Y, Ye = [logdata[_] for _ in ['log Dist [kpc]', 'Dister [kpc]','m', 'mer']]
 
 
+Y=np.log10(Y)
+
+
 lm = linmix.LinMix(X, Y, Xe, Ye, K=2)
 
 
