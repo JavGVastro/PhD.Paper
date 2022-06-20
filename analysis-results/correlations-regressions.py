@@ -247,6 +247,9 @@ logdata['siger']=(data['siger']/data['sig [km/s]'])*0.434
 logdata['sig2er']=(data['sig2er']/data['sig2 [km/s]'])*0.434
 
 
+logdata
+
+
 #logify(data['L [pc]'],data['Ler [pc]'])
 
 
@@ -413,7 +416,7 @@ ax.text(.05, .95,'log $m$ = ('
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
-#    xlim=[-0.2, 0.8], ylim=[-0.2, 0.8],
+    xlim=[-1.2, 1.25], ylim=[-0.2, 0.2],
     xlabel=r"log $r_{0}$ [pc]", ylabel=r"log $m$",
 )
 
@@ -529,7 +532,7 @@ ax.text(.05, .95,'log $m$ = ('
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
-#    xlim=[-0.2, 0.8], ylim=[-0.2, 0.8],
+    xlim=[0.2, 1.5], ylim=[-0.2, 0.2],
     xlabel=r"log $\sigma$ [km/s]", ylabel=r"log $m$",
 )
 
@@ -964,16 +967,10 @@ fig, ax = plt.subplots(figsize=(10, 10))
 ax.errorbar(X, Y, xerr=Xe, yerr=Ye, ls="", elinewidth=0.4, alpha=1.0, c="k")
 
 marker=itertools.cycle(('o','o','o','o','s','^','s','^','^'))
+
 #for i in [0,1,2,3,4,6,8]:
 for i in range(len(samples)):
     ax.scatter(X[i], Y[i], marker=next(marker), s=150,zorder=5, c ='k')
-
-#ax.plot(xgrid,xgrid*results.params[1]+results.params[0],linestyle='-',color='k')
-
-#ax.plot(xgrid,xgrid*(results.params[1]+results.bse[1])+(results.params[0]+results.bse[0]),linestyle=':',color='k')
-#ax.plot(xgrid,xgrid*(results.params[1]-results.bse[1])+(results.params[0]-results.bse[0]),linestyle=':',color='k')
-#ax.plot(xgrid,xgrid*(results.params[1]+results.bse[1])+(results.params[0]-results.bse[0]),linestyle=':',color='k')
-#ax.plot(xgrid,xgrid*(results.params[1]-results.bse[1])+(results.params[0]+results.bse[0]),linestyle=':',color='k')
 
 
 ax.plot(xgrid,xgrid*1+0,linestyle='dotted',color='k')
