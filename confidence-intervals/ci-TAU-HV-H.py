@@ -196,14 +196,14 @@ bplot.corner_plot(
 )
 
 
-bplot.strucfunc_plot(
-    result_emcee, result, r, B, to_fit, name, data, box_size, large_scale
-)
-
-
 #bplot.strucfunc_plot(
-#    result_emcee, result_emcee, r, B, to_fit, name, data, box_size, large_scale
+#    result_emcee, result, r, B, to_fit, name, data, box_size, large_scale
 #)
+
+
+bplot.strucfunc_plot(
+    result_emcee, result_emcee, r, B, to_fit, name, data, box_size, large_scale
+)
 
 
 # LM results

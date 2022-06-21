@@ -122,9 +122,6 @@ for i in range(len(samples)):
     pc[i] = data[samples[0][i]]['properties']['pc']
 
 
-#pc[8]=pc[8]/60
-
-
 # Crate table
 
 td = pd.DataFrame(
@@ -204,18 +201,16 @@ s1f.round(4)
 
 
 turbulence_param = s1f.drop([1,6,7,8,10,12,13,15,16,17,19,20,22,23])
-
-
 turbulence_param.sort_values(by=['sig2'], ascending=False)
 
 
 nuisance_param = s0f.drop([1,6,7,8,10,12,13,15,16,17,19,20,22,23])
 
 
-nuisance_param 
+nuisance_param.reindex(index=(9,0,2,11,21,4,5,3,18,14))
 
 
-nuisance_param
+
 
 
 marker_sample = ['o','o','o','o','o','^','^','^','^','s','s','s','s','s','^','^','^','^','^','^','^','^']
