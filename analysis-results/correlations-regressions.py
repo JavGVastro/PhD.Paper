@@ -839,9 +839,9 @@ for samp in lm.chain[::20]:
     ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
         '-', c="r", alpha=0.25, lw=0.1)
     
-ax.plot(xgrid,xgrid*1+0,linestyle='solid',color='gray')
-ax.plot(xgrid,xgrid*2+0,linestyle='solid',color='gray')
-ax.plot(xgrid,xgrid*1.04+8.15,linestyle='dashed',color='k', label= 'Lagrois & Joncas (2011)')
+ax.plot(xgrid,xgrid*1+0,linestyle='solid',color='gray',zorder=0)
+ax.plot(xgrid,xgrid*2+0,linestyle='solid',color='gray',zorder=0)
+ax.plot(xgrid,xgrid*1.04+8.15,linestyle='dashed',color='k', label= 'Lagrois & Joncas (2011)',zorder=1)
 
     
 ax.text(.05, .95,'$\sigma_{LOS}$ = (' 
