@@ -861,7 +861,7 @@ plt.legend(loc='lower right')
 plt.savefig('Imgs/corr-los-vs-pos-fit.pdf', bbox_inches='tight')
 
 
-tab7 = ['$\sigma_{pos}$','$\sigma_{LOS}$',np.round(dfchain["beta"].mean(),2),np.round(dfchain["beta"].std(),2),
+tab7 = ['$\sigma_{pos}$','$\sigma_{los}$',np.round(dfchain["beta"].mean(),2),np.round(dfchain["beta"].std(),2),
        np.round(dfchain["alpha"].mean(),2),np.round(dfchain["alpha"].std(),2),
       np.round(pearsonr(X, Y)[0],2),np.round(pearsonr(X, Y)[1],2)]
 tab7

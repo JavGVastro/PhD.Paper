@@ -85,6 +85,30 @@ sigma_data['~s_los_lit_err [km/s]'] = [1,1.6,0,0,0,0.02,0.03,0.09,0.3]
 sigma_data.round(2)
 
 
+def combine_moments(f1, v1, s1, f2, v2, s2, return_skew=False):
+    """Find combined flux, mean velocity, and sigma for two components 
+    with fluxes `f1` and `f2`, velocities `v1` and `v2`, and sigmas `s1` and `s2`. 
+    Returns tuple of the combined moments: `f`, `v`, `s`."""
+    f = f1 + f2
+    v = (v1*f1 + v2*f2)/f
+    ss = (s1*s1*f1 + s2*s2*f2)/f
+    ss += f1*f2*(v1 - v2)**2 / f**2
+    s = np.sqrt(ss)
+    if return_skew:
+        p1 = f1/f
+        p2 = f2/f
+        skew = p1*p2*(v1 - v2)*((1 - 2*p1)*(v1 - v2)**2 + 3*(s1**2 - s2**2))
+        skew /= (p1*(p2*(v1 - v2)**2 + s1**2 - s2**2) + s2**2)**1.5
+#        vmode = np.where(f1 > f2, v1, v2)
+#        mskew = (v - vmode)/s
+        return f, v, s, skew
+    else:
+        return f, v, s
+
+
+combine_moments(0.3966,-6.404371,6.44256,0.60335,3.454723,6.069641)
+
+
 print("--- %s seconds ---" % (time.time() - start_time))
 
 
