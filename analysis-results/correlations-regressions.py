@@ -492,6 +492,63 @@ tab1 = ['$\sigma$','$r_{0}$',np.round(dfchain["beta"].mean(),2),np.round(dfchain
 tab1
 
 
+# - log r0 vs log sig
+
+X, Xe, Y, Ye = [logdata[_] for _ in ['log r0 [pc]', 'r0er','log sig [km/s]', 'siger']]
+
+lm = linmix.LinMix(X, Y, Xe, Ye, K=2)
+
+lm.run_mcmc()
+
+
+dfchain = pd.DataFrame.from_records(
+    lm.chain.tolist(), 
+    columns=lm.chain.dtype.names
+)
+
+
+pearsonr(X, Y)
+
+
+pd.DataFrame({"X": X, "Xe": Xe, "Y": Y, "Ye": Ye}).describe()
+
+
+vmin, vmax = -1.5, 1.5
+xgrid = np.linspace(vmin, vmax, 200)
+
+
+fig, ax = plt.subplots(figsize=(10, 10))
+
+ax.errorbar(X, Y, xerr=Xe, yerr=Ye, ls=" ", elinewidth=0.4, alpha=1.0, c="k")
+
+marker=itertools.cycle(('o','o','o','o','s','^','s','^','^'))
+#for i in [0,1,2,3,4,6,8]:
+for i in range(len(samples)):
+    ax.scatter(X[i], Y[i], marker=next(marker), s=250,zorder=5, c ='k', alpha=0.5)
+
+# The original fit
+ax.plot(xgrid, dfchain["alpha"].mean() + xgrid*dfchain["beta"].mean(), 
+        '-', c="k")
+for samp in lm.chain[::5]:
+    ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
+        '-', c="r", alpha=0.2, lw=0.1)
+    
+ax.text(.05, .95,'log $\sigma$ = (' 
+        + str(np.round(dfchain["beta"].mean(),3)) + '$\pm$' + str(np.round(dfchain["beta"].std(),3))
+        + ')log $r_{0}$+('
+        + str(np.round(dfchain["alpha"].mean(),3)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),3))
+        + ')',  color='k', transform=ax.transAxes)
+
+    
+ax.set(
+   xlim=[-1.5, 1.5], ylim=[0, 1.5],
+    xlabel=r"log $r_{0}$ [pc]", ylabel=r"log $\sigma$ [km/s]",
+)
+
+
+
+
+
 # - sig vs m
 
 X, Xe, Y, Ye = [data[_] for _ in ['sig [km/s]', 'siger','m', 'mer']]
@@ -581,6 +638,9 @@ pearsonr(X, Y)
 pd.DataFrame({"X": X, "Xe": Xe, "Y": Y, "Ye": Ye}).describe()
 
 
+len(lm.chain[::150])
+
+
 vmin, vmax = -0.5, 3
 xgrid = np.linspace(vmin, vmax, 200)
 
@@ -590,10 +650,11 @@ fig, ax = plt.subplots(figsize=(10, 10))
 
 # The original fit
 ax.plot(xgrid, dfchain["alpha"].mean() + xgrid*dfchain["beta"].mean(), 
-        '-', c="k",zorder=10)
-for samp in lm.chain[::20]:
-    ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
-        '-', c="r", alpha=0.10, lw=0.1,zorder=0)
+        '-', c="k")
+for samp in lm.chain[::25]:
+    if ((dfchain["beta"].mean()-1.0*dfchain["beta"].std() )< samp["beta"] < (1.0*dfchain["beta"].std()+dfchain["beta"].mean())) &        ((dfchain["alpha"].mean()-1.0*dfchain["alpha"].std() )< samp["alpha"] < (1.0*dfchain["alpha"].std()+dfchain["alpha"].mean()) ):
+        ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
+            '-', c="r",alpha=0.15, lw=0.35,zorder=0)
     
 ax.errorbar(X, Y, xerr=Xe, yerr=Ye, ls=" ", elinewidth=0.4, alpha=1.0, c="k",zorder=6)
 
@@ -605,13 +666,13 @@ for i in range(len(samples)):
     
 ax.text(.05, .95,'log $r_0$ = (' 
         + str(np.round(dfchain["beta"].mean(),3)) + '$\pm$' + str(np.round(dfchain["beta"].std(),3))
-        + ')log $S$ +('
+        + ')log $D$ +('
         + str(np.round(dfchain["alpha"].mean(),3)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),3))
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
     xlim=[0.5, 3], ylim=[-1.5, 1.5],
-    xlabel=r"log S [pc]", ylabel=r"log $r_0$ [pc]",
+    xlabel=r"log $D$ [pc]", ylabel=r"log $r_0$ [pc]",
 )
 
 plt.savefig('Imgs//corr-rvsS.pdf', bbox_inches='tight')
@@ -620,7 +681,7 @@ plt.savefig('Imgs//corr-rvsS.pdf', bbox_inches='tight')
 
 
 
-tab3 = ['log $r_0$','log $S$',np.round(dfchain["beta"].mean(),2),np.round(dfchain["beta"].std(),2),
+tab3 = ['log $r_0$','log $D$',np.round(dfchain["beta"].mean(),2),np.round(dfchain["beta"].std(),2),
        np.round(dfchain["alpha"].mean(),2),np.round(dfchain["alpha"].std(),2),
       np.round(pearsonr(X, Y)[0],2),np.round(pearsonr(X, Y)[1],3)]
 tab3
@@ -666,20 +727,21 @@ for i in range(len(samples)):
 
 # The original fit
 ax.plot(xgrid, dfchain["alpha"].mean() + xgrid*dfchain["beta"].mean(), 
-        '-', c="k",zorder=3)
-for samp in lm.chain[::20]:
-    ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
-        '-', c="r", alpha=0.10, lw=0.1,zorder=0)
+        '-', c="k")
+for samp in lm.chain[::25]:
+    if ((dfchain["beta"].mean()-1.0*dfchain["beta"].std() )< samp["beta"] < (1.0*dfchain["beta"].std()+dfchain["beta"].mean())) &        ((dfchain["alpha"].mean()-1.0*dfchain["alpha"].std() )< samp["alpha"] < (1.0*dfchain["alpha"].std()+dfchain["alpha"].mean()) ):
+        ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
+            '-', c="r",alpha=0.15, lw=0.35,zorder=0)
     
-ax.text(.05, .95,'log $\sigma$ = (' 
+ax.text(.05, .95,r'log $\sigma$ = (' 
         + str(np.round(dfchain["beta"].mean(),3)) + '$\pm$' + str(np.round(dfchain["beta"].std(),3))
-        + ')log L(H)+('
+        + r')log $L(\mathrm{H \alpha})$ +('
         + str(np.round(dfchain["alpha"].mean(),3)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),3))
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
     xlim=[37, 39.75], ylim=[0, 1.35],
-    xlabel=r"log L(H) [erg s^-1]", ylabel=r"log $\sigma_{pos}$ [km/s]",
+    xlabel=r"log $L(\mathrm{H\alpha})$ [erg s^-1]", ylabel=r"log $\sigma_{pos}$ [km/s]",
 )
 
 plt.savefig('Imgs/corr-svsL.pdf', bbox_inches='tight')
@@ -720,11 +782,16 @@ xgrid = np.linspace(vmin, vmax, 200)
 fig, ax = plt.subplots(figsize=(10, 10))
 
 ax.errorbar(X, Y, xerr=Xe, yerr=Ye, ls=" ", elinewidth=0.4, alpha=1.0, c="k")
-ax.scatter(X, Y, marker=".", s=20/np.hypot(Xe, Ye))
+
+marker=itertools.cycle(('o','o','o','o','s','^','s','^','^'))
+#for i in [0,1,2,3,4,6,8]:
+for i in range(len(samples)):
+    ax.scatter(X[i], Y[i], marker=next(marker), s=250,zorder=5, c ='k', alpha=0.5)
+
 # The original fit
 ax.plot(xgrid, dfchain["alpha"].mean() + xgrid*dfchain["beta"].mean(), 
         '-', c="k")
-for samp in lm.chain[::20]:
+for samp in lm.chain[::25]:
     ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
         '-', c="r", alpha=0.2, lw=0.1)
     
@@ -735,7 +802,7 @@ ax.text(.05, .95,'log L(H) = ('
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
-    ylim=[37, 39.75], xlim=[0, 1.35],
+    ylim=[37, 39.75], xlim=[0.2, 1.35],
     ylabel=r"log L(H) [erg s^-1]", xlabel=r"log $\sigma$ [km/s]",
 )
 
@@ -784,7 +851,7 @@ ax.scatter(X, Y, marker=".", s=20/np.hypot(Xe, Ye))
 # The original fit
 ax.plot(xgrid, dfchain["alpha"].mean() + xgrid*dfchain["beta"].mean(), 
         '-', c="k")
-for samp in lm.chain[::20]:
+for samp in lm.chain[::25]:
     ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
         '-', c="r", alpha=0.2, lw=0.1)
     
@@ -795,7 +862,7 @@ ax.text(.05, .95,'log $m$ = ('
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
-#   xlim=[-1.0, 3.0], ylim=[0.5, 1.5],
+  xlim=[-1.0, 3.0], ylim=[-0.2, 0.2],
     xlabel=r"log Dist [kpc]", ylabel=r"log $m$",
 )
 
@@ -835,6 +902,18 @@ dfchain = pd.DataFrame.from_records(
 pd.DataFrame({"X": X, "Xe": Xe, "Y": Y, "Ye": Ye}).describe()
 
 
+dfchain["beta"].mean()
+
+
+2*dfchain["beta"].std()+dfchain["beta"].mean()
+
+
+dfchain["beta"].mean()-2*dfchain["beta"].std()
+
+
+
+
+
 vmin, vmax = 0, 25
 xgrid = np.linspace(vmin, vmax, 200)
 
@@ -851,30 +930,34 @@ for i in range(len(samples)):
 # The original fit
 ax.plot(xgrid, dfchain["alpha"].mean() + xgrid*dfchain["beta"].mean(), 
         '-', c="k")
-for samp in lm.chain[::20]:
-    ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
-        '-', c="r",alpha=0.10, lw=0.1,zorder=0)
+for samp in lm.chain[::25]:
+    if ((dfchain["beta"].mean()-1.0*dfchain["beta"].std() )< samp["beta"] < (1.0*dfchain["beta"].std()+dfchain["beta"].mean())) &        ((dfchain["alpha"].mean()-1.0*dfchain["alpha"].std() )< samp["alpha"] < (1.0*dfchain["alpha"].std()+dfchain["alpha"].mean()) ):
+        ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
+            '-', c="r",alpha=0.15, lw=0.35,zorder=0)
     
-ax.plot(xgrid,xgrid*1+0,linestyle='solid',color='gray',zorder=0)
-ax.plot(xgrid,xgrid*2+0,linestyle='solid',color='gray',zorder=0)
+#ax.plot(xgrid,xgrid*1+0,linestyle='solid',color='gray',zorder=0)
+#ax.plot(xgrid,xgrid*2+0,linestyle='solid',color='gray',zorder=0)
 ax.plot(xgrid,xgrid*1.04+8.15,linestyle='dashed',color='k', label= 'Lagrois & Joncas (2011)',zorder=1)
 
     
-ax.text(.05, .95,'$\sigma_{LOS}$ = (' 
+ax.text(.05, .95,r"$ \langle \sigma_{los} \rangle $ = ("  
         + str(np.round(dfchain["beta"].mean(),3)) + '$\pm$' + str(np.round(dfchain["beta"].std(),3))
-        + ')$\sigma$ +('
+        + ')$\sigma_{pos}$ +('
         + str(np.round(dfchain["alpha"].mean(),3)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),3))
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
-    xlim=[0, 20], ylim=[0, 25],
-    xlabel=r"$\sigma$[km/s]", ylabel=r"$\sigma_{LOS}$ [km/s]",
+    xlim=[0, 20], ylim=[5, 25],
+    xlabel=r"$\sigma_{pos}$[km/s]", ylabel=r"$ \langle \sigma_{los} \rangle $ [km/s]",
 )
 
 plt.legend(loc='lower right')    
 
 
 plt.savefig('Imgs/corr-los-vs-pos.pdf', bbox_inches='tight')
+
+
+
 
 
 tab7 = ['$\sigma_{pos}$','$\sigma_{los}$',np.round(dfchain["beta"].mean(),2),np.round(dfchain["beta"].std(),2),
