@@ -371,10 +371,10 @@ logdata
 
 # - r0 vs m
 
-X, Xe, Y, Ye = [data[_] for _ in ['r0 [pc]', 'r0er','m', 'mer']]
+X, Xe, Y, Ye = [logdata[_] for _ in ['log r0 [pc]', 'r0er','m', 'mer']]
 
 
-#Y=np.log10(Y)
+Y=np.log10(Y)
 
 
 lm = linmix.LinMix(X, Y, Xe, Ye, K=2)
@@ -395,7 +395,7 @@ pearsonr(X, Y)
 pd.DataFrame({"X": X, "Xe": Xe, "Y": Y, "Ye": Ye}).describe()
 
 
-vmin, vmax = 0, 17.5
+vmin, vmax = -1.5, 1.5
 xgrid = np.linspace(vmin, vmax, 200)
 
 fig, ax = plt.subplots(figsize=(10, 10))
@@ -416,8 +416,8 @@ ax.text(.05, .95,'log $m$ = ('
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
-    xlim=[0, 17.55], ylim=[0.5, 1.6],
-    xlabel=r"$r_{0}$ [pc]", ylabel=r"$m$",
+    xlim=[-1.5, 1.5], ylim=[-0.2, 0.2],
+    xlabel=r"log $r_{0}$ [pc]", ylabel=r"log $m$",
 )
 
 
@@ -427,72 +427,12 @@ ax.set(
 tab=['Y','X','a','b','r','p']
 
 
-tab0 = ['$m$','$r_{0}$',np.round(dfchain["beta"].mean(),2),np.round(dfchain["beta"].std(),2),
+tab0 = ['log $m$','log $r_{0}$',np.round(dfchain["beta"].mean(),2),np.round(dfchain["beta"].std(),2),
        np.round(dfchain["alpha"].mean(),2),np.round(dfchain["alpha"].std(),2),
       np.round(pearsonr(X, Y)[0],2),np.round(pearsonr(X, Y)[1],3)]
 
 
 # - r0 vs sig
-
-X, Xe, Y, Ye = [data[_] for _ in ['r0 [pc]', 'r0er','sig [km/s]', 'siger']]
-
-lm = linmix.LinMix(X, Y, Xe, Ye, K=2)
-
-lm.run_mcmc()
-
-
-dfchain = pd.DataFrame.from_records(
-    lm.chain.tolist(), 
-    columns=lm.chain.dtype.names
-)
-
-
-pearsonr(X, Y)
-
-
-pd.DataFrame({"X": X, "Xe": Xe, "Y": Y, "Ye": Ye}).describe()
-
-
-vmin, vmax = 0, 15
-xgrid = np.linspace(vmin, vmax, 200)
-
-
-fig, ax = plt.subplots(figsize=(10, 10))
-
-ax.errorbar(X, Y, xerr=Xe, yerr=Ye, ls=" ", elinewidth=0.4, alpha=1.0, c="k")
-
-marker=itertools.cycle(('o','o','o','o','s','^','s','^','^'))
-#for i in [0,1,2,3,4,6,8]:
-for i in range(len(samples)):
-    ax.scatter(X[i], Y[i], marker=next(marker), s=250,zorder=5, c ='k', alpha=0.5)
-
-# The original fit
-ax.plot(xgrid, dfchain["alpha"].mean() + xgrid*dfchain["beta"].mean(), 
-        '-', c="k")
-for samp in lm.chain[::20]:
-    ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
-        '-', c="r", alpha=0.2, lw=0.1)
-    
-ax.text(.05, .95,'$\sigma$ = (' 
-        + str(np.round(dfchain["beta"].mean(),3)) + '$\pm$' + str(np.round(dfchain["beta"].std(),3))
-        + ')$r_{0}$+('
-        + str(np.round(dfchain["alpha"].mean(),3)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),3))
-        + ')',  color='k', transform=ax.transAxes)
-
-    
-ax.set(
-    xlim=[0, 15], ylim=[0, 20],
-    xlabel=r"$r_{0}$ [pc]", ylabel=r"$\sigma$ [km/s]",
-)
-
-
-tab1 = ['$\sigma$','$r_{0}$',np.round(dfchain["beta"].mean(),2),np.round(dfchain["beta"].std(),2),
-       np.round(dfchain["alpha"].mean(),2),np.round(dfchain["alpha"].std(),2),
-      np.round(pearsonr(X, Y)[0],2),np.round(pearsonr(X, Y)[1],3)]
-tab1
-
-
-# - log r0 vs log sig
 
 X, Xe, Y, Ye = [logdata[_] for _ in ['log r0 [pc]', 'r0er','log sig [km/s]', 'siger']]
 
@@ -529,7 +469,7 @@ for i in range(len(samples)):
 # The original fit
 ax.plot(xgrid, dfchain["alpha"].mean() + xgrid*dfchain["beta"].mean(), 
         '-', c="k")
-for samp in lm.chain[::5]:
+for samp in lm.chain[::20]:
     ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
         '-', c="r", alpha=0.2, lw=0.1)
     
@@ -541,20 +481,26 @@ ax.text(.05, .95,'log $\sigma$ = ('
 
     
 ax.set(
-   xlim=[-1.5, 1.5], ylim=[0, 1.5],
+    xlim=[-1.5, 1.5], ylim=[0, 1.5],
     xlabel=r"log $r_{0}$ [pc]", ylabel=r"log $\sigma$ [km/s]",
 )
 
 
+tab1 = ['log $\sigma$','log $r_{0}$',np.round(dfchain["beta"].mean(),2),np.round(dfchain["beta"].std(),2),
+       np.round(dfchain["alpha"].mean(),2),np.round(dfchain["alpha"].std(),2),
+      np.round(pearsonr(X, Y)[0],2),np.round(pearsonr(X, Y)[1],3)]
+tab1
 
 
 
-# - sig vs m
-
-X, Xe, Y, Ye = [data[_] for _ in ['sig [km/s]', 'siger','m', 'mer']]
 
 
-#Y=np.log10(Y)
+# - log sig vs log m
+
+X, Xe, Y, Ye = [logdata[_] for _ in ['log sig [km/s]', 'siger','m', 'mer']]
+
+
+Y=np.log10(Y)
 
 
 lm = linmix.LinMix(X, Y, Xe, Ye, K=2)
@@ -575,7 +521,7 @@ pearsonr(X, Y)
 pd.DataFrame({"X": X, "Xe": Xe, "Y": Y, "Ye": Ye}).describe()
 
 
-vmin, vmax = 0, 20
+vmin, vmax = 0, 1.5
 xgrid = np.linspace(vmin, vmax, 200)
 
 
@@ -595,22 +541,22 @@ for samp in lm.chain[::20]:
     ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
         '-', c="r", alpha=0.2, lw=0.1)
     
-ax.text(.05, .95,'$m$ = (' 
+ax.text(.05, .95,'log $m$ = (' 
         + str(np.round(dfchain["beta"].mean(),3)) + '$\pm$' + str(np.round(dfchain["beta"].std(),3))
-        + ')$\sigma$+('
+        + ')log $\sigma$+('
         + str(np.round(dfchain["alpha"].mean(),3)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),3))
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
-    xlim=[0, 20], ylim=[0.5, 1.5],
-    xlabel=r"$\sigma$ [km/s]", ylabel=r"$m$",
+    xlim=[0, 1.5], ylim=[-0.2, 0.2],
+    xlabel=r"log $\sigma$ [km/s]", ylabel=r"log $m$",
 )
 
 
 
 
 
-tab2 = ['$m$','$\sigma$',np.round(dfchain["beta"].mean(),2),np.round(dfchain["beta"].std(),2),
+tab2 = ['log $m$','log $\sigma$',np.round(dfchain["beta"].mean(),2),np.round(dfchain["beta"].std(),2),
        np.round(dfchain["alpha"].mean(),2),np.round(dfchain["alpha"].std(),2),
       np.round(pearsonr(X, Y)[0],2),np.round(pearsonr(X, Y)[1],3)]
 tab2
