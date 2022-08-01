@@ -13,11 +13,11 @@ import json
 datapath_names = Path(open("path-name-list.txt", "r").read()).expanduser()
 
 
-samples=pd.read_csv(str(datapath_names) +'//sample-names.csv',header=None)
+samples=pd.read_csv(str(datapath_names) +'//sample-names-pdf.csv',header=None)
 samples
 
 
-Names=pd.read_csv(str(datapath_names) +'//formal-names.csv',header=None)
+Names=pd.read_csv(str(datapath_names) +'//formal-names-pdf.csv',header=None)
 Names
 
 
@@ -50,22 +50,22 @@ for i in range(len(samples)):
     Results[samples[0][i]]['RVhist'] = RVhist
 
 
-fig, axes = plt.subplots(len(samples), 1, figsize=(10, 15), sharex=True)
-#fig, axes = plt.subplots(len(samples), 1, figsize=(8, 10), sharex=True)
+#fig, axes = plt.subplots(len(samples), 1, figsize=(10, 15), sharex=True)
+fig, axes = plt.subplots(len(samples), 1, figsize=(8, 10), sharex=True)
 #fig.suptitle('PDFs')
 
 for i in range(len(samples)):
     sns.histplot(ax=axes[i],data=Results[samples[0][i]],
                  x="RVhist", binwidth=1, element="step", fill=False, label=str(Names[0][i]),  color='k', stat='density')
-    axes[i].text(.05, .65,'$\sigma$ = ' + str(np.round(Results[samples[0][i]].RV.std(),2))+ ' km/s',  color='k', transform=axes[i].transAxes)
-    axes[i].text(.05, .35,'$N_{points}$ = '+ str(Results[samples[0][i]].RV.count()),  color='k', transform=axes[i].transAxes)
+    axes[i].text(.015, .65,'$\sigma$ = ' + str(np.round(Results[samples[0][i]].RV.std(),2))+ ' km/s',  color='k', transform=axes[i].transAxes)
+    axes[i].text(.015, .35,'$N_{points}$ = '+ str(Results[samples[0][i]].RV.count()),  color='k', transform=axes[i].transAxes)
     axes[i].legend()
 
 fig.align_labels()    
 plt.xlim(-40,40)
 plt.xlabel('Radial velocity[km/s]')
 
-#plt.savefig('Imgs//Hist.pdf', bbox_inches='tight')
+plt.savefig('Imgs//Hist.pdf', bbox_inches='tight')
 
 
 get_ipython().system('jupyter nbconvert --to script --no-prompt velocities-distributions.ipynb')

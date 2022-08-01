@@ -209,8 +209,8 @@ bplot.strucfunc_plot(
 LM = {
     'sig2': [result.params['sig2'].value,result.params['sig2'].stderr],
     'r0': [result.params['r0'].value,result.params['r0'].stderr],
-    'm' : ['1','0'],
-    's0': ['0','0'],
+    'm' : [1,0],
+    's0': [0,0],
     'noise' : [result.params['noise'].value,result.params['noise'].stderr]
 }
 
@@ -223,8 +223,8 @@ LM
 MCMC = {
     'sig2': [result_emcee.params['sig2'].value,result_emcee.params['sig2'].stderr],
     'r0': [result_emcee.params['r0'].value,result_emcee.params['r0'].stderr],
-    'm' : ['1','0'],
-    's0': ['0','0'],
+    'm' : [1,0],
+    's0': [0,0],
     'noise' : [result_emcee.params['noise'].value,result_emcee.params['noise'].stderr]
 }
 
@@ -287,8 +287,8 @@ b0s1m = result.params['noise'].value-b0s1[0]
 results_2sig = {
     'sig2': [result.params['sig2'].value,sig2s2p,sig2s2m],
     'r0': [result.params['r0'].value,r0s2p,r0s2m],
-    'm' : ['1','0','0'],
-    's0': ['0','0','0'],
+    'm' : [1,0,0],
+    's0': [0,0,0],
     'noise' : [result.params['noise'].value,b0s2p,b0s2m] 
     
 }
@@ -300,8 +300,8 @@ results_2sig
 results_1sig = {
     'sig2': [result.params['sig2'].value,sig2s1p,sig2s1m],
     'r0': [result.params['r0'].value,r0s1p,r0s1m],
-    'm' : ['1','0','0'],
-    's0': ['0','0','0'],
+    'm' : [1,0,0],
+    's0': [0,0,0],
     'noise' : [result.params['noise'].value,b0s1p,b0s1m] 
     
 }
