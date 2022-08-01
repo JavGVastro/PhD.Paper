@@ -85,7 +85,7 @@ plt.figure(1)
 plt.imshow(dataI, cmap='inferno')
 
 cbar = plt.colorbar()
-#plt.clim(225,350)
+plt.clim(0.0,0.7)
 cbar.set_label(' ', rotation=270, labelpad=15)  
 
 ax.set_xlabel('X')
