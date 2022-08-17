@@ -401,7 +401,12 @@ xgrid = np.linspace(vmin, vmax, 200)
 fig, ax = plt.subplots(figsize=(10, 10))
 
 ax.errorbar(X, Y, xerr=Xe, yerr=Ye, ls=" ", elinewidth=0.4, alpha=1.0, c="k")
-ax.scatter(X, Y, marker=".", s=20/np.hypot(Xe, Ye))
+
+marker=itertools.cycle(('o','o','o','o','s','^','s','^','^'))
+#for i in [0,1,2,3,4,6,8]:
+for i in range(len(samples)):
+    ax.scatter(X[i], Y[i], marker=next(marker), s=250,zorder=5, c ='k', alpha=0.5)
+
 # The original fit
 ax.plot(xgrid, dfchain["alpha"].mean() + xgrid*dfchain["beta"].mean(), 
         '-', c="k")
@@ -597,8 +602,10 @@ fig, ax = plt.subplots(figsize=(10, 10))
 # The original fit
 ax.plot(xgrid, dfchain["alpha"].mean() + xgrid*dfchain["beta"].mean(), 
         '-', c="k")
+
+sigma=1.0
 for samp in lm.chain[::25]:
-    if ((dfchain["beta"].mean()-1.0*dfchain["beta"].std() )< samp["beta"] < (1.0*dfchain["beta"].std()+dfchain["beta"].mean())) &        ((dfchain["alpha"].mean()-1.0*dfchain["alpha"].std() )< samp["alpha"] < (1.0*dfchain["alpha"].std()+dfchain["alpha"].mean()) ):
+    if ((dfchain["beta"].mean()-sigma*dfchain["beta"].std() )< samp["beta"] < (sigma*dfchain["beta"].std()+dfchain["beta"].mean())) &        ((dfchain["alpha"].mean()-sigma*dfchain["alpha"].std() )< samp["alpha"] < (sigma*dfchain["alpha"].std()+dfchain["alpha"].mean()) ):
         ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
             '-', c="r",alpha=0.15, lw=0.35,zorder=0)
     
@@ -886,14 +893,14 @@ for samp in lm.chain[::25]:
 ax.plot(xgrid,xgrid*1.04+8.15,linestyle='dashed',color='k', label= 'Lagrois & Joncas (2011)',zorder=1)
 
     
-ax.text(.05, .95,r"$ \langle \sigma_{los} \rangle $ = ("  
+ax.text(.30, .10,r"$ \langle \sigma_{los} \rangle $ = ("  
         + str(np.round(dfchain["beta"].mean(),3)) + '$\pm$' + str(np.round(dfchain["beta"].std(),3))
         + ')$\sigma_{pos}$ +('
         + str(np.round(dfchain["alpha"].mean(),3)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),3))
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
-    xlim=[0, 20], ylim=[5, 25],
+    xlim=[0, 20], ylim=[0, 25],
     xlabel=r"$\sigma_{pos}$[km/s]", ylabel=r"$ \langle \sigma_{los} \rangle $ [km/s]",
 )
 
