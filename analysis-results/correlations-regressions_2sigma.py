@@ -255,7 +255,7 @@ logdata
 
 # Make the label text bigger on the figures
 
-sns.set_context("talk")
+sns.set_context("talk", font_scale=1.25)
 
 
 selected_vars = [ "log L [pc]","log L(H) [erg s^-1]", "log Dist [kpc]", "m", "log r0 [pc]", "log sig [km/s]", "log siglos [km/s]"]
@@ -380,7 +380,7 @@ Y=np.log10(Y)
 lm = linmix.LinMix(X, Y, Xe, Ye, K=2)
 
 
-lm.run_mcmc()
+lm.run_mcmc(silent=True)
 
 
 dfchain = pd.DataFrame.from_records(
@@ -443,7 +443,7 @@ X, Xe, Y, Ye = [logdata[_] for _ in ['log r0 [pc]', 'r0er','log sig [km/s]', 'si
 
 lm = linmix.LinMix(X, Y, Xe, Ye, K=2)
 
-lm.run_mcmc()
+lm.run_mcmc(silent=True)
 
 
 dfchain = pd.DataFrame.from_records(
@@ -511,7 +511,7 @@ Y=np.log10(Y)
 lm = linmix.LinMix(X, Y, Xe, Ye, K=2)
 
 
-lm.run_mcmc()
+lm.run_mcmc(silent=True)
 
 
 dfchain = pd.DataFrame.from_records(
@@ -573,7 +573,7 @@ tab2
 
 X, Xe, Y, Ye = [logdata[_] for _ in ['log L [pc]', 'Ler [pc]','log r0 [pc]', 'r0er']]
 lm = linmix.LinMix(X, Y, Xe, Ye, K=2)
-lm.run_mcmc()
+lm.run_mcmc(silent=True)
 
 
 dfchain = pd.DataFrame.from_records(
@@ -589,7 +589,7 @@ pearsonr(X, Y)
 pd.DataFrame({"X": X, "Xe": Xe, "Y": Y, "Ye": Ye}).describe()
 
 
-len(lm.chain[::150])
+len(lm.chain[::100])
 
 
 vmin, vmax = -0.5, 3
@@ -603,11 +603,16 @@ fig, ax = plt.subplots(figsize=(10, 10))
 ax.plot(xgrid, dfchain["alpha"].mean() + xgrid*dfchain["beta"].mean(), 
         '-', c="k")
 
-sigma=1.0
-for samp in lm.chain[::25]:
-    if ((dfchain["beta"].mean()-sigma*dfchain["beta"].std() )< samp["beta"] < (sigma*dfchain["beta"].std()+dfchain["beta"].mean())) &        ((dfchain["alpha"].mean()-sigma*dfchain["alpha"].std() )< samp["alpha"] < (sigma*dfchain["alpha"].std()+dfchain["alpha"].mean()) ):
-        ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
-            '-', c="r",alpha=0.15, lw=0.35,zorder=0)
+#sigma=1.0
+#for samp in lm.chain[::25]:
+#    if ((dfchain["beta"].mean()-sigma*dfchain["beta"].std() )< samp["beta"] < (sigma*dfchain["beta"].std()+dfchain["beta"].mean())) & \
+#       ((dfchain["alpha"].mean()-sigma*dfchain["alpha"].std() )< samp["alpha"] < (sigma*dfchain["alpha"].std()+dfchain["alpha"].mean()) ):
+#        ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
+#'-', c="r",alpha=0.15, lw=0.35,zorder=0)
+ 
+for samp in lm.chain[::100]:
+    ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
+        '-', c="r", alpha=0.15, lw=0.35,zorder=0)
     
 ax.errorbar(X, Y, xerr=Xe, yerr=Ye, ls=" ", elinewidth=0.4, alpha=1.0, c="k",zorder=6)
 
@@ -618,14 +623,14 @@ for i in range(len(samples)):
     ax.scatter(X[i], Y[i], marker=next(marker), s=250,zorder=5, c ='k', alpha=0.50)
     
 ax.text(.05, .95,'log $r_0$ = (' 
-        + str(np.round(dfchain["beta"].mean(),3)) + '$\pm$' + str(np.round(dfchain["beta"].std(),3))
-        + ')log $D$ +('
-        + str(np.round(dfchain["alpha"].mean(),3)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),3))
+        + str(np.round(dfchain["beta"].mean(),2)) + '$\pm$' + str(np.round(dfchain["beta"].std(),2))
+        + ')log $D_{HII}$ +('
+        + str(np.round(dfchain["alpha"].mean(),2)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),2))
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
     xlim=[0.5, 3], ylim=[-1.5, 1.5],
-    xlabel=r"log $D$ [pc]", ylabel=r"log $r_0$ [pc]",
+    xlabel=r"log $D_{HII}$ [pc]", ylabel=r"log $r_0$ [pc]",
 )
 
 plt.savefig('Imgs//corr-rvsS.pdf', bbox_inches='tight')
@@ -681,15 +686,21 @@ for i in range(len(samples)):
 # The original fit
 ax.plot(xgrid, dfchain["alpha"].mean() + xgrid*dfchain["beta"].mean(), 
         '-', c="k")
-for samp in lm.chain[::25]:
-    if ((dfchain["beta"].mean()-1.0*dfchain["beta"].std() )< samp["beta"] < (1.0*dfchain["beta"].std()+dfchain["beta"].mean())) &        ((dfchain["alpha"].mean()-1.0*dfchain["alpha"].std() )< samp["alpha"] < (1.0*dfchain["alpha"].std()+dfchain["alpha"].mean()) ):
-        ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
-            '-', c="r",alpha=0.15, lw=0.35,zorder=0)
+
+#for samp in lm.chain[::25]:
+#    if ((dfchain["beta"].mean()-1.0*dfchain["beta"].std() )< samp["beta"] < (1.0*dfchain["beta"].std()+dfchain["beta"].mean())) & \
+#       ((dfchain["alpha"].mean()-1.0*dfchain["alpha"].std() )< samp["alpha"] < (1.0*dfchain["alpha"].std()+dfchain["alpha"].mean()) ):
+#        ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
+#            '-', c="r",alpha=0.15, lw=0.35,zorder=0)
+ 
+for samp in lm.chain[::100]:
+    ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
+        '-', c="r", alpha=0.15, lw=0.35,zorder=0)    
     
 ax.text(.05, .95,r'log $\sigma$ = (' 
-        + str(np.round(dfchain["beta"].mean(),3)) + '$\pm$' + str(np.round(dfchain["beta"].std(),3))
+        + str(np.round(dfchain["beta"].mean(),2)) + '$\pm$' + str(np.round(dfchain["beta"].std(),2))
         + r')log $L(\mathrm{H \alpha})$ +('
-        + str(np.round(dfchain["alpha"].mean(),3)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),3))
+        + str(np.round(dfchain["alpha"].mean(),2)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),2))
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
@@ -755,7 +766,7 @@ ax.text(.05, .95,'log L(H) = ('
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
-    ylim=[37, 39.75], xlim=[0.2, 1.35],
+    ylim=[37, 40.5], xlim=[0.2, 1.35],
     ylabel=r"log L(H) [erg s^-1]", xlabel=r"log $\sigma$ [km/s]",
 )
 
@@ -777,7 +788,7 @@ Y=np.log10(Y)
 lm = linmix.LinMix(X, Y, Xe, Ye, K=2)
 
 
-lm.run_mcmc()
+lm.run_mcmc(silent=True)
 
 
 dfchain = pd.DataFrame.from_records(
@@ -843,7 +854,7 @@ plt.errorbar(X, Y, xerr=Xe, yerr=Ye, ls="", elinewidth=0.4, alpha=1.0, c="k")
 lm = linmix.LinMix(X, Y, Xe, Ye, K=2)
 
 
-lm.run_mcmc()
+lm.run_mcmc(silent=True)
 
 
 dfchain = pd.DataFrame.from_records(
@@ -883,20 +894,25 @@ for i in range(len(samples)):
 # The original fit
 ax.plot(xgrid, dfchain["alpha"].mean() + xgrid*dfchain["beta"].mean(), 
         '-', c="k")
-for samp in lm.chain[::25]:
-    if ((dfchain["beta"].mean()-1.0*dfchain["beta"].std() )< samp["beta"] < (1.0*dfchain["beta"].std()+dfchain["beta"].mean())) &        ((dfchain["alpha"].mean()-1.0*dfchain["alpha"].std() )< samp["alpha"] < (1.0*dfchain["alpha"].std()+dfchain["alpha"].mean()) ):
-        ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
-            '-', c="r",alpha=0.15, lw=0.35,zorder=0)
-    
+
+#for samp in lm.chain[::25]:
+#    if ((dfchain["beta"].mean()-1.0*dfchain["beta"].std() )< samp["beta"] < (1.0*dfchain["beta"].std()+dfchain["beta"].mean())) & \
+#       ((dfchain["alpha"].mean()-1.0*dfchain["alpha"].std() )< samp["alpha"] < (1.0*dfchain["alpha"].std()+dfchain["alpha"].mean()) ):
+#        ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
+#            '-', c="r",alpha=0.15, lw=0.35,zorder=0)
+ 
+for samp in lm.chain[::100]:
+    ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
+        '-', c="r", alpha=0.15, lw=0.35,zorder=0)    
 #ax.plot(xgrid,xgrid*1+0,linestyle='solid',color='gray',zorder=0)
 #ax.plot(xgrid,xgrid*2+0,linestyle='solid',color='gray',zorder=0)
 ax.plot(xgrid,xgrid*1.04+8.15,linestyle='dashed',color='k', label= 'Lagrois & Joncas (2011)',zorder=1)
 
     
-ax.text(.30, .10,r"$ \langle \sigma_{los} \rangle $ = ("  
-        + str(np.round(dfchain["beta"].mean(),3)) + '$\pm$' + str(np.round(dfchain["beta"].std(),3))
+ax.text(.25, .125,r"$ \langle \sigma_{los} \rangle $ = ("  
+        + str(np.round(dfchain["beta"].mean(),2)) + '$\pm$' + str(np.round(dfchain["beta"].std(),2))
         + ')$\sigma_{pos}$ +('
-        + str(np.round(dfchain["alpha"].mean(),3)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),3))
+        + str(np.round(dfchain["alpha"].mean(),2)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),2))
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
@@ -1024,5 +1040,5 @@ Corr1.to_latex('latex-files/scaling-relations.tex', escape=False, caption='Regre
 print("--- %s seconds ---" % (time.time()-start_time))
 
 
-get_ipython().system('jupyter nbconvert --to script --no-prompt correlations-regressions.ipynb')
+get_ipython().system('jupyter nbconvert --to script --no-prompt correlations-regressions_2sigma.ipynb')
 

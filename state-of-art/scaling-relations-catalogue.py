@@ -41,7 +41,7 @@ from logerr import logify
 # Load Table with physical properties
 
 physical_data = pd.read_table('property-regions-data.csv', delimiter=',')
-physical_data = physical_data.drop(physical_data .index[[5,7]])
+#physical_data = physical_data.drop(physical_data .index[[5,7]])
 
 
 # Path names
@@ -366,14 +366,66 @@ plt.legend()
 
 
 
+globalL= pd.concat([Moiseev.L, Ostin.L.dropna(),Blasco.L.dropna(),Rozas.L.dropna(),Ars.L.dropna(),Wis.L.dropna(),Gal.L.dropna()], axis=0)
+globalS= pd.concat([Moiseev.sig, Ostin.sig.dropna(),Blasco.sig.dropna(),10**Rozas.sig.dropna(),10**Ars.sig.dropna(),Wis.sig.dropna(),Gal.sig.dropna()],  axis=0)
+GL=np.concatenate((np.array(globalL), np.array(logdata['log L(H) [erg s^-1]'])))
+GS=np.concatenate((np.array(globalS), np.array(10**(logdata['log siglos [km/s]']))))
+
+
+GSer = (GS*.05)/GS
+
+
+GLer = (GL*.05)/GL
+
+
+X, Xe, Y, Ye = [GL, GLer, np.log10(GS), GSer]
+lm = linmix.LinMix(X, Y, Xe, Ye, K=2)
+lm.run_mcmc()
 
 
 
 
+dfchain = pd.DataFrame.from_records(
+    lm.chain.tolist(), 
+    columns=lm.chain.dtype.names
+)
+#dfchain
 
 
+pearsonr(X, Y)
 
 
+a = pearsonr(X, Y)
+
+
+pd.DataFrame({"X": X, "Xe": Xe, "Y": Y, "Ye": Ye}).describe()
+
+
+vmin, vmax = 36, 44
+xgrid = np.linspace(vmin, vmax, 200)
+
+
+fig, ax = plt.subplots(figsize=(10, 10))
+
+ax.errorbar(X, Y, xerr=Xe, yerr=Ye, ls=" ", elinewidth=0.4, alpha=1.0, c="k")
+ax.scatter(X, Y, marker=".", s=20/np.hypot(Xe, Ye))
+# The original fit
+ax.plot(xgrid, dfchain["alpha"].mean() + xgrid*dfchain["beta"].mean(), 
+        '-', c="k")
+for samp in lm.chain[::20]:
+    ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
+        '-', c="r", alpha=0.2, lw=0.1)
+    
+ax.text(.05, .95,'log $\sigma$ = (' 
+        + str(np.round(dfchain["beta"].mean(),3)) + '$\pm$' + str(np.round(dfchain["beta"].std(),3))
+        + ')log L(H)+('
+        + str(np.round(dfchain["alpha"].mean(),3)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),3))
+        + ')',  color='k', transform=ax.transAxes)
+    
+ax.set(
+#    xlim=[-0.2, 0.8], ylim=[-0.2, 0.8],
+    xlabel=r"log L(H) [erg s^-1]", ylabel=r"log $\sigma$ [km/s]",
+)
 
 
 
