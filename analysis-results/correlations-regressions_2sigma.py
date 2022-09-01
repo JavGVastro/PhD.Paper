@@ -255,7 +255,7 @@ logdata
 
 # Make the label text bigger on the figures
 
-sns.set_context("talk", font_scale=1.25)
+sns.set_context("talk", font_scale=1.2)
 
 
 selected_vars = [ "log L [pc]","log L(H) [erg s^-1]", "log Dist [kpc]", "m", "log r0 [pc]", "log sig [km/s]", "log siglos [km/s]"]
@@ -653,7 +653,7 @@ X, Xe, Y, Ye = [logdata[_] for _ in ['log L(H) [erg s^-1]', 'LHaer','log sig [km
 lm = linmix.LinMix(X, Y, Xe, Ye, K=2)
 
 
-lm.run_mcmc()
+lm.run_mcmc(silent=True)
 
 
 dfchain = pd.DataFrame.from_records(
@@ -907,6 +907,7 @@ for samp in lm.chain[::100]:
 #ax.plot(xgrid,xgrid*1+0,linestyle='solid',color='gray',zorder=0)
 #ax.plot(xgrid,xgrid*2+0,linestyle='solid',color='gray',zorder=0)
 ax.plot(xgrid,xgrid*1.04+8.15,linestyle='dashed',color='k', label= 'Lagrois & Joncas (2011)',zorder=1)
+ax.plot(xgrid,xgrid*2+7,linestyle='dotted',color='k', label= 'Lagrois & Joncas (2011)',zorder=1)
 
     
 ax.text(.25, .125,r"$ \langle \sigma_{los} \rangle $ = ("  
