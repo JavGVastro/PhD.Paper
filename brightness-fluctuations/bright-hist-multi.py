@@ -99,7 +99,7 @@ fig, axes = plt.subplot_mosaic(
     sharex=True,
     sharey=True,
 )
-fig.set_size_inches(10, 8)
+fig.set_size_inches(8, 6)
 resamples = [2, 4, 8, 16, 32, 64]
 sigS_vals = []
 esigS_vals = []
@@ -156,7 +156,7 @@ for image, ax in zip(images, axes.values()):
     )
     ax.text(
         0.97,
-        0.97,
+        0.95,
         biglabel,
         ha="right",
         transform=ax.transAxes,
@@ -180,8 +180,8 @@ for image, ax in zip(images, axes.values()):
     rat_vals.append(sigpos_los)
     erat_vals.append(erat)
 
-axes["g"].set_xlabel(r"Surface brightness: $\ln (S / S_0)$")
-axes["a"].set_ylabel("Probability density")
+axes["g"].set_xlabel("Surface brightness:\n" + r"$\ln (S / S_0)$")
+axes["a"].set_ylabel("Probability\ndensity")
 
 for label, ax in axes.items():
     ax.text(0.03, 0.97, label, transform=ax.transAxes, va="top", fontweight="bold")
@@ -194,9 +194,11 @@ axx.scatter(sigS_vals, rat_vals, color="r")
 axx.text(0.02, 0.97, "h", transform=axx.transAxes, va="top", fontweight="bold")
 axx.set_xlim(0.0, None)
 axx.set_ylim(0.0, None)
-axx.set_xlabel(f"RMS brightness fluctuation: ${Sfluct_label}$")
+axx.set_xlabel(f"RMS brightness fluctuation:\n${Sfluct_label}$")
 axx.set_ylabel(r"$\sigma_\mathrm{pos} / \sigma_\mathrm{los}$")
 
-fig.tight_layout()
+fig.subplots_adjust(0.16, 0.2, 0.97, 0.98, wspace=0.1, hspace=0.1)
+# fig.tight_layout(rect=(0.1, 0.2, 1.1, 1.2), pad=0.0)
+
 fig.savefig(plotfile)
 print(plotfile, end="")
