@@ -1,0 +1,29 @@
+* Finding the PDF of the brightness fluctuations
+For the discussion of the sigma POS sigma LOS correlation, we want to see whether the emissivity fluctuations  combined with radial expansion might be contributing.
+
+If this is the case, then sigma(POS) / sigma(LOS) ought to increase as the width of the emissivity distribution increases.
+
+In Arthur et al (2016) we showed that the emissivity sigma is about twice the surface brightness sigma, with the later being estimated from the Ha maps.
+
+So we will calculate it for 30 Doradus in order to compare with Orion
+
+
+** PDF of Ha map for 30 Dor
+:PROPERTIES:
+:ID:       B262582F-C826-4F60-8201-36D7FA11506E
+:END:
+- This is based on what I did for the Orion project
+  - See [[file:../../../OrionStats/NewMoments/turb-velocity-stats.org]]
+- Python program [[file:bright-hist-multi.py]] 
+
+
+
+#+begin_src sh :results file
+python bright-hist-multi.py
+#+end_src
+
+#+RESULTS:
+[[file:bright-hist-multi.pdf]]
+
+
+
