@@ -102,6 +102,7 @@ fig, axes = plt.subplot_mosaic(
 fig.set_size_inches(10, 8)
 resamples = [2, 4, 8, 16, 32, 64]
 sigS_vals = []
+esigS_vals = []
 rat_vals = []
 erat_vals = []
 Sfluct_label = r"\langle \delta S^2 \rangle^{1/2} / S_0"
@@ -137,6 +138,7 @@ for image, ax in zip(images, axes.values()):
     core = H > 0.01
     g = fitter(g, x, H)
     sigS = np.sqrt(np.exp(g.stddev.value ** 2) - 1)
+    esigS = 0.5 * np.sqrt(np.exp(g.mean.value ** 2) - 1)
     xx = np.linspace(smin, smax, 200)
     ax.plot(xx, g(xx), "orange", lw=2)
     # Calculate equivalent fractional RMS width in linear brightness space
@@ -173,6 +175,8 @@ for image, ax in zip(images, axes.values()):
     erat = np.hypot(epos, elos) * sigpos_los
 
     sigS_vals.append(sigS)
+    esigS_vals.append(esigS)
+
     rat_vals.append(sigpos_los)
     erat_vals.append(erat)
 
@@ -183,7 +187,9 @@ for label, ax in axes.items():
     ax.text(0.03, 0.97, label, transform=ax.transAxes, va="top", fontweight="bold")
 
 axx = fig.add_subplot(3, 5, (11, 13))
-axx.errorbar(sigS_vals, rat_vals, yerr=erat_vals, fmt="none", color="r")
+axx.errorbar(
+    sigS_vals, rat_vals, xerr=esigS_vals, yerr=erat_vals, fmt="none", color="r"
+)
 axx.scatter(sigS_vals, rat_vals, color="r")
 axx.text(0.02, 0.97, "h", transform=axx.transAxes, va="top", fontweight="bold")
 axx.set_xlim(0.0, None)
