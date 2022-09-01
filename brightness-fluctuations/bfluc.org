@@ -27,3 +27,7 @@ python bright-hist-multi.py
 
 
 
+** Results
+- For the majority of sources, there is not much evidence of any relation
+- However, 30 Dor has significantly higher brightness fluctuations and also a significantly higher sigma ratio
+

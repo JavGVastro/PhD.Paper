@@ -104,6 +104,7 @@ resamples = [2, 4, 8, 16, 32, 64]
 sigS_vals = []
 rat_vals = []
 erat_vals = []
+Sfluct_label = r"\langle \delta S^2 \rangle^{1/2} / S_0"
 for image, ax in zip(images, axes.values()):
     s = fits.open(DATADIR / image.fitsfile)[image.ihdu].data.astype(float)
     m = (s > image.fmin) & np.isfinite(s)
@@ -148,14 +149,18 @@ for image, ax in zip(images, axes.values()):
     biglabel = (
         image.name
         + "\n"
-        + r"$\sigma_{S/S_0} "
-        + f"= {sigS:.2f}$"
+        + f"${Sfluct_label} = {sigS:.2f}$"
         # + f", ${eps_rms:.2f}$"
     )
     ax.text(smin + 0.1, 1.0, biglabel, bbox=whitebox, fontsize="small")
+
+    # Value of the sigma ratio
     sigpos_los = np.sqrt(image.sig2pos[0]) / image.siglos[0]
+    # Relative error in sig_pos
     epos = 0.5 * image.sig2pos[1] / image.sig2pos[0]
+    # Relative error in sig_los
     elos = image.siglos[1] / image.siglos[0]
+    # Absolute error in ratio
     erat = np.hypot(epos, elos) * sigpos_los
 
     sigS_vals.append(sigS)
@@ -170,7 +175,7 @@ axx.errorbar(sigS_vals, rat_vals, yerr=erat_vals, fmt="none", color="r")
 axx.scatter(sigS_vals, rat_vals, color="r")
 axx.set_xlim(0.0, None)
 axx.set_ylim(0.0, None)
-axx.set_xlabel(r"$\sigma_{S/S_0}$")
+axx.set_xlabel(f"Surface brightness fluctuations: ${Sfluct_label}$")
 axx.set_ylabel(r"$\sigma_\mathrm{pos} / \sigma_\mathrm{los}$")
 
 fig.tight_layout()
