@@ -152,7 +152,16 @@ for image, ax in zip(images, axes.values()):
         + f"${Sfluct_label} = {sigS:.2f}$"
         # + f", ${eps_rms:.2f}$"
     )
-    ax.text(smin + 0.1, 1.0, biglabel, bbox=whitebox, fontsize="small")
+    ax.text(
+        0.97,
+        0.97,
+        biglabel,
+        ha="right",
+        transform=ax.transAxes,
+        va="top",
+        bbox=whitebox,
+        fontsize="small",
+    )
 
     # Value of the sigma ratio
     sigpos_los = np.sqrt(image.sig2pos[0]) / image.siglos[0]
@@ -167,15 +176,19 @@ for image, ax in zip(images, axes.values()):
     rat_vals.append(sigpos_los)
     erat_vals.append(erat)
 
-axes["g"].set_xlabel(r"Surface brightness: $\ln\, (S / S_0)$")
+axes["g"].set_xlabel(r"Surface brightness: $\ln (S / S_0)$")
 axes["a"].set_ylabel("Probability density")
+
+for label, ax in axes.items():
+    ax.text(0.03, 0.97, label, transform=ax.transAxes, va="top", fontweight="bold")
 
 axx = fig.add_subplot(3, 5, (11, 13))
 axx.errorbar(sigS_vals, rat_vals, yerr=erat_vals, fmt="none", color="r")
 axx.scatter(sigS_vals, rat_vals, color="r")
+axx.text(0.02, 0.97, "h", transform=axx.transAxes, va="top", fontweight="bold")
 axx.set_xlim(0.0, None)
 axx.set_ylim(0.0, None)
-axx.set_xlabel(f"Surface brightness fluctuations: ${Sfluct_label}$")
+axx.set_xlabel(f"RMS brightness fluctuation: ${Sfluct_label}$")
 axx.set_ylabel(r"$\sigma_\mathrm{pos} / \sigma_\mathrm{los}$")
 
 fig.tight_layout()
