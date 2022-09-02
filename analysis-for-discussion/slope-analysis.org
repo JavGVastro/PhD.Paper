@@ -1,0 +1,41 @@
+* Distribution of m values
+- It looks like the average value of the slope is about 1
+- We want to test if the data are consistent with *all* the slopes being 1
+- So we look at the distribution of ~(m - 1) / err~
+  - where we take the ~err~ on  the appropriate side from Table 3 of the paper
+  - that is, the + value for m < 1 and the - value for m > 1
+- We find that the mean is 0.08, so close enough to zero
+  - remember that this gets multiplied by the mean err, which is 0.134
+  - so that would give a weighted mean m of 1 + 0.077 0.134 = 1.01, which is /extremely/ close to 1 (compare the unweighted mean of 1.03)
+- The ~sdev~ is 1.64, whereas we would expect 1 if all the dispersion were due to the errors
+  - But what is the expected distribution of ~sdev~ for a sample of 8 points drawn from a Gaussian?
+  - It seems that (N - 1) S^2 should follow a \chi^2 distro with N - 1 degrees of freedom
+    - where S is the sample standard deviation in units of the true standard deviation
+    - See https://online.stat.psu.edu/stat414/lesson/26/26.3
+    - So we can calculate the p-value for \chi^2 = 7 1.638 = 11.55 and d.o.f = 7, which gives p = 0.116
+    - In other words, not very significant in either direction
+
+|     m |   err | (m - 1)/err |      |
+|-------+-------+-------------+------|
+|  0.85 |  0.08 |      -1.875 |      |
+|  0.77 |  0.20 |      -1.150 |      |
+|  1.38 |  0.15 |       2.533 |      |
+|  0.95 |  0.05 |      -1.000 |      |
+|  1.16 |  0.17 |       0.941 |      |
+|  1.02 |  0.22 |       0.091 |      |
+|  1.07 |  0.04 |       1.750 |      |
+|  0.81 |  0.10 |      -1.900 |      |
+|  1.26 |  0.20 |       1.300 |      |
+|-------+-------+-------------+------|
+| 1.030 | 0.134 |       0.077 | mean |
+|       |       |       1.638 | sdev |
+#+TBLFM: $3=($1 - 1)/$2;f3::@11$1..@11$3=vmean(@I..@II);f3::@12$3=vsdev(@I..@II);f3
+
+
+
+
+
+
+
+
+
