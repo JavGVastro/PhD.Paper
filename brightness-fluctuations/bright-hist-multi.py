@@ -186,12 +186,33 @@ axes["a"].set_ylabel("Probability\ndensity")
 for label, ax in axes.items():
     ax.text(0.03, 0.97, label, transform=ax.transAxes, va="top", fontweight="bold")
 
+axes["c"].text(
+    0.5,
+    0.4,
+    "**",
+    transform=axes["c"].transAxes,
+    va="center",
+    ha="center",
+    fontweight="bold",
+    fontsize="x-large",
+)
+
 axx = fig.add_subplot(3, 5, (11, 13))
 axx.errorbar(
     sigS_vals, rat_vals, xerr=esigS_vals, yerr=erat_vals, fmt="none", color="r"
 )
 axx.scatter(sigS_vals, rat_vals, color="r")
 axx.text(0.02, 0.97, "h", transform=axx.transAxes, va="top", fontweight="bold")
+axx.text(
+    1.2,
+    0.6,
+    "**",
+    va="center",
+    ha="center",
+    fontweight="bold",
+    fontsize="x-large",
+    color="k",
+)
 axx.set_xlim(0.0, None)
 axx.set_ylim(0.0, None)
 axx.set_xlabel(f"RMS brightness fluctuation:\n${Sfluct_label}$")
