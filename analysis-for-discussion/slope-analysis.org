@@ -12,7 +12,7 @@
   - It seems that (N - 1) S^2 should follow a \chi^2 distro with N - 1 degrees of freedom
     - where S is the sample standard deviation in units of the true standard deviation
     - See https://online.stat.psu.edu/stat414/lesson/26/26.3
-    - So we can calculate the p-value for \chi^2 = 7 1.638 = 11.55 and d.o.f = 7, which gives p = 0.116
+    - So we can calculate the p-value for \chi^2 = 8 1.638 = 13.1 and d.o.f = 8, which gives p = 0.108
     - In other words, not very significant in either direction
 
 |     m |   err | (m - 1)/err |      |
