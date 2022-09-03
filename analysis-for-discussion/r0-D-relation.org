@@ -1,0 +1,28 @@
+* Correlation of r0 with D
+- If we *assume* that the relation is linear, then we can get a better estimate of the average ratio and its spread, which should be tighter than the mcmc results
+- From the following table I get an unweighted average of 0.12 +/- 0.01
+
+| Name     |   D |  eD |    r0 |   er0 |  r0/D | erat |
+|----------+-----+-----+-------+-------+-------+------|
+| Orion    |   5 | 0.5 | 0.068 | 0.006 | 0.014 | 0.13 |
+| Lagoon   |  25 | 2.5 |   1.0 |   0.2 | 0.040 | 0.22 |
+| Carina   | 200 |  20 |   0.5 |   0.1 | 0.003 | 0.22 |
+| 30 Dor   | 370 |  37 |   4.0 |   1.0 | 0.011 | 0.27 |
+| NGC 346  | 220 |  22 |   2.4 |   0.3 | 0.011 | 0.16 |
+| Hubble X | 160 |  16 |   4.0 |   0.5 | 0.025 | 0.16 |
+| Hubble V | 130 |  13 |   3.6 |   0.8 | 0.028 | 0.24 |
+| NGC 595  | 400 |  40 |    11 |   1.0 | 0.028 | 0.14 |
+| NGC 604  | 400 |  40 |    12 |   4.0 | 0.030 | 0.35 |
+|----------+-----+-----+-------+-------+-------+------|
+|          |     |     |       |       | 0.021 | mean |
+|          |     |     |       |       | 0.012 | sdev |
+#+TBLFM: $6=$4/$2;f3::$7=hypot($3/$2, $5/$4);f2::@11$6=vmean(@I..@II);f3::@11$7=mean::@12$6=vsdev(@I..@II);f3::@12$7=sdev
+
+
+
+
+
+
+
+
+
