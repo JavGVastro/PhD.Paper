@@ -251,6 +251,7 @@ fig, ax=plt.subplots(figsize=(10,10))
 #ax.axhline(39.2 + 0.32, color="b", linestyle="dashed")
 
 plt.scatter(np.log10(TM81.sig),TM81.L+TM81.C,label='TM 81',marker='.',alpha=0.85,color='orange',s=200)
+plt.scatter(np.log10(Hp86.sig),Hp86.L-0.45,label='Hp 86',marker='.',alpha=0.65,color='pink',s=200)
 plt.scatter(np.log10(M87.sig),M87.L+M87.C,label='M 87',marker='.',alpha=0.65,color='blue',s=200)
 plt.scatter(Fer.sig,Fer.L,label='F 18',marker='.',alpha=0.75,color='red',s=200)
 #plt.scatter(Z,Y1b,label='TM 81',marker='o',alpha=0.65,color='purple',s=200)
@@ -260,8 +261,8 @@ marker=itertools.cycle(('o','o','o','s','s','^','^','x','x'))
 #for i in range(len(L_data)):
 #    ax.scatter(Z[i], Y2b[i], marker=next(marker),alpha=0.5,color='green',s=100)
     
-for i in range(len(L_data)):
-    ax.scatter(Z[i], Y1b[i], marker=next(marker),alpha=0.5,color='purple',s=200)
+#for i in range(len(L_data)):
+#    ax.scatter(Z[i], Y1b[i], marker=next(marker),alpha=0.5,color='purple',s=200)
     
 
 ax.set(ylabel='Log(L$_{Hβ}$) [erg/s]', xlabel='log $σ_{los}$ [km s$^{-1}$]')
@@ -280,28 +281,43 @@ plt.legend()
 
 fig, ax=plt.subplots(figsize=(10,10))
 
+ax.axvline(Z[8], color='k', linestyle="dashed",alpha=0.5,linewidth=0.75)
+ax.axvline(Z[5], color='k', linestyle="dashed",alpha=0.5,linewidth=0.75)
+ax.axvline(Z[6], color='k', linestyle="dashed",alpha=0.5,linewidth=0.75)
+ax.axvline(Z[7], color='k', linestyle="dashed",alpha=0.5,linewidth=0.75)
+
 #604
 ax.scatter(np.log10(TM81.sig[0]),TM81.L[0]+TM81.C[0],label='TM81',color = 'orange')
+ax.scatter(np.log10(Hp86.sig[0]),Hp86.L[0]-0.45,label='Hp86',color = 'pink')
 ax.scatter(np.log10(M87.sig[0]),M87.L[0]+M87.C[0],label='M87',color = 'blue')
 ax.scatter(Fer.sig[10],Fer.L[10],label='Fer',color = 'red')
 ax.errorbar(Fer.sig[10], Fer.L[10], xerr=Fer.sigerr[10], yerr=Fer.err[10], ls=" ", elinewidth=0.5, alpha=1.0, c="r")
-ax.scatter(np.log10(Hp86.sig[0]),Hp86.L[0]-0.45,label='Hp86',color = 'pink')
-ax.scatter(Z[8], Y1b[8], marker='.',alpha=0.5,color='purple',s=200)
-ax.scatter(Z[8], Y2b[8], marker='.',alpha=0.5,color='green',s=200)
+ax.scatter(Z[8], Y1b[8], marker='.',alpha=0.5,color='purple',s=200,label='K84')
+ax.errorbar(Z[8], Y1b[8], yerr=0.25, ls=" ", elinewidth=0.5, alpha=1.0, c="purple")
+ax.scatter(Z[8], Y2b[8], marker='.',alpha=0.5,color='green',s=200,label='B02')
+#ax.errorbar(Z[8], Y2b[8], yerr=0.25, ls=" ", elinewidth=0.5, alpha=1.0, c="green")
+ax.scatter(Z[8], 38.99, marker='.',alpha=1.0,color='k',s=250)
+ax.errorbar(Z[8], 38.99, yerr=0.08, ls=" ", elinewidth=2.25, alpha=1.0, c='k')
+
 
 #595
 ax.scatter(np.log10(TM81.sig[1]),TM81.L[1]+TM81.C[1],color = 'orange', marker='^')
 ax.scatter(np.log10(M87.sig[1]),M87.L[1]+M87.C[1],color = 'blue', marker='^')
 ax.scatter(np.log10(Hp86.sig[1]),Hp86.L[1]-0.45,color = 'pink', marker='^')
 ax.scatter(Fer.sig[9],Fer.L[9],color = 'red', marker='^')
-ax.errorbar(Fer.sig[9], Fer.L[9], xerr=Fer.sigerr[9], yerr=Fer.err[9], ls=" ", elinewidth=0.5, alpha=1.0, c="r", marker='^')
+ax.errorbar(Fer.sig[9], Fer.L[9], xerr=Fer.sigerr[9], yerr=Fer.err[9], ls=" ", elinewidth=0.75, alpha=1.0, c="r", marker='^')
 ax.scatter(Z[7], Y1b[7], marker='^',alpha=0.5,color='purple')
+ax.errorbar(Z[7], Y1b[7], yerr=0.25, ls=" ", elinewidth=0.75, alpha=1.0, c="purple")
 ax.scatter(Z[7], Y2b[7], marker='^',alpha=0.5,color='green')
+ax.scatter(Z[7], 38.66, marker='^',alpha=1.0,color='k')
+ax.errorbar(Z[7], 38.66, yerr=0.12, ls=" ", elinewidth=2.25, alpha=1.0, c='k')
+
 
 #30Dor
 ax.scatter(np.log10(TM81.sig[17]),TM81.L[17]+TM81.C[17],color = 'orange', marker='s')
 ax.scatter(np.log10(M87.sig[26]),M87.L[26]+M87.C[26],color = 'blue', marker='s')
 ax.scatter(Z[3], Y1b[3], marker='s',alpha=0.5,color='purple')
+ax.errorbar(Z[3], Y1b[3], yerr=0.25, ls=" ", elinewidth=0.75, alpha=1.0, c="purple")
 
 #HX
 ax.scatter(np.log10(TM81.sig[10]),TM81.L[10]+TM81.C[10],color = 'orange', marker='x')
@@ -309,6 +325,10 @@ ax.scatter(np.log10(M87.sig[24]),M87.L[24]+M87.C[24],color = 'blue', marker='x')
 ax.scatter(np.log10(Hp86.sig[40]),Hp86.L[40]-0.45,color = 'pink', marker='x')
 ax.scatter(Z[5], Y2b[5], marker='x',alpha=0.5,color='green')
 ax.scatter(Z[5], Y1b[5], marker='x',alpha=0.5,color='purple')
+ax.errorbar(Z[5], Y1b[5], yerr=0.25, ls=" ", elinewidth=0.75, alpha=1.0, c="purple")
+ax.scatter(Z[5], 37.91, marker='x',alpha=1.0,color='k')
+ax.errorbar(Z[5], 37.91, yerr=0.14, ls=" ", elinewidth=2.25, alpha=1.0, c='k')
+
 
 #HV
 ax.scatter(np.log10(TM81.sig[11]),TM81.L[11]+TM81.C[11],color = 'orange', marker='d')
@@ -316,6 +336,11 @@ ax.scatter(np.log10(M87.sig[25]),M87.L[25]+M87.C[25],color = 'blue', marker='d')
 ax.scatter(np.log10(Hp86.sig[41]),Hp86.L[41]-0.45,color = 'pink', marker='d')
 ax.scatter(Z[6], Y2b[6], marker='d',alpha=0.5,color='green')
 ax.scatter(Z[6], Y1b[6], marker='d',alpha=0.5,color='purple')
+ax.errorbar(Z[6], Y1b[6], yerr=0.25, ls=" ", elinewidth=0.75, alpha=1.0, c="purple")
+ax.scatter(Z[6], 37.96, marker='d',alpha=1.0,color='k')
+ax.errorbar(Z[6], 37.96, yerr=0.14, ls=" ", elinewidth=2.25, alpha=1.0, c='k')
+
+
 
 ax.set(ylabel='Log(L$_{Hβ}$) [erg/s]', xlabel='log $σ_{los}$ [km s$^{-1}$]')
 
@@ -324,9 +349,6 @@ ax.set(
     xlim  = [0.9, 1.5])
 
 plt.legend()
-
-
-Hp86
 
 
 

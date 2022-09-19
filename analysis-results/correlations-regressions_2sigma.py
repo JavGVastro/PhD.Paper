@@ -906,11 +906,12 @@ for samp in lm.chain[::100]:
         '-', c="r", alpha=0.15, lw=0.35,zorder=0)    
 #ax.plot(xgrid,xgrid*1+0,linestyle='solid',color='gray',zorder=0)
 #ax.plot(xgrid,xgrid*2+0,linestyle='solid',color='gray',zorder=0)
-ax.plot(xgrid,xgrid*1.04+8.15,linestyle='dashed',color='k', label= 'Lagrois & Joncas (2011)',zorder=1)
-ax.plot(xgrid,xgrid*2+7,linestyle='dotted',color='k', label= 'Lagrois & Joncas (2011)',zorder=1)
+ax.plot(xgrid,xgrid*1.04+8.15,linestyle='--',color='k', label= 'Lagrois & Joncas (2011)',zorder=1)
+ax.plot(xgrid,xgrid*2,linestyle=':',color='k',zorder=1)
+ax.plot(xgrid,(xgrid**2 + 8**2)**0.5,linestyle='-.',color='k',zorder=1, label= r'$σ_{los} = (σ_{pos}^2+v_{exp}^2)^{1/2}$')
 
     
-ax.text(.25, .125,r"$ \langle \sigma_{los} \rangle $ = ("  
+ax.text(.25, .2,r"$ \langle \sigma_{los} \rangle $ = ("  
         + str(np.round(dfchain["beta"].mean(),2)) + '$\pm$' + str(np.round(dfchain["beta"].std(),2))
         + ')$\sigma_{pos}$ +('
         + str(np.round(dfchain["alpha"].mean(),2)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),2))
