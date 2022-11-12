@@ -173,6 +173,7 @@ s1f = pd.DataFrame(
         "m":m,
         "m+": ms2p,
         "m-": ms2m,
+        "fov": box_size,
        
     }
 )
@@ -206,6 +207,8 @@ data = pd.DataFrame(
        "mer": ms2p,
        "r0 [pc]": r0,
        "r0er": r0s2p,
+       "fov [pc]": box_size,
+        "fover [pc]": np.array(box_size)*0.1,
         
        "siglos [km/s]": physical_data['siglos [km/s]'],
        "sigloser [km/s]": physical_data['sigloser [km/s]'],
@@ -245,6 +248,7 @@ logdata['mer']=(data['mer']/data['m'])*0.434
 logdata['r0er']=(data['r0er']/data['r0 [pc]'])*0.434
 logdata['siger']=(data['siger']/data['sig [km/s]'])*0.434
 logdata['sig2er']=(data['sig2er']/data['sig2 [km/s]'])*0.434
+logdata['fover [pc]']=(data['fover [pc]']/data['fov [pc]'])*0.434
 
 
 logdata
@@ -258,7 +262,7 @@ logdata
 sns.set_context("talk", font_scale=1.2)
 
 
-selected_vars = [ "log L [pc]","log L(H) [erg s^-1]", "log Dist [kpc]", "m", "log r0 [pc]", "log sig [km/s]", "log siglos [km/s]"]
+selected_vars = [ "log L [pc]","log L(H) [erg s^-1]", "log Dist [kpc]", "m", "log r0 [pc]", "log sig [km/s]", "log siglos [km/s]", "log fov [pc]"]
 plotdata = logdata[selected_vars].rename(
     columns={
         # Switch column names to use latex formatting to improve axis labels
@@ -368,6 +372,61 @@ logdata
 
 
 # # Correlation between results 
+
+X, Xe, Y, Ye = [logdata[_] for _ in ['log r0 [pc]', 'r0er','log fov [pc]', 'log fover [pc]']]
+
+
+lm = linmix.LinMix(X, Y, Xe, Ye, K=2)
+
+
+lm.run_mcmc(silent=True)
+
+
+dfchain = pd.DataFrame.from_records(
+    lm.chain.tolist(), 
+    columns=lm.chain.dtype.names
+)
+
+
+pearsonr(X, Y)
+
+
+pd.DataFrame({"X": X, "Xe": Xe, "Y": Y, "Ye": Ye}).describe()
+
+
+vmin, vmax = -1.5, 1.5
+xgrid = np.linspace(vmin, vmax, 200)
+
+fig, ax = plt.subplots(figsize=(10, 10))
+
+ax.errorbar(X, Y, xerr=Xe, yerr=Ye, ls=" ", elinewidth=0.4, alpha=1.0, c="k")
+
+marker=itertools.cycle(('o','o','o','o','s','^','s','^','^'))
+#for i in [0,1,2,3,4,6,8]:
+for i in range(len(samples)):
+    ax.scatter(X[i], Y[i], marker=next(marker), s=250,zorder=5, c ='k', alpha=0.5)
+
+# The original fit
+ax.plot(xgrid, dfchain["alpha"].mean() + xgrid*dfchain["beta"].mean(), 
+        '-', c="k")
+for samp in lm.chain[::20]:
+    ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
+        '-', c="r", alpha=0.2, lw=0.1)
+
+ax.text(.05, .95,'log $r_{0}$ = (' 
+        + str(np.round(dfchain["beta"].mean(),3)) + '$\pm$' + str(np.round(dfchain["beta"].std(),3))
+        + ')log Lbox+('
+        + str(np.round(dfchain["alpha"].mean(),3)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),3))
+        + ')',  color='k', transform=ax.transAxes)
+    
+ax.set(
+    xlim=[-1.5, 1.5], ylim=[-2, 3],
+    xlabel=r"log Lbox [pc]", ylabel=r"log $r_{0}$ [pc]",
+)
+
+
+
+
 
 # - r0 vs m
 
