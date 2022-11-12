@@ -226,7 +226,7 @@ data.round(4)
 cols = data.columns
 logdata = data.copy()
 for col in cols:
-    if col not in ["Region", "m", "mer", "r0er", "siger",  "sig2er", "Ler [pc]", "Dister [kpc]","LHaer","sigloser [km/s]"]:
+    if col not in ["Region", "m", "mer", "r0er", "siger",  "sig2er", "Ler [pc]", "Dister [kpc]","LHaer","sigloser [km/s]","fover [pc]"]:
         logdata[col] = np.round(np.log10(logdata[col]), 2)
         logdata.rename(columns={col: f"log {col}"}, inplace=True)
 # Some minor changes to column names
@@ -373,7 +373,7 @@ logdata
 
 # # Correlation between results 
 
-X, Xe, Y, Ye = [logdata[_] for _ in ['log r0 [pc]', 'r0er','log fov [pc]', 'log fover [pc]']]
+X, Xe, Y, Ye = [logdata[_] for _ in ['log fov [pc]', 'fover [pc]','log r0 [pc]', 'r0er']]
 
 
 lm = linmix.LinMix(X, Y, Xe, Ye, K=2)
@@ -394,7 +394,7 @@ pearsonr(X, Y)
 pd.DataFrame({"X": X, "Xe": Xe, "Y": Y, "Ye": Ye}).describe()
 
 
-vmin, vmax = -1.5, 1.5
+vmin, vmax = -1.0, 3.0
 xgrid = np.linspace(vmin, vmax, 200)
 
 fig, ax = plt.subplots(figsize=(10, 10))
@@ -420,7 +420,7 @@ ax.text(.05, .95,'log $r_{0}$ = ('
         + ')',  color='k', transform=ax.transAxes)
     
 ax.set(
-    xlim=[-1.5, 1.5], ylim=[-2, 3],
+    xlim=[-1, 3], ylim=[-1.5, 1.5],
     xlabel=r"log Lbox [pc]", ylabel=r"log $r_{0}$ [pc]",
 )
 
