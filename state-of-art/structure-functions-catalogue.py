@@ -437,7 +437,7 @@ plt.loglog(r_Car_S,B_Car_S,marker='o',color='green',alpha=0.75, markersize=5)
 ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
 plt.tick_params(which='both', labelright=False, direction='in', right=True,  top=True)
 plt.grid(which='minor')
-plt.title('Carina)
+plt.title('Carina')
 plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))    
 #fig.savefig('plots/comp-M8.pdf', 
 #              bbox_inches='tight')

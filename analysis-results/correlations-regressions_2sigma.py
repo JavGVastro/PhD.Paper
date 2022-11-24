@@ -285,7 +285,7 @@ sns.pairplot(plotdata,
 figname = "strucfunc-correlations"
 # Save PDF and JPG versions of the figure
 #plt.gcf().savefig(f"{figname}.pdf")
-#plt.gcf().savefig(f"{figname}.jpg")
+plt.gcf().savefig(f"{figname}.jpg")
 
 
 # ## Correlation coefficients
@@ -401,6 +401,14 @@ fig, ax = plt.subplots(figsize=(10, 10))
 
 ax.errorbar(X, Y, xerr=Xe, yerr=Ye, ls=" ", elinewidth=0.4, alpha=1.0, c="k")
 
+for samp in lm.chain[::100]:
+    ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
+        '-', c="r", alpha=0.15, lw=0.35,zorder=0)
+    
+ax.errorbar(X, Y, xerr=Xe, yerr=Ye, ls=" ", elinewidth=0.4, alpha=1.0, c="k",zorder=6)
+
+marker=itertools.cycle(('o','o','o','o','s','^','s','^','^'))
+
 marker=itertools.cycle(('o','o','o','o','s','^','s','^','^'))
 #for i in [0,1,2,3,4,6,8]:
 for i in range(len(samples)):
@@ -409,9 +417,6 @@ for i in range(len(samples)):
 # The original fit
 ax.plot(xgrid, dfchain["alpha"].mean() + xgrid*dfchain["beta"].mean(), 
         '-', c="k")
-for samp in lm.chain[::20]:
-    ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
-        '-', c="r", alpha=0.2, lw=0.1)
 
 ax.text(.05, .95,'log $r_{0}$ = (' 
         + str(np.round(dfchain["beta"].mean(),3)) + '$\pm$' + str(np.round(dfchain["beta"].std(),3))
@@ -423,6 +428,8 @@ ax.set(
     xlim=[-1, 3], ylim=[-1.5, 1.5],
     xlabel=r"log Lbox [pc]", ylabel=r"log $r_{0}$ [pc]",
 )
+
+plt.savefig('Imgs//corr-rvsfov.pdf', bbox_inches='tight')
 
 
 
@@ -695,7 +702,17 @@ ax.set(
 plt.savefig('Imgs//corr-rvsS.pdf', bbox_inches='tight')
 
 
+# * Correlation of r0 with D
+# - If we *assume* that the relation is linear, then we can get a better estimate of the average ratio and its spread, which should be tighter than the mcmc results
+# - From the following table I get an unweighted average of 0.12 +/- 0.01
+# 
+# from: https://github.com/will-henney/PhD.Paper/commit/fc22ed750aa6c8a7cc27d26dfda49bab8af34e72
 
+r0_D = s1f.r0/physical_data['L [pc]']
+r0_D,r0_D.mean(),r0_D.std()
+
+
+np.hypot(physical_data['Ler [pc]']/physical_data['L [pc]'],s1f['r0+']/s1f.r0)
 
 
 tab3 = ['log $r_0$','log $D$',np.round(dfchain["beta"].mean(),2),np.round(dfchain["beta"].std(),2),
@@ -1074,6 +1091,82 @@ tab8 = ['log $\sigma$','log $S$',np.round(dfchain["beta"].mean(),2),np.round(dfc
        np.round(dfchain["alpha"].mean(),2),np.round(dfchain["alpha"].std(),2),
       np.round(pearsonr(X, Y)[0],2),np.round(pearsonr(X, Y)[1],2)]
 tab8
+
+
+# m = 1
+# constancy
+
+m_err = [[0]*(1) for i in range(9)]
+
+
+for i in range(9):
+
+    if s1f.iloc[i][7] > 1:
+        m_err[i]= s1f.iloc[i][9]
+    else:
+        m_err[i] = s1f.iloc[i][8]  
+
+
+m_const = {
+    'm' : s1f.m,
+    'err' : m_err
+            }
+
+
+df = pd.DataFrame(m_const)
+df['(m-1)/err'] = (df.m-1)/df.err
+df.round(2)
+
+
+df.m.mean(),df.err.mean(),df['(m-1)/err'].mean(),df['(m-1)/err'].std()
+
+
+res_als = {
+    'r0' : s1f.r0,
+    'r0_err' : s1f['r0+'],
+    'D' : physical_data['L [pc]'],
+    'D_err' : physical_data['Ler [pc]'],
+    'r0/D' : r0_D,
+    'erat' : np.hypot(physical_data['Ler [pc]']/physical_data['L [pc]'],s1f['r0+']/s1f.r0),
+     'm' : s1f.m,
+    'err' : m_err,
+    '(m-1)/err' : (s1f.m-1)/m_err,
+    'rat_sig' : physical_data['siglos [km/s]'] / data['sig [km/s]'],
+    '2sigE': np.array([0.53, 0.70, 0.93, 0.98, 1.25, 0, 0.61, 0, 0.66])*2,
+}
+
+
+df_0 = pd.DataFrame(res_als) 
+#df_0
+df_0.insert(loc=0, column='Region', value=Names)
+df_0.replace(0, np.nan, inplace=True)
+df_0.round(4)
+
+
+df_0.describe()
+
+
+means = [[0]*(1) for i in range(12)]
+means[0]  = 'means'
+std = [[0]*(1) for i in range(12)]
+std[0]  = 'std'
+
+for i in range(11):
+    means[i+1] = df_0.iloc[:,i+1].mean()
+    std[i+1] = df_0.iloc[:,i+1].std()
+    
+means = pd.Series(data = means, index = df_0.columns, name = 9)
+std = pd.Series(data = std, index = df_0.columns, name = 10)
+
+df_0 = df_0.append(means)
+df_0 = df_0.append(std)
+
+
+#Corr.rename(columns={0:'A',1:'B',2:'C',3:'DC',4:'E',5:'DE',6:'F',7:'G'}, inplace=True)
+df_0.round(2)
+
+
+(df_0.round(2)).to_latex('latex-files/res_als.tex', escape=False, caption='m and r0 analysis',index=False)
 
 
 # Results to table

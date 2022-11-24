@@ -15,7 +15,7 @@ import json
 from results import loadresults,loadresults2
 
 
-#a,b = loadresults('sample-names-corr','formal-names-corr','1sig')
+x,y = loadresults('sample-names-corr','formal-names-corr','2sig')
 
 
 a,b = loadresults2('sample-names-corr','formal-names-corr','LM')
@@ -30,16 +30,8 @@ b
 d
 
 
-fig, ax = plt.subplots(figsize=(9,9))
-ax.scatter(b['sig2'],b['r0'])
-ax.scatter(d['sig2'],d['r0'])
-
-
-cz=[0.7,0.7,0.7,0.7,0.7,0.7,0.7,0.7,0.7]
-
-
-plt.rcParams["axes.edgecolor"] = "yellow"
-plt.rcParams["axes.linewidth"]  = 2
+#plt.rcParams["axes.edgecolor"] = "yellow"
+#plt.rcParams["axes.linewidth"]  = 2
 
 fig = plt.figure(figsize=(9,9))
 ax = fig.add_subplot(projection='3d')
@@ -65,9 +57,20 @@ ax.set_zlabel('m')
 plt.show()
 
 
-fig, ax = plt.subplots(1, 3,figsize=(12, 8))
+fig, ax = plt.subplots(figsize=(8,8))
+ax.scatter(b['sig2'],b['r0'], c="b",s=40, alpha=0.6)
+ax.errorbar(b['sig2'],b['r0'], xerr=b['sig2+'], yerr=b['r0+'], ls=" ", elinewidth=0.5, alpha=1.0, c="b")
+ax.scatter(d['sig2'],d['r0'], c="r",s=40, alpha=0.6)
+ax.errorbar(d['sig2'],d['r0'], xerr=d['sig2+'], yerr=d['r0+'], ls=" ", elinewidth=0.5, alpha=1.0, c="r")
+#ax.scatter(y['sig2'],y['r0'], c="r",s=40, alpha=0.6)
+#ax.errorbar(y['sig2'],y['r0'], xerr=y['sig2+'], yerr=y['r0+'], ls=" ", elinewidth=0.5, alpha=1.0, c="g")
 
-ax.scatter(b['sig2'],b['r0'])
+
+fig, ax = plt.subplots(figsize=(8,8))
+ax.scatter(b['sig2'],b['m'], c="b")
+ax.errorbar(b['sig2'],b['m'], xerr=b['sig2+'], yerr=b['m+'], ls=" ", elinewidth=0.75, alpha=1.0, c="b")
+ax.scatter(d['sig2'],d['m'], c="r")
+ax.errorbar(d['sig2'],d['m'], xerr=d['sig2+'], yerr=d['m+'], ls=" ", elinewidth=0.75, alpha=1.0, c="r")
 
 
 get_ipython().system('jupyter nbconvert --to script --no-prompt results-compiler-v2.ipynb')
