@@ -31,6 +31,11 @@ python bright-hist-multi.py
 - For the majority of sources, there is not much evidence of any relation
 - However, 30 Dor has significantly higher brightness fluctuations and also a significantly higher sigma ratio
 - And also, significantly higher absolute sigma_pos
+- Theoretical prediction for compressive forcing is that \sigma_\rho = M
+  - And we should have emissivity fluctuations \sigma_E = 2 \sigma_\rho
+  - And surface brightness fluctuations \sigma_S = (1/3) \sigma_E from projection
+  - So we \sigma_S = (2/3) M, which we can plot
+  - For solenoidal case, it is (2/9) M,
 
 
 

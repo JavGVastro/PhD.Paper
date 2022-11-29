@@ -102,7 +102,7 @@ fig, axes = plt.subplot_mosaic(
     sharex=True,
     sharey=True,
 )
-fig.set_size_inches(12, 9)
+fig.set_size_inches(11, 9)
 resamples = [2, 4, 8, 16, 32, 64]
 sigS_vals = []
 esigS_vals = []
@@ -185,7 +185,7 @@ for image, ax in zip(images, axes.values()):
     rat_vals.append(sigpos_los)
     erat_vals.append(erat)
 
-    mach = np.sqrt(image.sig2pos[0] / CS_SQUARED)
+    mach = np.sqrt(3 * image.sig2pos[0] / CS_SQUARED)
     sig2_vals.append(mach)
     esig2_vals.append(epos * mach)
 
@@ -206,6 +206,8 @@ axes["c"].text(
     fontsize="x-large",
 )
 
+smax = 1.39
+
 axx = fig.add_subplot(4, 4, (13, 15))
 axx.errorbar(
     sigS_vals, rat_vals, xerr=esigS_vals, yerr=erat_vals, fmt="none", color="b"
@@ -222,12 +224,20 @@ axx.text(
     fontsize="x-large",
     color="k",
 )
-axx.set_xlim(0.0, None)
+axx.set_xlim(0.0, smax)
 axx.set_ylim(0.0, None)
 axx.set_xlabel(f"RMS brightness fluctuation:\n${Sfluct_label}$")
 axx.set_ylabel(r"$\sigma_\mathrm{pos} / \sigma_\mathrm{los}$")
 
 axxx = fig.add_subplot(4, 4, (5, 11))
+axxx.fill_between(
+    [0, smax],
+    [0, 1.5 * smax],
+    [0, 4.5 * smax],
+    color="k",
+    linewidth=0,
+    alpha=0.1,
+)
 axxx.errorbar(
     sigS_vals, sig2_vals, xerr=esigS_vals, yerr=esig2_vals, fmt="none", color="r"
 )
@@ -235,7 +245,7 @@ axxx.scatter(sigS_vals, sig2_vals, color="r")
 axxx.text(0.02, 0.97, "h", transform=axxx.transAxes, va="top", fontweight="bold")
 axxx.text(
     1.2,
-    1.4,
+    2.5,
     "**",
     va="center",
     ha="center",
@@ -243,9 +253,9 @@ axxx.text(
     fontsize="x-large",
     color="k",
 )
-axxx.set_xlim(0.0, None)
-axxx.set_ylim(0.0, None)
-axxx.set_ylabel(r"$\sigma_\mathrm{pos} / c_\mathrm{s}$")
+axxx.set_xlim(0.0, smax)
+axxx.set_ylim(0.0, 2.9)
+axxx.set_ylabel(r"$\mathcal{M} \approx \sqrt{3} \sigma_\mathrm{pos} / c_\mathrm{s}$")
 axxx.set_xticklabels([])
 # fig.subplots_adjust(0.16, 0.2, 0.97, 0.98, wspace=0.1, hspace=0.1)
 # fig.tight_layout(rect=(0.1, 0.2, 1.1, 1.2), pad=0.0)
