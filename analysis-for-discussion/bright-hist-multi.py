@@ -22,6 +22,8 @@ class Image:
 
 
 plotfile = "bright-hist-multi.pdf"
+
+CS_SQUARED = 11.0 ** 2
 images = [
     Image(
         "Orion",
@@ -90,19 +92,22 @@ sns.set_color_codes("deep")
 whitebox = {"facecolor": "white", "alpha": 0.7, "edgecolor": "none"}
 fitter = fitting.LevMarLSQFitter()
 LAYOUT = """
-abc
-def
-..g
+abcd
+...e
+...f
+...g
 """
 fig, axes = plt.subplot_mosaic(
     LAYOUT,
     sharex=True,
     sharey=True,
 )
-fig.set_size_inches(8, 6)
+fig.set_size_inches(12, 9)
 resamples = [2, 4, 8, 16, 32, 64]
 sigS_vals = []
 esigS_vals = []
+sig2_vals = []
+esig2_vals = []
 rat_vals = []
 erat_vals = []
 Sfluct_label = r"\langle \delta S^2 \rangle^{1/2} / S_0"
@@ -180,6 +185,10 @@ for image, ax in zip(images, axes.values()):
     rat_vals.append(sigpos_los)
     erat_vals.append(erat)
 
+    mach = np.sqrt(image.sig2pos[0] / CS_SQUARED)
+    sig2_vals.append(mach)
+    esig2_vals.append(epos * mach)
+
 axes["g"].set_xlabel("Surface brightness:\n" + r"$\ln (S / S_0)$")
 axes["a"].set_ylabel("Probability\ndensity")
 
@@ -197,12 +206,12 @@ axes["c"].text(
     fontsize="x-large",
 )
 
-axx = fig.add_subplot(3, 5, (11, 13))
+axx = fig.add_subplot(4, 4, (13, 15))
 axx.errorbar(
-    sigS_vals, rat_vals, xerr=esigS_vals, yerr=erat_vals, fmt="none", color="r"
+    sigS_vals, rat_vals, xerr=esigS_vals, yerr=erat_vals, fmt="none", color="b"
 )
-axx.scatter(sigS_vals, rat_vals, color="r")
-axx.text(0.02, 0.97, "h", transform=axx.transAxes, va="top", fontweight="bold")
+axx.scatter(sigS_vals, rat_vals, color="b")
+axx.text(0.02, 0.97, "i", transform=axx.transAxes, va="top", fontweight="bold")
 axx.text(
     1.2,
     0.6,
@@ -218,8 +227,28 @@ axx.set_ylim(0.0, None)
 axx.set_xlabel(f"RMS brightness fluctuation:\n${Sfluct_label}$")
 axx.set_ylabel(r"$\sigma_\mathrm{pos} / \sigma_\mathrm{los}$")
 
-fig.subplots_adjust(0.16, 0.2, 0.97, 0.98, wspace=0.1, hspace=0.1)
+axxx = fig.add_subplot(4, 4, (5, 11))
+axxx.errorbar(
+    sigS_vals, sig2_vals, xerr=esigS_vals, yerr=esig2_vals, fmt="none", color="r"
+)
+axxx.scatter(sigS_vals, sig2_vals, color="r")
+axxx.text(0.02, 0.97, "h", transform=axxx.transAxes, va="top", fontweight="bold")
+axxx.text(
+    1.2,
+    1.4,
+    "**",
+    va="center",
+    ha="center",
+    fontweight="bold",
+    fontsize="x-large",
+    color="k",
+)
+axxx.set_xlim(0.0, None)
+axxx.set_ylim(0.0, None)
+axxx.set_ylabel(r"$\sigma_\mathrm{pos} / c_\mathrm{s}$")
+axxx.set_xticklabels([])
+# fig.subplots_adjust(0.16, 0.2, 0.97, 0.98, wspace=0.1, hspace=0.1)
 # fig.tight_layout(rect=(0.1, 0.2, 1.1, 1.2), pad=0.0)
 
-fig.savefig(plotfile)
+fig.savefig(plotfile, bbox_inches="tight")
 print(plotfile, end="")
