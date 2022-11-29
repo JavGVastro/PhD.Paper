@@ -14,6 +14,10 @@
     - See https://online.stat.psu.edu/stat414/lesson/26/26.3
     - So we can calculate the p-value for \chi^2 = 8 1.638 = 13.1 and d.o.f = 8, which gives p = 0.108
     - In other words, not very significant in either direction
+- We can also work out the s.e.m.
+  - 1.64 0.134 / sqrt(9-1) = 0.0777
+- And we can find the estimated true dispersion as
+  - sqrt(1.6**2 - 1) 0.134 = 0.1674
 
 |     m |   err | (m - 1)/err |      |
 |-------+-------+-------------+------|
