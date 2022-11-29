@@ -26,10 +26,34 @@
 #+TBLFM: $6=$4/$2;f3::$7=hypot($3/$2, $5/$4);f2::@11$6=vmean(@I..@II);f3::@11$7=mean::@12$6=vsdev(@I..@II);f3::@12$7=sdev
 
 
+* Other definitions of correlation length
+- Jaupart:2022i have a more rigorous treatment of all this
+  - Statistical properties and correlation length in star-forming molecular clouds - I. Formalism and application to observations
+  - E. Jaupart and G. Chabrier
+  - A&A, 663 (2022) A113
+  - DOI: https://doi.org/10.1051/0004-6361/202141084
+- They cite Papoulis & Pillai (1965) book
+  - I managed to get the PDF from academia.edu
+  - [[https://www.dropbox.com/sh/adhs0wprrhl9m3n/AAD55KvG73CLol5ug7qV3MIPa?dl=0][Dropbox link]]
+  - But I cannot find any discussion of correlation length in multiple dimensions in that book. They mainly talk about one-dimensional cases in the time domain
+- Jaupart equation (11) is for general D-dimensional case. Specialising to 2 dimensions and assuming C(0) = 1 gives
+  \[
+  \ell_C^2 = \frac{1}{4} \int C(r) \, d^2 r = \frac{\pi}{2} \int_0^\infty r C(r) d r
+  \]
+- Then using our model covariance: \(C(r) = 2^{-(r/r_0)^m}\)
+- And assuming m = 1 for simplicity
+- We can write r = r_0 x so the integral above is
+  - r_0^2 \int_0^\infty x 2^{-x} dx = r_0^2 / ln^2(2)
+- Therefore \ell_c / r_0 = \sqrt{\pi/2} / \ln{2} = 1.808
+- The general case can be done with a change of variable
+  - See my Apple Note [[file:Correlation length.pdf]]
+  - 
 
 
-
-
+- Integrate exp(-x^m) dx
+  - x put u = x^m or x = u^{1/m}
+  - du = m x^(m - 1) dx
+  - dx = (1/m) = u^{1/m - 1}
 
 
 
