@@ -173,6 +173,7 @@ s1f = pd.DataFrame(
         "m":m,
         "m+": ms2p,
         "m-": ms2m,
+        "fov": box_size,
        
     }
 )
@@ -206,6 +207,8 @@ data = pd.DataFrame(
        "mer": ms2p,
        "r0 [pc]": r0,
        "r0er": r0s2p,
+       "fov [pc]": box_size,
+        "fover [pc]": np.array(box_size)*0.1,
         
        "siglos [km/s]": physical_data['siglos [km/s]'],
        "sigloser [km/s]": physical_data['sigloser [km/s]'],
@@ -223,7 +226,7 @@ data.round(4)
 cols = data.columns
 logdata = data.copy()
 for col in cols:
-    if col not in ["Region", "m", "mer", "r0er", "siger",  "sig2er", "Ler [pc]", "Dister [kpc]","LHaer","sigloser [km/s]"]:
+    if col not in ["Region", "m", "mer", "r0er", "siger",  "sig2er", "Ler [pc]", "Dister [kpc]","LHaer","sigloser [km/s]","fover [pc]"]:
         logdata[col] = np.round(np.log10(logdata[col]), 2)
         logdata.rename(columns={col: f"log {col}"}, inplace=True)
 # Some minor changes to column names
@@ -245,6 +248,7 @@ logdata['mer']=(data['mer']/data['m'])*0.434
 logdata['r0er']=(data['r0er']/data['r0 [pc]'])*0.434
 logdata['siger']=(data['siger']/data['sig [km/s]'])*0.434
 logdata['sig2er']=(data['sig2er']/data['sig2 [km/s]'])*0.434
+logdata['fover [pc]']=(data['fover [pc]']/data['fov [pc]'])*0.434
 
 
 logdata
@@ -255,10 +259,10 @@ logdata
 
 # Make the label text bigger on the figures
 
-sns.set_context("talk", font_scale=1.25)
+sns.set_context("talk", font_scale=1.2)
 
 
-selected_vars = [ "log L [pc]","log L(H) [erg s^-1]", "log Dist [kpc]", "m", "log r0 [pc]", "log sig [km/s]", "log siglos [km/s]"]
+selected_vars = [ "log L [pc]","log L(H) [erg s^-1]", "log Dist [kpc]", "m", "log r0 [pc]", "log sig [km/s]", "log siglos [km/s]", "log fov [pc]"]
 plotdata = logdata[selected_vars].rename(
     columns={
         # Switch column names to use latex formatting to improve axis labels
@@ -281,7 +285,7 @@ sns.pairplot(plotdata,
 figname = "strucfunc-correlations"
 # Save PDF and JPG versions of the figure
 #plt.gcf().savefig(f"{figname}.pdf")
-#plt.gcf().savefig(f"{figname}.jpg")
+plt.gcf().savefig(f"{figname}.jpg")
 
 
 # ## Correlation coefficients
@@ -368,6 +372,68 @@ logdata
 
 
 # # Correlation between results 
+
+X, Xe, Y, Ye = [logdata[_] for _ in ['log fov [pc]', 'fover [pc]','log r0 [pc]', 'r0er']]
+
+
+lm = linmix.LinMix(X, Y, Xe, Ye, K=2)
+
+
+lm.run_mcmc(silent=True)
+
+
+dfchain = pd.DataFrame.from_records(
+    lm.chain.tolist(), 
+    columns=lm.chain.dtype.names
+)
+
+
+pearsonr(X, Y)
+
+
+pd.DataFrame({"X": X, "Xe": Xe, "Y": Y, "Ye": Ye}).describe()
+
+
+vmin, vmax = -1.0, 3.0
+xgrid = np.linspace(vmin, vmax, 200)
+
+fig, ax = plt.subplots(figsize=(10, 10))
+
+ax.errorbar(X, Y, xerr=Xe, yerr=Ye, ls=" ", elinewidth=0.4, alpha=1.0, c="k")
+
+for samp in lm.chain[::100]:
+    ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
+        '-', c="r", alpha=0.15, lw=0.35,zorder=0)
+    
+ax.errorbar(X, Y, xerr=Xe, yerr=Ye, ls=" ", elinewidth=0.4, alpha=1.0, c="k",zorder=6)
+
+marker=itertools.cycle(('o','o','o','o','s','^','s','^','^'))
+
+marker=itertools.cycle(('o','o','o','o','s','^','s','^','^'))
+#for i in [0,1,2,3,4,6,8]:
+for i in range(len(samples)):
+    ax.scatter(X[i], Y[i], marker=next(marker), s=250,zorder=5, c ='k', alpha=0.5)
+
+# The original fit
+ax.plot(xgrid, dfchain["alpha"].mean() + xgrid*dfchain["beta"].mean(), 
+        '-', c="k")
+
+ax.text(.05, .95,'log $r_{0}$ = (' 
+        + str(np.round(dfchain["beta"].mean(),3)) + '$\pm$' + str(np.round(dfchain["beta"].std(),3))
+        + ')log Lbox+('
+        + str(np.round(dfchain["alpha"].mean(),3)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),3))
+        + ')',  color='k', transform=ax.transAxes)
+    
+ax.set(
+    xlim=[-1, 3], ylim=[-1.5, 1.5],
+    xlabel=r"log Lbox [pc]", ylabel=r"log $r_{0}$ [pc]",
+)
+
+plt.savefig('Imgs//corr-rvsfov.pdf', bbox_inches='tight')
+
+
+
+
 
 # - r0 vs m
 
@@ -636,7 +702,17 @@ ax.set(
 plt.savefig('Imgs//corr-rvsS.pdf', bbox_inches='tight')
 
 
+# * Correlation of r0 with D
+# - If we *assume* that the relation is linear, then we can get a better estimate of the average ratio and its spread, which should be tighter than the mcmc results
+# - From the following table I get an unweighted average of 0.12 +/- 0.01
+# 
+# from: https://github.com/will-henney/PhD.Paper/commit/fc22ed750aa6c8a7cc27d26dfda49bab8af34e72
 
+r0_D = s1f.r0/physical_data['L [pc]']
+r0_D,r0_D.mean(),r0_D.std()
+
+
+np.hypot(physical_data['Ler [pc]']/physical_data['L [pc]'],s1f['r0+']/s1f.r0)
 
 
 tab3 = ['log $r_0$','log $D$',np.round(dfchain["beta"].mean(),2),np.round(dfchain["beta"].std(),2),
@@ -653,7 +729,7 @@ X, Xe, Y, Ye = [logdata[_] for _ in ['log L(H) [erg s^-1]', 'LHaer','log sig [km
 lm = linmix.LinMix(X, Y, Xe, Ye, K=2)
 
 
-lm.run_mcmc()
+lm.run_mcmc(silent=True)
 
 
 dfchain = pd.DataFrame.from_records(
@@ -906,10 +982,12 @@ for samp in lm.chain[::100]:
         '-', c="r", alpha=0.15, lw=0.35,zorder=0)    
 #ax.plot(xgrid,xgrid*1+0,linestyle='solid',color='gray',zorder=0)
 #ax.plot(xgrid,xgrid*2+0,linestyle='solid',color='gray',zorder=0)
-ax.plot(xgrid,xgrid*1.04+8.15,linestyle='dashed',color='k', label= 'Lagrois & Joncas (2011)',zorder=1)
+ax.plot(xgrid,xgrid*1.04+8.15,linestyle='--',color='k', label= 'Lagrois & Joncas (2011)',zorder=1)
+ax.plot(xgrid,xgrid*2,linestyle=':',color='k',zorder=1)
+ax.plot(xgrid,(xgrid**2 + 8**2)**0.5,linestyle='-.',color='k',zorder=1, label= r'$σ_{los} = (σ_{pos}^2+v_{exp}^2)^{1/2}$')
 
     
-ax.text(.25, .125,r"$ \langle \sigma_{los} \rangle $ = ("  
+ax.text(.25, .2,r"$ \langle \sigma_{los} \rangle $ = ("  
         + str(np.round(dfchain["beta"].mean(),2)) + '$\pm$' + str(np.round(dfchain["beta"].std(),2))
         + ')$\sigma_{pos}$ +('
         + str(np.round(dfchain["alpha"].mean(),2)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),2))
@@ -1013,6 +1091,82 @@ tab8 = ['log $\sigma$','log $S$',np.round(dfchain["beta"].mean(),2),np.round(dfc
        np.round(dfchain["alpha"].mean(),2),np.round(dfchain["alpha"].std(),2),
       np.round(pearsonr(X, Y)[0],2),np.round(pearsonr(X, Y)[1],2)]
 tab8
+
+
+# m = 1
+# constancy
+
+m_err = [[0]*(1) for i in range(9)]
+
+
+for i in range(9):
+
+    if s1f.iloc[i][7] > 1:
+        m_err[i]= s1f.iloc[i][9]
+    else:
+        m_err[i] = s1f.iloc[i][8]  
+
+
+m_const = {
+    'm' : s1f.m,
+    'err' : m_err
+            }
+
+
+df = pd.DataFrame(m_const)
+df['(m-1)/err'] = (df.m-1)/df.err
+df.round(2)
+
+
+df.m.mean(),df.err.mean(),df['(m-1)/err'].mean(),df['(m-1)/err'].std()
+
+
+res_als = {
+    'r0' : s1f.r0,
+    'r0_err' : s1f['r0+'],
+    'D' : physical_data['L [pc]'],
+    'D_err' : physical_data['Ler [pc]'],
+    'r0/D' : r0_D,
+    'erat' : np.hypot(physical_data['Ler [pc]']/physical_data['L [pc]'],s1f['r0+']/s1f.r0),
+     'm' : s1f.m,
+    'err' : m_err,
+    '(m-1)/err' : (s1f.m-1)/m_err,
+    'rat_sig' : physical_data['siglos [km/s]'] / data['sig [km/s]'],
+    '2sigE': np.array([0.53, 0.70, 0.93, 0.98, 1.25, 0, 0.61, 0, 0.66])*2,
+}
+
+
+df_0 = pd.DataFrame(res_als) 
+#df_0
+df_0.insert(loc=0, column='Region', value=Names)
+df_0.replace(0, np.nan, inplace=True)
+df_0.round(4)
+
+
+df_0.describe()
+
+
+means = [[0]*(1) for i in range(12)]
+means[0]  = 'means'
+std = [[0]*(1) for i in range(12)]
+std[0]  = 'std'
+
+for i in range(11):
+    means[i+1] = df_0.iloc[:,i+1].mean()
+    std[i+1] = df_0.iloc[:,i+1].std()
+    
+means = pd.Series(data = means, index = df_0.columns, name = 9)
+std = pd.Series(data = std, index = df_0.columns, name = 10)
+
+df_0 = df_0.append(means)
+df_0 = df_0.append(std)
+
+
+#Corr.rename(columns={0:'A',1:'B',2:'C',3:'DC',4:'E',5:'DE',6:'F',7:'G'}, inplace=True)
+df_0.round(2)
+
+
+(df_0.round(2)).to_latex('latex-files/res_als.tex', escape=False, caption='m and r0 analysis',index=False)
 
 
 # Results to table
