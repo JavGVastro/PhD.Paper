@@ -39,4 +39,43 @@ python bright-hist-multi.py
 
 
 
+** Brightness to velocity fluctuations
+- See handwritten notes
+  - [[file:brightness-to-velocity-fluctuations.pdf]]
+- Emissivity contrast is \alpha
+- Emissivity width is
+  \[
+  \sigma_E = \frac{
+  [3(\alpha + \alpha^{-1})^2 - 4(1 + \alpha + \alpha^{-1})]^{1/2}
+  }{
+  2 + \alpha + \alpha^{-1}
+  }
+  \]
+- Line of sight velocity width
+  \[
+  \sigma(los) = \frac{\alpha^{1/2}}{1 + \alpha}
+  \]
+- Plane of sky velocity width
+  \[
+  \sigma(pos) = \frac{\vert\alpha - 1\vert}{2 (1 + \alpha)}
+  \]
+
+
+|  \alpha |    \sigma_E | \sigma(los) | \sigma(pos) | \sigma(pos) / \sigma(los) |    \sigma_S |
+|----+-------+--------+--------+-----------------+-------|
+|  1 |     0 |  0.500 |      0 |           0.000 |     0 |
+|  2 | 0.484 |  0.471 |  0.167 |           0.355 | 0.333 |
+|  3 | 0.750 |  0.433 |  0.250 |           0.577 | 0.500 |
+| 10 | 1.337 |  0.287 |  0.409 |           1.425 | 0.818 |
+| 30 | 1.586 |  0.177 |  0.468 |           2.644 | 0.935 |
+#+TBLFM: $2=sqrt(3 ($1 + 1/$1)**2 - 4 (1 + $1 + 1/$1))/(2 + $1 + 1/$1);f3::$3=sqrt($1)/(1+$1);f3::$4=($1 - 1)/(2(1+$1));f3::$5=$4/$3;f3::$6=($1 - 1)/((1+$1));f3
+
+So we see that \sigma(pos)increases linearly with \sigma_S. If the line-of-sight velocity difference were the same in all sources, then this would give a line like we drew in Fig 12h, but the direction of causality is the opposite here.
+
+Previously, we were saying that the true 3d velocity fluctuations were causing the brightness fluctuations. Now, we are saying that the brightness fluctuations plus the velocity gradient are causing the apparent POS velocity fluctuations. ;
+
+On the other hand, the los velocity dispersion decreases with increasing brightness fluctuations because we become dominated by a single layer. However the fact that we only have two layers in the toy model means that this effect is probably overestimated.
+
+*** TODO Python program to make a graph of these relations
+- Plot all those columns from the previous table against \alpha (put \alpha on a log scale)
 
