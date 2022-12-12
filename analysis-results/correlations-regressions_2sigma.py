@@ -1131,8 +1131,8 @@ res_als = {
      'm' : s1f.m,
     'err' : m_err,
     '(m-1)/err' : (s1f.m-1)/m_err,
-    'rat_sig' : physical_data['siglos [km/s]'] / data['sig [km/s]'],
-    '2sigE': np.array([0.53, 0.70, 0.93, 0.98, 1.25, 0, 0.61, 0, 0.66])*2,
+    'rat_sig' : data['sig [km/s]']/physical_data['siglos [km/s]'] ,
+    '2sigSd ': np.array([0.53, 0.70, 0.93, 0.98, 1.25, 0, 0.61, 0, 0.66])*2,
 }
 
 
@@ -1167,6 +1167,23 @@ df_0.round(2)
 
 
 (df_0.round(2)).to_latex('latex-files/res_als.tex', escape=False, caption='m and r0 analysis',index=False)
+
+
+# L(Ha) and Q_0 stuff
+
+qtol = 8.56e11
+
+
+physical_data.LHa
+
+
+np.round(np.log10(physical_data.LHa*qtol),2)
+
+
+physical_data.LHa / physical_data.LHa[8]
+
+
+
 
 
 # Results to table
