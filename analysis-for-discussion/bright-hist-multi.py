@@ -110,7 +110,8 @@ sig2_vals = []
 esig2_vals = []
 rat_vals = []
 erat_vals = []
-Sfluct_label = r"\langle \delta S^2 \rangle^{1/2} / S_0"
+Sfluct_label_long = r"\langle \delta S^2 \rangle^{1/2} / S_0"
+Sfluct_label = r"\sigma_S"
 for image, ax in zip(images, axes.values()):
     s = fits.open(DATADIR / image.fitsfile)[image.ihdu].data.astype(float)
     m = (s > image.fmin) & np.isfinite(s)
@@ -209,6 +210,10 @@ axes["c"].text(
 smax = 1.39
 
 axx = fig.add_subplot(4, 4, (13, 15))
+alpha = np.logspace(0.0, 1.6, 500)
+sig_S = np.abs(alpha - 1) / (1 + alpha)
+ratio = 0.5 * np.abs(alpha - 1) / np.sqrt(alpha)
+axx.plot(sig_S, ratio, color="k", linestyle="dashed", zorder=-1)
 axx.errorbar(
     sigS_vals, rat_vals, xerr=esigS_vals, yerr=erat_vals, fmt="none", color="b"
 )
@@ -225,8 +230,8 @@ axx.text(
     color="k",
 )
 axx.set_xlim(0.0, smax)
-axx.set_ylim(0.0, None)
-axx.set_xlabel(f"RMS brightness fluctuation:\n${Sfluct_label}$")
+axx.set_ylim(0.0, 0.95)
+axx.set_xlabel(f"RMS brightness fluctuation:\n${Sfluct_label} = {Sfluct_label_long}$")
 axx.set_ylabel(r"$\sigma_\mathrm{pos} / \sigma_\mathrm{los}$")
 
 axxx = fig.add_subplot(4, 4, (5, 11))
