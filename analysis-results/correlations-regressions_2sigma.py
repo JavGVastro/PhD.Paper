@@ -983,11 +983,12 @@ for samp in lm.chain[::100]:
 #ax.plot(xgrid,xgrid*1+0,linestyle='solid',color='gray',zorder=0)
 #ax.plot(xgrid,xgrid*2+0,linestyle='solid',color='gray',zorder=0)
 ax.plot(xgrid,xgrid*1.04+8.15,linestyle='--',color='k', label= 'Lagrois & Joncas (2011)',zorder=1)
-ax.plot(xgrid,xgrid*2,linestyle=':',color='k',zorder=1)
-ax.plot(xgrid,(xgrid**2 + 8**2)**0.5,linestyle='-.',color='k',zorder=1, label= r'$σ_{los} = (σ_{pos}^2+v_{exp}^2)^{1/2}$')
+ax.plot(xgrid,xgrid*2,linestyle=':',color='k',zorder=1, label= 'Arthur et al. (2016)')
+#vexp
+#ax.plot(xgrid,(xgrid**2 + 8**2)**0.5,linestyle='-.',color='k',zorder=1, label= r'$σ_{los} = (σ_{pos}^2+v_{exp}^2)^{1/2}$')
 
     
-ax.text(.25, .2,r"$ \langle \sigma_{los} \rangle $ = ("  
+ax.text(.25, .25,r"$ \langle \sigma_{los} \rangle $ = ("  
         + str(np.round(dfchain["beta"].mean(),2)) + '$\pm$' + str(np.round(dfchain["beta"].std(),2))
         + ')$\sigma_{pos}$ +('
         + str(np.round(dfchain["alpha"].mean(),2)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),2))
@@ -998,8 +999,14 @@ ax.set(
     xlabel=r"$\sigma_{pos}$[km/s]", ylabel=r"$ \langle \sigma_{los} \rangle $ [km/s]",
 )
 
-plt.legend(loc='lower right')    
 
+yy1 = (xgrid**2 + 8**2)**0.5
+yy2 = (xgrid**2 + 12**2)**0.5
+#plt.axhspan(yy2, yy1, color='green', alpha=0.75, lw=0)
+ax.fill_between(xgrid, yy1, yy2, alpha = 0.5)
+ax.plot(xgrid,(xgrid**2 + 8**2)**0.5,linestyle='',alpha= 0.0,color='blue',zorder=1, label= r'$σ_{los} = (σ_{pos}^2+v_{exp}^2)^{1/2}$')
+
+plt.legend(loc='lower right')    
 
 plt.savefig('Imgs/corr-los-vs-pos.pdf', bbox_inches='tight')
 
@@ -1024,6 +1031,12 @@ results.params
 
 
 results.bse
+
+
+
+
+
+
 
 
 # - sig vs S

@@ -13,7 +13,6 @@ import seaborn as sns
 import numpy as np
 import pandas as pd
 sns.set_color_codes()
-from scipy import interpolate
 import json
 
 plt.rcParams["font.family"]="Times New Roman"
@@ -159,7 +158,7 @@ with sns.axes_style("darkgrid"):
     fig, ax = plt.subplots(figsize=(12, 6))
     scat = ax.scatter(df.RAdeg, df.DEdeg, 
                       s=0.0015*((df.NormHalpha)), 
-                      c=df.RVHalpha,cmap="viridis" 
+                      c=df.RVHalpha,cmap='coolwarm' 
                      )
     fig.colorbar(scat, ax=[ax])
     #mark_points(ax)

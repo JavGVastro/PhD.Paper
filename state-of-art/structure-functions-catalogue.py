@@ -257,6 +257,24 @@ plt.legend()
 #              bbox_inches='tight')
 
 
+fig, ax=plt.subplots(figsize=(7,7))
+
+plt.loglog(r_Orion,B_Orion,marker='.',color='black',alpha=0.5, markersize=7, label= 'Orion core', linestyle ='')
+plt.loglog(r_EON,B_EON,marker='^',color='black',alpha=0.5, markersize=7,label= 'EON', linestyle ='' )
+
+plt.loglog(DataH[21].pc,DataH[21].S*9.37,marker='o',color='blue',alpha=0.75, markersize=7, label=  DataNH[21])
+
+
+
+
+ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
+plt.tick_params(which='both', labelright=False, direction='in', right=True,  top=True)
+#plt.grid(which='minor')
+plt.title('Orion (M42)')
+plt.legend()
+fig.savefig('plots/comp-Orion.pdf',              bbox_inches='tight')
+
+
 # - NGC 604
 
 B_604 = data[samples[0][0]]['B']
@@ -267,15 +285,16 @@ B_604_O = data[samples[0][1]]['B']
 r_604_O = data[samples[0][1]]['r']
 
 
-fig, ax=plt.subplots(figsize=(6,6))
+fig, ax=plt.subplots(figsize=(7,7))
 
-plt.loglog(r_604,B_604,marker='o',color='red',alpha=0.75, markersize=5)
-plt.loglog(DataG[1].pc,DataG[1].S,color='black',alpha=1,linestyle='dotted' , label= DataNG[1])
-plt.loglog(DataG[14].pc,DataG[14].S*7.2**2,color='black',alpha=1,linestyle='dashed' , label= DataNG[14])
+plt.loglog(r_604,B_604,marker='.',color='black',alpha=0.75, markersize=8, linestyle ='')
+
+plt.loglog(DataG[1].pc,DataG[1].S,color='blue',linestyle='dotted' , label= DataNG[1],marker='o',alpha=0.5)
+plt.loglog(DataG[14].pc,DataG[14].S*7.2**2,color='blue',linestyle='dashed' , label= DataNG[14],marker='o',alpha=0.5)
 
 ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
 plt.tick_params(which='both', labelright=False, direction='in', right=True,  top=True)
-plt.grid(which='minor')
+#plt.grid(which='minor')
 plt.title('NGC 604')
 plt.legend()
 fig.savefig('plots/comp-604.pdf', 
@@ -286,8 +305,6 @@ fig, ax=plt.subplots(figsize=(6,6))
 
 plt.loglog(r_604,B_604,marker='o',color='red',alpha=0.75, markersize=5, label= 'Ha')
 plt.loglog(r_604_O,B_604_O,marker='o',color='blue',alpha=0.75, markersize=5, label= 'O')
-
-
 
 ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
 plt.tick_params(which='both', labelright=False, direction='in', right=True,  top=True)
@@ -311,18 +328,19 @@ B_Dor_N = data[samples[0][10]]['B']
 r_Dor_N = data[samples[0][10]]['r']
 
 
-fig, ax=plt.subplots(figsize=(6,6))
+fig, ax=plt.subplots(figsize=(7,7))
 
-plt.loglog(r_Dor,B_Dor,marker='o',color='red',alpha=0.75, markersize=5)
-plt.loglog(DataG[11].pc,DataG[11].S*18.2**2,color='black',alpha=0.75,linestyle='dashed' , label= DataNG[11])
-plt.loglog(DataG[12].pc,DataG[12].S*14.5**2,color='black',alpha=0.75,linestyle='dashed' , label= DataNG[12])
-plt.loglog(DataG[13].pc,DataG[13].S*11.6**2,color='black',alpha=0.75,linestyle='dashed' , label= DataNG[13])
-plt.loglog(DataG[0].pc,DataG[0].S,color='dimgray',alpha=1,linestyle='dotted' , label= DataNG[0])
+plt.loglog(r_Dor,B_Dor,marker='.',color='black',alpha=0.75, markersize=8, linestyle ='')
+
+plt.loglog(DataG[0].pc,DataG[0].S,color='blue',alpha=0.45,linestyle='-.' , label= DataNG[0],marker='o')
+plt.loglog(DataG[11].pc,DataG[11].S*18.2**2,color='blue',alpha=0.45,linestyle='dashed' , label= DataNG[11],marker='o')
+plt.loglog(DataG[12].pc,DataG[12].S*14.5**2,color='blue',alpha=0.45,linestyle='dotted' , label= DataNG[12],marker='o')
+plt.loglog(DataG[13].pc,DataG[13].S*11.6**2,color='blue',alpha=0.45,linestyle='-' , label= DataNG[13],marker='o')
 
 ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
 plt.tick_params(which='both', labelright=False, direction='in', right=True,  top=True)
-plt.grid(which='minor')
-plt.title('30 Doradus')
+#plt.grid(which='minor')
+plt.title('30 Dorado')
 plt.legend()
 
 fig.savefig('plots/comp-30Dor.pdf', 
@@ -337,7 +355,7 @@ plt.loglog(r_Dor_N,B_Dor_N,marker='o',color='orange',alpha=0.75, markersize=5)
 
 ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
 plt.tick_params(which='both', labelright=False, direction='in', right=True,  top=True)
-plt.grid(which='minor')
+#plt.grid(which='minor')
 plt.title('30 Doradus')
 plt.legend()
 
@@ -358,14 +376,16 @@ r_595 =  data[samples[0][2]]['r']
 fig, ax=plt.subplots(figsize=(6,6))
 
 
-plt.loglog(r_595,B_595,marker='o',color='red',alpha=0.75, markersize=5)
-plt.loglog(DataG[2].pc,DataG[2].S,color='black',alpha=0.75,linestyle='dashed' , label= DataNG[2])
-plt.loglog(DataG[5].pc,DataG[5].S*5.92**2,color='black',alpha=0.75,linestyle='dotted' , label= DataNG[5])
-plt.loglog(DataG[6].pc,DataG[6].S*5.92**2,color='black',alpha=0.75,label= DataNG[6],linestyle='dashdot')
+plt.loglog(r_595,B_595,marker='.',color='black',alpha=0.5, markersize=7, linestyle ='')
+
+
+plt.loglog(DataG[2].pc,DataG[2].S,color='blue',alpha=0.35, label= DataNG[2], linestyle ='-.',marker='o',markersize=5)
+plt.loglog(DataG[5].pc,DataG[5].S*5.92**2,color='blue',alpha=0.35, label= DataNG[5], linestyle ='-',marker='o',markersize=5)
+plt.loglog(DataG[6].pc,DataG[6].S*5.92**2,color='blue',alpha=0.35,label= DataNG[6],linestyle='-',marker='o',markersize=5)
 
 ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
 plt.tick_params(which='both', labelright=False, direction='in', right=True,  top=True)
-plt.grid(which='minor')
+#plt.grid(which='minor')
 plt.title('NGC 595')
 plt.legend()
 fig.savefig('plots/comp-595.pdf', 
@@ -383,21 +403,23 @@ B_M8_S = data[samples[0][20]]['B']
 r_M8_S =data[samples[0][20]]['r']
 
 
-fig, ax=plt.subplots(figsize=(6,6))
+fig, ax=plt.subplots(figsize=(8,8))
 
 
-plt.loglog(r_M8,B_M8,marker='o',color='red',alpha=0.75, markersize=5)
-plt.loglog(DataH[9].pc,DataH[9].S,marker='X',color='purple',alpha=0.75, markersize=7, label=  DataNH[9])
-plt.loglog(DataH[10].pc,DataH[10].S,marker='X',color='purple',alpha=0.75, markersize=7, label=  DataNH[10])
-plt.loglog(DataH[25].pc*0.006,DataH[25].S,marker='s',color='green',alpha=0.75, markersize=7, label=  DataNH[25])
-plt.loglog(DataH[26].pc*0.363,DataH[26].S**2,marker='^',color='green',alpha=0.75, markersize=7, label=  DataNH[26])
+plt.loglog(r_M8,B_M8,marker='.',color='black',alpha=0.5, markersize=7, linestyle ='')
+
+plt.loglog(DataH[26].pc*0.363,DataH[26].S**2,marker='.',color='blue',alpha=0.75, markersize=7, label=  DataNH[26], linestyle = ':')
+plt.loglog(DataH[9].pc,DataH[9].S,marker='o',color='blue',alpha=0.75, markersize=5, label=  DataNH[9], linestyle = '-.')
+plt.loglog(DataH[10].pc,DataH[10].S,marker='o',color='blue',alpha=0.75, markersize=5, label=  DataNH[10], linestyle = '-.')
+plt.loglog(DataH[25].pc*0.006,DataH[25].S,marker='o',color='blue',alpha=0.75, markersize=5, label=  DataNH[25], linestyle = '-')
 
 
 ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
 plt.tick_params(which='both', labelright=False, direction='in', right=True,  top=True)
-plt.grid(which='minor')
-plt.title('M8')
-plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))    
+#plt.grid(which='minor')
+plt.title('Laguna (M8,NGC 6253)')
+#plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))    
+plt.legend()    
 fig.savefig('plots/comp-M8.pdf', 
               bbox_inches='tight')
 
@@ -416,6 +438,58 @@ plt.title('M8')
 plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))    
 #fig.savefig('plots/comp-M8.pdf', 
 #              bbox_inches='tight')
+
+
+
+
+
+
+
+
+fig, ax=plt.subplots(figsize=(8,8))
+
+#M8
+plt.loglog(DataH[26].pc*0.363,DataH[26].S**2,marker='^',color='blue',alpha=0.75, markersize=7, label=  DataNH[26], linestyle = ':')
+plt.loglog(DataH[9].pc,DataH[9].S,marker='^',color='blue',alpha=0.75, markersize=5, label=  DataNH[9], linestyle = ':')
+plt.loglog(DataH[10].pc,DataH[10].S,marker='^',color='blue',alpha=0.75, markersize=5, label=  DataNH[10], linestyle = ':')
+plt.loglog(DataH[25].pc*0.006,DataH[25].S,marker='^',color='blue',alpha=0.75, markersize=5, label=  DataNH[25], linestyle = ':')
+#595
+plt.loglog(DataG[2].pc,DataG[2].S,color='blue',alpha=0.35, label= DataNG[2], linestyle ='-',marker='o',markersize=5)
+plt.loglog(DataG[5].pc,DataG[5].S*5.92**2,color='blue',alpha=0.35, label= DataNG[5], linestyle ='-',marker='o',markersize=5)
+plt.loglog(DataG[6].pc,DataG[6].S*5.92**2,color='blue',alpha=0.35,label= DataNG[6],linestyle='-',marker='o',markersize=5)
+#604
+plt.loglog(DataG[1].pc,DataG[1].S,color='blue',linestyle='-.' , label= DataNG[1],marker='d',alpha=0.5)
+plt.loglog(DataG[14].pc,DataG[14].S*7.2**2,color='blue',linestyle='-.' , label= DataNG[14],marker='d',alpha=0.5)
+#Orion
+plt.loglog(DataH[21].pc,DataH[21].S*9.37,marker='s',color='blue',alpha=0.75, markersize=7, label=  DataNH[21])
+#30
+plt.loglog(DataG[0].pc,DataG[0].S,color='blue',alpha=0.45,linestyle='-' , label= DataNG[0],marker='*')
+plt.loglog(DataG[11].pc,DataG[11].S*18.2**2,color='blue',alpha=0.45,linestyle='-' , label= DataNG[11],marker='*')
+plt.loglog(DataG[12].pc,DataG[12].S*14.5**2,color='blue',alpha=0.45,linestyle='-' , label= DataNG[12],marker='*')
+plt.loglog(DataG[13].pc,DataG[13].S*11.6**2,color='blue',alpha=0.45,linestyle='-' , label= DataNG[13],marker='*')
+
+plt.loglog(r_M8,B_M8,marker='^',color='black',alpha=0.65, markersize=7, linestyle ='')
+plt.loglog(r_595,B_595,marker='o',color='black',alpha=0.65, markersize=7, linestyle ='')
+plt.loglog(r_604,B_604,marker='d',color='black',alpha=0.65, markersize=8, linestyle ='')
+plt.loglog(r_Orion,B_Orion,marker='s',color='black',alpha=0.65, markersize=7, label= 'Orion core', linestyle ='')
+plt.loglog(r_EON,B_EON,marker='s',color='black',alpha=0.65, markersize=7,label= 'EON', linestyle ='' )
+plt.loglog(r_Dor,B_Dor,marker='*',color='black',alpha=0.65, markersize=8, linestyle ='')
+
+
+ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
+plt.tick_params(which='both', labelright=False, direction='in', right=True,  top=True)
+#plt.grid(which='minor')
+#plt.title('Laguna (M8,NGC 6253)')
+plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))    
+#plt.legend()    
+#fig.savefig('plots/comp-comp.pdf', 
+#              bbox_inches='tight')
+
+
+xx
+
+
+
 
 
 #mask = SFresults[samples_results[0][7]]["SF"]["N pairs"] > 0
