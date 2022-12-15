@@ -22,7 +22,7 @@
 # + Apply fake seeing to the cubes and investigate the effect on the structure function, etc
 # + Also see if there is any difference if we just simulate a velocity map and apply seeing to that
 
-# +
+# + pycharm={"name": "#%%\n"}
 from pathlib import Path
 import numpy as np
 import json
@@ -38,7 +38,8 @@ from turb_utils import make_extended
 import seaborn as sns
 import sys
 
-sys.path.append("..")
+sys.path.append("../structure-functions")
+
 import strucfunc
 
 sns.set_color_codes()
@@ -467,7 +468,7 @@ for width in widths:
 #   vmap_nps[width] = [convolve_fft(normalize(_), kernel)
 #                      for _ in split_square_in_4(vmap2x2_t)]
 
-# +
+# + pycharm={"name": "#%%\n"}
 ncols = len(widths) + 1
 nrows = 4
 fig, axes = plt.subplots(
@@ -478,7 +479,7 @@ fig, axes = plt.subplots(
     sharey=True,
 )
 for j, vm in enumerate(vms_t):
-    im = axes[j, 0]._(vm, **imshow_kwds)
+    im = axes[j, 0].imshow(vm, **imshow_kwds)
 axes[0, 0].set_title("original")
 for i, width in enumerate(widths):
     for j, vm in enumerate(vmap_nps[width]):
@@ -573,7 +574,7 @@ def bfac(x):
     return np.exp(-x)
 
 
-# +
+# + pycharm={"name": "#%%\n"}
 fig, ax = plt.subplots(figsize=(8, 5))
 rat_maxes = []
 callout_r0_widths = [8]
@@ -628,6 +629,7 @@ for width, c in zip(widths, colors):
         fr"$s_0 = {width}$",
         color=c,
         va="center",
+        fontsize="x-large",
         alpha=1.0,
     )
     if width in callout_r0_widths:
@@ -639,6 +641,7 @@ for width, c in zip(widths, colors):
             va="bottom",
             arrowprops=dict(arrowstyle="->", color=c, shrinkB=6),
             textcoords="offset points",
+            fontsize="x-large",
             color=c,
         )
     if width in callout_s0_widths:
@@ -650,6 +653,7 @@ for width, c in zip(widths, colors):
             va="bottom",
             arrowprops=dict(arrowstyle="->", color=c, shrinkB=8),
             textcoords="offset points",
+            fontsize="x-large",
             color=c,
         )
 
@@ -659,6 +663,7 @@ ax.text(
     1.05,
     fr"true $r_0 = {true_r0:.1f}$",
     color="k",
+    fontsize="x-large",
     ha="center",
     va="top",
 )
@@ -689,3 +694,281 @@ ax.set(
     ylim=[0.0, 1.0],
     xscale="log",
 )
+
+# + [markdown] pycharm={"name": "#%% md\n"}
+# ## Try different value of m
+#
+
+# + pycharm={"name": "#%%\n"}
+m = 1.0
+
+# + pycharm={"name": "#%%\n"}
+vms_t = split_square_in_4(
+    normalize(
+        make_extended(
+            2 * N,
+            powerlaw=2.0 + m,
+            ellip=0.5,
+            theta=45,
+            correlation_length=r0,
+            randomseed=2021_10_08,
+        )
+    )
+)
+# vms_t = [normalize(_) for _ in vms_t]
+
+fig, axes = plt.subplots(
+    2,
+    2,
+    sharex=True,
+    sharey=True,
+    figsize=(8, 8),
+)
+imshow_kwds = dict(origin="lower", vmin=-3, vmax=3, cmap="RdBu_r")
+for vm, ax in zip(vms_t, axes.flat):
+    im = ax.imshow(vm, **imshow_kwds)
+
+# + pycharm={"name": "#%%\n"}
+sfs_npt = [strucfunc.strucfunc_numba_parallel(vm, dlogr=0.05) for vm in vms_t]
+
+# + pycharm={"name": "#%%\n"}
+fig, ax = plt.subplots(
+    figsize=(8, 8),
+)
+
+Bs = [_["Unweighted B(r)"][mask] for _ in sfs_npt]
+Bm = np.mean(np.stack(Bs), axis=0)
+
+for _B in Bs:
+    ax.plot(r, _B, marker=".")
+ax.plot(r, Bm, linewidth=4, color="k")
+
+rgrid = np.logspace(0.0, 2.0)
+
+for scale in 0.02, 0.08:
+    ax.plot(rgrid, scale * rgrid ** m, color="0.8")
+
+ax.axhline(1.0, color="k", linestyle="dotted")
+ax.axvline(r0, color="k", linestyle="dotted")
+ax.axvline(N / 2, color="k", linestyle="dashed")
+ax.axvline(N / 6, color="k", linestyle="dashed")
+ax.set(
+    xscale="log",
+    yscale="log",
+    ylim=[8e-3, 4],
+)
+
+# + pycharm={"name": "#%%\n"}
+vmap2x2_t = make_extended(
+    2 * N,
+    powerlaw=2.0 + m,
+    ellip=0.5,
+    theta=45,
+    correlation_length=r0,
+    randomseed=2021_10_08,
+)
+widths = [1, 2, 4, 8, 16, 32]
+vmap_nps = {}
+for width in widths:
+    kernel = Gaussian2DKernel(x_stddev=width)
+    vmap_nps[width] = split_square_in_4(
+        convolve_fft(normalize(vmap2x2_t), kernel, boundary="wrap")
+    )
+#   vmap_nps[width] = [convolve_fft(normalize(_), kernel)
+#                      for _ in split_square_in_4(vmap2x2_t)]
+
+# + pycharm={"name": "#%%\n"}
+ncols = len(widths) + 1
+nrows = 4
+fig, axes = plt.subplots(
+    nrows,
+    ncols,
+    figsize=(8, 5.1),
+    sharex=True,
+    sharey=True,
+)
+for j, vm in enumerate(vms_t):
+    im = axes[j, 0].imshow(vm, **imshow_kwds)
+axes[0, 0].set_title("original")
+for i, width in enumerate(widths):
+    for j, vm in enumerate(vmap_nps[width]):
+        im = axes[j, i + 1].imshow(vm, **imshow_kwds)
+    axes[0, i + 1].set_title(fr"$s_0 = {width}$")
+
+for ax in axes.flat:
+    ax.set(xticks=[], yticks=[])
+sns.despine(left=True, bottom=True)
+fig.tight_layout(h_pad=0.2, w_pad=0.2)
+fig.savefig("fake-seeing-nonp-m100-thumbnails.pdf")
+
+# + pycharm={"name": "#%%\n"}
+use_cached_strucfunc = True
+
+# + pycharm={"name": "#%%\n"}
+if use_cached_strucfunc:
+    sfs_npt_s = {
+        width: [
+            values2arrays(json.load(open(fn)))
+            for fn in sorted(
+                Path(".").glob(f"fake-tapered-nonp-m100-s0-{width:03d}-*-strucfunc.json")
+            )
+        ]
+        for width in widths
+    }
+else:
+    sfs_npt_s = {
+        width: [
+            strucfunc.strucfunc_numba_parallel(vm, dlogr=0.05) for vm in vmap_nps[width]
+        ]
+        for width in widths
+    }
+    for width in widths:
+        for jj, (_sf, _vm) in enumerate(zip(sfs_npt_s[width], vmap_nps[width])):
+            jsonfilename = f"fake-tapered-nonp-m100-s0-{width:03d}-{jj:02d}-strucfunc.json"
+            sig2 = _sf["Unweighted sigma^2"] = np.var(_vm)
+            B = _sf["Unweighted B(r)"][mask]
+            true_r0 = _sf["Apparent r0"] = np.interp(sig2, B[:-4], r[:-4])
+            with open(jsonfilename, "w") as f:
+                json.dump(_sf, fp=f, indent=3, cls=JsonCustomEncoder)
+
+# + pycharm={"name": "#%%\n"}
+fig, ax = plt.subplots(
+    figsize=(8, 8),
+)
+ax.plot(r, Bm, marker=".", color="c")
+true_r0 = np.interp(1.0, Bm[:-4], r[:-4])
+
+rgrid = np.logspace(-1.0, 2.5)
+for a in np.logspace(-3, -1, 9):
+    ax.plot(rgrid, a * rgrid ** m, color="0.8")
+
+for width in widths:
+    B = np.mean(
+        np.stack([_["Unweighted B(r)"][mask] for _ in sfs_npt_s[width]]), axis=0
+    )
+    line = ax.plot(r, B)
+    B0 = np.interp(2 * width, r, B)
+    c = line[0].get_color()
+    apparent_r0 = np.mean([_["Apparent r0"] for _ in sfs_npt_s[width]])
+    ax.plot(2 * width, B0, marker="o", color=c)
+    ax.plot(apparent_r0, B0, marker="s", color=c)
+
+
+ax.axhline(1.0, color="k", linestyle="dotted")
+ax.axvline(true_r0, color="k", linestyle="dotted")
+ax.axvline(N / 6, color="k", linestyle="dashed")
+ax.set(xscale="log", yscale="log", xlim=[1.0, N], ylim=[7e-3, 4.0])
+
+# + pycharm={"name": "#%%\n"}
+fig, ax = plt.subplots(figsize=(8, 5))
+rat_maxes = []
+callout_r0_widths = [8]
+callout_s0_widths = [1]
+
+colors = cmr.take_cmap_colors(
+    "cmr.dusk",
+    len(widths),
+    cmap_range=(0.25, 0.95),
+)
+
+for width, c in zip(widths, colors):
+    B = np.mean(
+        np.stack([_["Unweighted B(r)"][mask] for _ in sfs_npt_s[width]]), axis=0
+    )
+    rat = B / Bm
+    rat_individs = [
+        _this["Unweighted B(r)"][mask] / _B for _this, _B in zip(sfs_npt_s[width], Bs)
+    ]
+    rat_sigma = np.std(np.stack(rat_individs), axis=0)
+    rat_maxes.append(np.max(rat))
+    line = ax.plot(r, rat, marker=".", color=c)
+    ax.fill_between(
+        r,
+        rat - rat_sigma,
+        rat + rat_sigma,
+        color=c,
+        alpha=0.2,
+        linewidth=0,
+    )
+    # for _rat in rat_individs:
+    #    ax.plot(r, _rat, color=c, alpha=0.2)
+    rat0 = np.interp(2 * width, r, rat)
+    # c = line[0].get_color()
+    ax.plot(2 * width, rat0, marker="o", ms=15, color=c)
+    # Functional fit
+    ax.plot(r, seeing_empirical(r, width, true_r0, 0.65), color=c, linestyle="dashed")
+    # Plot apparent correlation lengths
+    apparent_r0 = np.mean([_["Apparent r0"] for _ in sfs_npt_s[width]])
+    ax.plot(apparent_r0, rat0, marker="+", ms=15, mew=5, color="w")
+    ax.plot(apparent_r0, rat0, marker="+", ms=15, mew=3, color=c)
+    ax.plot(
+        [2 * width, apparent_r0],
+        [rat0] * 2,
+        linestyle="dotted",
+        color=c,
+        linewidth=3,
+    )
+    ax.text(
+        400,
+        bfac(width / true_r0),
+        fr"$s_0 = {width}$",
+        color=c,
+        va="center",
+        fontsize="x-large",
+        alpha=1.0,
+    )
+    if width in callout_r0_widths:
+        ax.annotate(
+            "apparent $r_0$",
+            xy=(apparent_r0, rat0),
+            xytext=(20, 25),
+            ha="left",
+            va="bottom",
+            arrowprops=dict(arrowstyle="->", color=c, shrinkB=6),
+            textcoords="offset points",
+            fontsize="x-large",
+            color=c,
+        )
+    if width in callout_s0_widths:
+        ax.annotate(
+            r"$2 \times s_0$",
+            xy=(2 * width, rat0),
+            xytext=(-40, 40),
+            ha="left",
+            va="bottom",
+            arrowprops=dict(arrowstyle="->", color=c, shrinkB=8),
+            textcoords="offset points",
+            fontsize="x-large",
+            color=c,
+        )
+
+ax.axvline(true_r0, ymax=0.93, color="k", linestyle="dotted", zorder=-1)
+ax.text(
+    true_r0,
+    1.05,
+    fr"true $r_0 = {true_r0:.1f}$",
+    color="k",
+    fontsize="x-large",
+    ha="center",
+    va="top",
+)
+ax.set(
+    xscale="log",
+    yscale="linear",
+    ylim=[-0.03, 1.03],
+    xlabel="Separation, $r$, pixels",
+    ylabel="Reduction in $B(r)$",
+)
+sns.despine()
+fig.tight_layout()
+fig.savefig("fake-seeing-nonp-m100-reduction.pdf")
+
+# + [markdown] pycharm={"name": "#%% md\n"}
+# ### Conclusion from changing $m$
+#
+# The results are a little bit different with m = 1, compared with m = 1.2
+#
+# The fit of the analytic function is better if we reduce from a = 0.75 to a = 0.65. But it is probably not worth adjusting this parameter in the fits.
+
+# + pycharm={"name": "#%%\n"}
+
