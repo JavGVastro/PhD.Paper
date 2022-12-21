@@ -212,8 +212,17 @@ smax = 1.39
 axx = fig.add_subplot(4, 4, (13, 15))
 alpha = np.logspace(0.0, 1.6, 500)
 sig_S = np.abs(alpha - 1) / (1 + alpha)
-ratio = 0.5 * np.abs(alpha - 1) / np.sqrt(alpha)
-axx.plot(sig_S, ratio, color="k", linestyle="dashed", zorder=-1)
+sig_pos = 0.5 * np.abs(alpha - 1) / (1 + alpha)
+sig_los = np.sqrt(alpha) / (1 + alpha)
+extra_sig = 0.25
+axx.plot(sig_S, sig_pos / sig_los, linestyle="solid", zorder=1)
+axx.plot(
+    sig_S,
+    sig_pos / np.hypot(sig_los, extra_sig),
+    color=axx.lines[-1].get_color(),
+    linestyle="dashed",
+    zorder=1,
+)
 axx.errorbar(
     sigS_vals, rat_vals, xerr=esigS_vals, yerr=erat_vals, fmt="none", color="b"
 )

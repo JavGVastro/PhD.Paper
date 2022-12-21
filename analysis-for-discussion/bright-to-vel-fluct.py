@@ -19,13 +19,20 @@ plot_and_label(
     ax,
     alpha,
     np.sqrt(alpha)  / (1 + alpha),
-    label=r"$\sigma_{\mathrm{los}}$",
+    label=r"$\sigma_{\mathrm{los}} / \beta$",
+)
+extra_sig = 0.25
+ax.plot(
+    alpha,
+    np.hypot(np.sqrt(alpha)  / (1 + alpha), extra_sig),
+    linestyle="dashed",
+    color=ax.lines[-1].get_color(),
 )
 plot_and_label(
     ax,
     alpha,
     0.5 * np.abs(alpha - 1)  / (1 + alpha),
-    label=r"$\sigma_{\mathrm{pos}}$",
+    label=r"$\sigma_{\mathrm{pos}} / \beta$",
 )
 plot_and_label(
     ax,
