@@ -280,37 +280,208 @@ figname = "strucfunc-correlations"
 # 
 # 
 
+# ## L vs Sig
+
+sns.set_context("talk", font_scale=1.2)
+
+
 path_previous = 'data-previous-scaling-relations'
 
 
-Moiseev=pd.read_csv(path_previous+'//Moiseev2015.csv')
-Ostin=pd.read_csv(path_previous+'//Ostin2001.csv')
-Blasco=pd.read_csv(path_previous+'//Blasco2013.csv')
-Rozas=pd.read_csv(path_previous+'//Rozas2006.csv')
-Ars=pd.read_csv(path_previous+'//ArsRoy1986.csv')
-Wis=pd.read_csv(path_previous+'//Wis2012.csv')
-Gal=pd.read_csv(path_previous+'//Gallagher1983.csv')
-Fer=pd.read_csv(path_previous+'//Fernandez2018.csv')
+Ostin = pd.read_csv(path_previous+'//Ostin2001.csv')
+Blasco = pd.read_csv(path_previous+'//Blasco2013.csv')
+Rozas = pd.read_csv(path_previous+'//Rozas2006.csv')
+Ars = pd.read_csv(path_previous+'//ArsRoy1986.csv')
+Wis = pd.read_csv(path_previous+'//Wis2012.csv')
+Gal = pd.read_csv(path_previous+'//Gallagher1983.csv')
+Fer = pd.read_csv(path_previous+'//Fernandez2018.csv')
+TM81 = pd.read_csv(path_previous + '//TM1981.csv')
+Ch14 = pd.read_csv(path_previous + '//Chavez2014.csv')
+Moiseev = pd.read_csv(path_previous+'//Moiseev2015.csv')
+
+MoiLV = pd.read_csv(path_previous+'//MoiLV2015.csv')
+MoiXMD = pd.read_csv(path_previous+'//MoiXMD2015.csv')
+MoiBCDG = pd.read_csv(path_previous+'//MoiBCDG2015.csv')
 
 
-fig, ax=plt.subplots(figsize=(9,9))
+logdata['log siglos [km/s]']
 
-plt.scatter(Fer.L,10**(Fer.sig),label='Fernandez 2018',marker='.',alpha=0.95,color='darkgray')
 
-#plt.scatter(logdata['log L(H) [erg s^-1]'],10**(logdata['log sig [km/s]']),marker='o',label='SigPOS',color='black',s=(logdata['log Dist [kpc]']+1.0)*70)
-plt.scatter(logdata['log L(H) [erg s^-1]'],10**(logdata['log siglos [km/s]']),marker='v',label='SigLOS',color='black',s=(logdata['log Dist [kpc]']+1.0)*70)
+fig, ax=plt.subplots(figsize=(10,10))
 
-plt.yscale('log')
+#plt.scatter(Fer.L,10**(Fer.sig),label='Fernandez 2018',marker='.',alpha=0.95,color='darkgray')
+#plt.scatter(logdata['log L(H) [erg s^-1]'],10**(logdata['log siglos [km/s]']),marker='v',label='SigLOS',color='black',s=(logdata['log Dist [kpc]']+1.0)*70)
+
+#HB
+plt.scatter(Ch14.sig,Ch14.L,label='Galaxias HII',marker='.',alpha=0.95,color='blue')
+plt.scatter(np.log10(TM81.sig),TM81.L,label='GEHRs',marker='.',alpha=0.95,color='red')
+#Ha
+plt.scatter(np.log10(MoiLV.sig),MoiLV.L-0.45,label='Galaxias enanas',marker='.',alpha=0.75,color='orange')
+plt.scatter(np.log10(MoiXMD.sig),MoiXMD.L-0.45,label='Galaxias XMD' ,marker='X',alpha=0.75,color='orange')
+plt.scatter(np.log10(MoiBCDG.sig),MoiBCDG.L-0.45,label='BCDG',marker='^',alpha=0.75,color='orange')
+plt.scatter(np.log10(Wis.sig),Wis.L-0.45,label='clumps',marker='o',alpha=0.75,color='lime')
+plt.scatter(logdata['log sig [km/s]'],logdata['log L(H) [erg s^-1]']-0.45,marker='o',label='$σ_{pos}$',color='black')
+plt.scatter(logdata['log siglos [km/s]'],logdata['log L(H) [erg s^-1]']-0.45,marker='x',label='$σ_{los}$',color='black')
+#plt.scatter(Rozas.sig,Rozas.L-0.45,label='Rozas 2006',marker='.',alpha=0.95,color='darkgray')
+
 
 ax.set(
 #    ylim  = [36, 43],
 #    xlim  = [1, 150],
 )
 #ax.set_facecolor('whitesmoke')
-ax.set(xlabel='Log(L$_{Hα}$) [erg/s]', ylabel='$σ$ [km s$^{-1}$]')
-plt.legend()
-#fig.savefig('SFplots//lvss.pdf', bbox_inches='tight')
+#plt.yscale('log')
 
+ax.set(ylabel='Log(L$_{Hβ}$) [erg/s]', xlabel='Log $σ$ [km s$^{-1}$]')
+plt.legend()
+fig.savefig('plots//l_vs_s_global.pdf', bbox_inches='tight')
+
+
+global_sig = pd.concat([Ch14.sig,np.log10(TM81.sig),np.log10(MoiLV.sig),np.log10(MoiXMD.sig),np.log10(MoiBCDG.sig),np.log10(Wis.sig),logdata['log sig [km/s]']], axis = 0)
+global_L = pd.concat([Ch14.L,TM81.L,MoiLV.L-0.45,MoiXMD.L-0.45,MoiBCDG.L-0.45,Wis.L-0.45,logdata['log L(H) [erg s^-1]']-0.45], axis = 0)
+
+
+global_sig_er = (global_sig *.05)/global_sig 
+global_L_er = (global_L *.05)/global_L 
+
+
+X, Xe, Y, Ye = [global_sig, global_sig_er, global_L, global_L_er]
+lm = linmix.LinMix(X, Y, Xe, Ye, K=2)
+lm.run_mcmc()
+
+
+dfchain = pd.DataFrame.from_records(
+    lm.chain.tolist(), 
+    columns=lm.chain.dtype.names
+)
+#dfchain
+
+
+pearsonr(X, Y)
+
+
+pd.DataFrame({"X": X, "Xe": Xe, "Y": Y, "Ye": Ye}).describe()
+
+
+vmin, vmax = 0.25, 2.5
+xgrid = np.linspace(vmin, vmax, 200)
+
+
+fig, ax = plt.subplots(figsize=(10, 10))
+
+ax.errorbar(X, Y, xerr=Xe, yerr=Ye, ls=" ", elinewidth=0.4, alpha=1.0, c="k")
+ax.scatter(X, Y, marker=".", s=20/np.hypot(Xe, Ye))
+# The original fit
+ax.plot(xgrid, dfchain["alpha"].mean() + xgrid*dfchain["beta"].mean(), 
+        '-', c="k")
+
+
+for samp in lm.chain[::100]:
+    ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
+        '-', c="r", alpha=0.15, lw=0.35,zorder=0)
+    
+ax.text(.05, .95,'log  (L$_{Hβ}$)= (' 
+        + str(np.round(dfchain["beta"].mean(),3)) + '$\pm$' + str(np.round(dfchain["beta"].std(),3))
+        + ')log $\sigma$+('
+        + str(np.round(dfchain["alpha"].mean(),3)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),3))
+        + ')',  color='k', transform=ax.transAxes)
+    
+ax.set(xlim=[0.25, 2.5], ylim=[36, 44],ylabel='Log(L$_{Hβ}$) [erg/s]', xlabel='Log $σ$ [km s$^{-1}$]')
+fig.savefig('plots//global_L_s.pdf', bbox_inches='tight')
+
+
+# ## D vs Sig
+
+MelDS = pd.read_csv(path_previous+'//MelDS1977.csv')
+LarDS = pd.read_csv(path_previous+'//LarDS1981.csv')
+TMDS = pd.read_csv(path_previous+'//TMDS1981.csv')
+TMDSEG = pd.read_csv(path_previous+'//TMDS1981EG.csv')
+ARDSA = pd.read_csv(path_previous+'//ARDS1988.csv')
+WDS = pd.read_csv(path_previous+'//WisDS2012.csv')
+
+
+fig, ax=plt.subplots(figsize=(10,10))
+
+plt.scatter(MelDS.sig,MelDS.D,label='GEHRs',marker='.',alpha=0.95,color='blue')
+plt.scatter(LarDS.sig,LarDS.D,label='MCs',marker='.',alpha=0.95,color='red')
+plt.scatter(TMDS.sig,TMDS.D,label='GEHRs',marker='s',alpha=0.95,color='orange')
+plt.scatter(TMDSEG.sig,TMDSEG.D,label='EG',marker='.',alpha=0.95,color='orange')
+plt.scatter(ARDSA.sig,ARDSA.D,label='GEHRs',marker='.',alpha=0.95,color='green')
+plt.scatter(np.log10(WDS.sig),np.log10(WDS.D),label='clumps',marker='.',alpha=0.95,color='lime')
+
+plt.scatter(logdata['log sig [km/s]'],logdata['log L [pc]'],marker='o',label='$σ_{pos}$',color='black')
+plt.scatter(logdata['log siglos [km/s]'],logdata['log L [pc]'],marker='x',label='$σ_{los}$',color='black')
+
+
+ax.set(
+#    ylim  = [36, 43],
+#    xlim  = [1, 150],
+)
+#ax.set_facecolor('whitesmoke')
+#plt.yscale('log')
+
+ax.set(ylabel='Log D [pc]', xlabel='Log $σ$ [km s$^{-1}$]')
+plt.legend()
+fig.savefig('plots//d_vs_s_global.pdf', bbox_inches='tight')
+
+
+
+
+
+global_sig = pd.concat([MelDS.sig,LarDS.sig,TMDS.sig,TMDSEG.sig,ARDSA.sig,np.log10(WDS.sig),logdata['log sig [km/s]']], axis = 0)
+global_D = pd.concat([MelDS.D,LarDS.D,TMDS.D,TMDSEG.D,ARDSA.D,np.log10(WDS.D),logdata['log L [pc]']], axis = 0)
+
+
+global_sig_er = (global_sig *.05)/global_sig 
+global_D_er = (global_D *.05)/global_D 
+
+
+X, Xe, Y, Ye = [global_sig, global_sig_er, global_D, global_D_er]
+lm = linmix.LinMix(X, Y, Xe, Ye, K=2)
+lm.run_mcmc()
+
+
+dfchain = pd.DataFrame.from_records(
+    lm.chain.tolist(), 
+    columns=lm.chain.dtype.names
+)
+#dfchain
+
+
+pearsonr(X, Y)
+
+
+pd.DataFrame({"X": X, "Xe": Xe, "Y": Y, "Ye": Ye}).describe()
+
+
+vmin, vmax = -0.5, 3.0
+xgrid = np.linspace(vmin, vmax, 200)
+
+
+fig, ax = plt.subplots(figsize=(10, 10))
+
+ax.errorbar(X, Y, xerr=Xe, yerr=Ye, ls=" ", elinewidth=0.4, alpha=1.0, c="k")
+ax.scatter(X, Y, marker=".", s=20/np.hypot(Xe, Ye))
+# The original fit
+ax.plot(xgrid, dfchain["alpha"].mean() + xgrid*dfchain["beta"].mean(), 
+        '-', c="k")
+
+
+for samp in lm.chain[::100]:
+    ax.plot(xgrid, samp["alpha"] + xgrid*samp["beta"], 
+        '-', c="r", alpha=0.15, lw=0.35,zorder=0)
+    
+ax.text(.05, .95,'log  D= (' 
+        + str(np.round(dfchain["beta"].mean(),3)) + '$\pm$' + str(np.round(dfchain["beta"].std(),3))
+        + ')log $\sigma$+('
+        + str(np.round(dfchain["alpha"].mean(),3)) + '$\pm$' + str(np.round(dfchain["alpha"].std(),3))
+        + ')',  color='k', transform=ax.transAxes)
+    
+ax.set(ylabel='Log D [pc]', xlabel='Log $σ$ [km s$^{-1}$]')
+fig.savefig('plots//global_d_s.pdf', bbox_inches='tight')
+
+
+# ## other stuff
 
 
 
@@ -336,32 +507,9 @@ ax.set(
 #ax.set_facecolor('whitesmoke')
 ax.set(xlabel='Log(L$_{Hα}$) [erg/s]', ylabel='$σ$ [km s$^{-1}$]')
 plt.legend()
-#fig.savefig('SFplots//lvss.pdf', bbox_inches='tight')
 
 
-fig, ax=plt.subplots(figsize=(9,9))
 
-plt.scatter(Gal.L,Gal.sig,label='Gallagher 1983',marker='x',alpha=0.85,color='dimgray')
-plt.scatter(Ars.L,10**Ars.sig,label='Arsenault 1988',marker='+',alpha=0.85,color='dimgray')
-plt.scatter(Ostin.L,Ostin.sig,label='Ostin 2001',marker='o',alpha=0.95,color='darkgray')
-plt.scatter(Rozas.L,10**(Rozas.sig),label='Rozas 2006',marker='.',alpha=0.95,color='darkgray')
-plt.scatter(Wis.L,Wis.sig,label='Wisnioski 2012',marker='s',alpha=0.75,color='silver')
-plt.scatter(Blasco.L,Blasco.sig,label='Blasco 2013',marker='D',alpha=0.75,color='silver')
-plt.scatter(Moiseev.L,Moiseev.sig,label='Moiseev 2015',marker='^',alpha=0.75,color='silver')
-
-#plt.scatter(logdata['log L(H) [erg s^-1]'],10**(logdata['log sig [km/s]']),marker='o',label='SigPOS',color='black',s=(logdata['log Dist [kpc]']+1.0)*70)
-plt.scatter(logdata['log L(H) [erg s^-1]'],10**(logdata['log siglos [km/s]']),marker='v',label='SigLOS',color='black',s=(logdata['log Dist [kpc]']+1.0)*70)
-
-plt.yscale('log')
-
-ax.set(
-#    ylim  = [36, 43],
-#    xlim  = [1, 150],
-)
-#ax.set_facecolor('whitesmoke')
-ax.set(xlabel='Log(L$_{Hα}$) [erg/s]', ylabel='$σ$ [km s$^{-1}$]')
-plt.legend()
-#fig.savefig('SFplots//lvss.pdf', bbox_inches='tight')
 
 
 

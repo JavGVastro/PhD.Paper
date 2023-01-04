@@ -18,6 +18,12 @@ from results import loadresults,loadresults2
 x,y = loadresults('sample-names-corr','formal-names-corr','2sig')
 
 
+x
+
+
+y
+
+
 a,b = loadresults2('sample-names-corr','formal-names-corr','LM')
 
 
@@ -71,6 +77,9 @@ ax.scatter(b['sig2'],b['m'], c="b")
 ax.errorbar(b['sig2'],b['m'], xerr=b['sig2+'], yerr=b['m+'], ls=" ", elinewidth=0.75, alpha=1.0, c="b")
 ax.scatter(d['sig2'],d['m'], c="r")
 ax.errorbar(d['sig2'],d['m'], xerr=d['sig2+'], yerr=d['m+'], ls=" ", elinewidth=0.75, alpha=1.0, c="r")
+
+
+
 
 
 get_ipython().system('jupyter nbconvert --to script --no-prompt results-compiler-v2.ipynb')

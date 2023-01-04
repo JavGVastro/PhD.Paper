@@ -281,72 +281,101 @@ plt.legend()
 
 fig, ax=plt.subplots(figsize=(10,10))
 
-ax.axvline(Z[8], color='k', linestyle="dashed",alpha=0.5,linewidth=0.75)
-ax.axvline(Z[5], color='k', linestyle="dashed",alpha=0.5,linewidth=0.75)
-ax.axvline(Z[6], color='k', linestyle="dashed",alpha=0.5,linewidth=0.75)
-ax.axvline(Z[7], color='k', linestyle="dashed",alpha=0.5,linewidth=0.75)
+ax.axhline(39.2, color='b', linestyle="dashed",alpha=0.85,linewidth=2.5,label='K84')
+ax.axhline(38.91, color='r', linestyle="dashed",alpha=0.85,linewidth=2.5)
+ax.axhline(38.15, color="green", linestyle="dashed",alpha=0.85,linewidth=2.5)
+ax.axhline(38.43, color="orange", linestyle="dashed",alpha=0.85,linewidth=2.5)
+
+ax.axhline(38.97, color='b', linestyle=':',alpha=0.85,linewidth=2.5,label='B02')
+ax.axhline(38.50, color='r', linestyle=':',alpha=0.85,linewidth=2.5)
+ax.axhline(37.76, color="green", linestyle=':',alpha=0.85,linewidth=2.5)
+ax.axhline(37.85, color="orange", linestyle=':',alpha=0.85,linewidth=2.5)
 
 #604
-ax.scatter(np.log10(TM81.sig[0]),TM81.L[0]+TM81.C[0],label='TM81',color = 'orange')
-ax.scatter(np.log10(Hp86.sig[0]),Hp86.L[0]-0.45,label='Hp86',color = 'pink')
-ax.scatter(np.log10(M87.sig[0]),M87.L[0]+M87.C[0],label='M87',color = 'blue')
-ax.scatter(Fer.sig[10],Fer.L[10],label='Fer',color = 'red')
-ax.errorbar(Fer.sig[10], Fer.L[10], xerr=Fer.sigerr[10], yerr=Fer.err[10], ls=" ", elinewidth=0.5, alpha=1.0, c="r")
-ax.scatter(Z[8], Y1b[8], marker='.',alpha=0.5,color='purple',s=200,label='K84')
-ax.errorbar(Z[8], Y1b[8], yerr=0.25, ls=" ", elinewidth=0.5, alpha=1.0, c="purple")
-ax.scatter(Z[8], Y2b[8], marker='.',alpha=0.5,color='green',s=200,label='B02')
+ax.scatter(np.log10(TM81.sig[0]),TM81.L[0],label='TM81',color = 'blue', marker='D')
+ax.scatter(np.log10(Hp86.sig[0]),Hp86.L[0]-0.45,label='Hp86',color = 'blue', marker='s')
+ax.scatter(np.log10(M87.sig[0]),M87.L[0],label='M87',color = 'blue', marker='o')
+ax.scatter(Fer.sig[10],Fer.L[10],label='Fer18',color = 'blue', marker='^')
+ax.errorbar(Fer.sig[10], Fer.L[10], xerr=Fer.sigerr[10], yerr=Fer.err[10], ls=" ", elinewidth=0.5, alpha=1.0, c="b")
+#ax.scatter(Z[8], Y1b[8], marker='.',alpha=0.5,color='purple',s=200,label='K84')
+#ax.errorbar(Z[8], Y1b[8], yerr=0.25, ls=" ", elinewidth=0.5, alpha=1.0, c="purple")
+#ax.scatter(Z[8], Y2b[8], marker='.',alpha=0.5,color='green',s=200,label='B02')
 #ax.errorbar(Z[8], Y2b[8], yerr=0.25, ls=" ", elinewidth=0.5, alpha=1.0, c="green")
-ax.scatter(Z[8], 38.99, marker='.',alpha=1.0,color='k',s=250)
-ax.errorbar(Z[8], 38.99, yerr=0.08, ls=" ", elinewidth=2.25, alpha=1.0, c='k')
+ax.scatter(np.log10(17.46), 38.86, marker='x',alpha=1.0,color='blue',s=250,label='median')
+ax.scatter(np.log10(17.46), 38.99, marker='+',alpha=1.0,color='blue',s=250, label='mean')
 
 
 #595
-ax.scatter(np.log10(TM81.sig[1]),TM81.L[1]+TM81.C[1],color = 'orange', marker='^')
-ax.scatter(np.log10(M87.sig[1]),M87.L[1]+M87.C[1],color = 'blue', marker='^')
-ax.scatter(np.log10(Hp86.sig[1]),Hp86.L[1]-0.45,color = 'pink', marker='^')
+ax.scatter(np.log10(TM81.sig[1]),TM81.L[1],color = 'red' , marker='D')
+ax.scatter(np.log10(M87.sig[1]),M87.L[1],color = 'red', marker='o')
+ax.scatter(np.log10(Hp86.sig[1]),Hp86.L[1]-0.45,color = 'red', marker='s')
 ax.scatter(Fer.sig[9],Fer.L[9],color = 'red', marker='^')
 ax.errorbar(Fer.sig[9], Fer.L[9], xerr=Fer.sigerr[9], yerr=Fer.err[9], ls=" ", elinewidth=0.75, alpha=1.0, c="r", marker='^')
-ax.scatter(Z[7], Y1b[7], marker='^',alpha=0.5,color='purple')
-ax.errorbar(Z[7], Y1b[7], yerr=0.25, ls=" ", elinewidth=0.75, alpha=1.0, c="purple")
-ax.scatter(Z[7], Y2b[7], marker='^',alpha=0.5,color='green')
-ax.scatter(Z[7], 38.66, marker='^',alpha=1.0,color='k')
-ax.errorbar(Z[7], 38.66, yerr=0.12, ls=" ", elinewidth=2.25, alpha=1.0, c='k')
+#ax.scatter(Z[7], Y1b[7], marker='^',alpha=0.5,color='purple')
+#ax.errorbar(Z[7], Y1b[7], yerr=0.25, ls=" ", elinewidth=0.75, alpha=1.0, c="purple")
+#ax.scatter(Z[7], Y2b[7], marker='^',alpha=0.5,color='green')
+ax.scatter(np.log10(18.06), 38.40, marker='x',alpha=1.0,color='red',s=250)
+ax.scatter(np.log10(18.06), 38.66, marker='+',alpha=1.0,color='red',s=250)
+
 
 
 #30Dor
-ax.scatter(np.log10(TM81.sig[17]),TM81.L[17]+TM81.C[17],color = 'orange', marker='s')
-ax.scatter(np.log10(M87.sig[26]),M87.L[26]+M87.C[26],color = 'blue', marker='s')
-ax.scatter(Z[3], Y1b[3], marker='s',alpha=0.5,color='purple')
-ax.errorbar(Z[3], Y1b[3], yerr=0.25, ls=" ", elinewidth=0.75, alpha=1.0, c="purple")
+#ax.scatter(np.log10(TM81.sig[17]),TM81.L[17]+TM81.C[17],color = 'orange', marker='s')
+#ax.scatter(np.log10(M87.sig[26]),M87.L[26]+M87.C[26],color = 'blue', marker='s')
+#ax.scatter(Z[3], Y1b[3], marker='s',alpha=0.5,color='purple')
+#ax.errorbar(Z[3], Y1b[3], yerr=0.25, ls=" ", elinewidth=0.75, alpha=1.0, c="purple")
 
 #HX
-ax.scatter(np.log10(TM81.sig[10]),TM81.L[10]+TM81.C[10],color = 'orange', marker='x')
-ax.scatter(np.log10(M87.sig[24]),M87.L[24]+M87.C[24],color = 'blue', marker='x')
-ax.scatter(np.log10(Hp86.sig[40]),Hp86.L[40]-0.45,color = 'pink', marker='x')
-ax.scatter(Z[5], Y2b[5], marker='x',alpha=0.5,color='green')
-ax.scatter(Z[5], Y1b[5], marker='x',alpha=0.5,color='purple')
-ax.errorbar(Z[5], Y1b[5], yerr=0.25, ls=" ", elinewidth=0.75, alpha=1.0, c="purple")
-ax.scatter(Z[5], 37.91, marker='x',alpha=1.0,color='k')
-ax.errorbar(Z[5], 37.91, yerr=0.14, ls=" ", elinewidth=2.25, alpha=1.0, c='k')
+ax.scatter(np.log10(TM81.sig[10]),TM81.L[10],color = 'green', marker='D')
+ax.scatter(np.log10(M87.sig[24]),M87.L[24],color = 'green', marker='o')
+ax.scatter(np.log10(Hp86.sig[40]),Hp86.L[40]-0.45,color = 'green', marker='s')
+#ax.scatter(Z[5], Y2b[5], marker='x',alpha=0.5,color='green')
+#ax.scatter(Z[5], Y1b[5], marker='x',alpha=0.5,color='purple')
+#ax.errorbar(Z[5], Y1b[5], yerr=0.25, ls=" ", elinewidth=0.75, alpha=1.0, c="purple")
+ax.scatter(np.log10(9.9), 37.48, marker='x',alpha=1.0,color='green',s=250)
+ax.scatter(np.log10(9.9), 37.91, marker='+',alpha=1.0,color='green',s=250)
 
 
 #HV
-ax.scatter(np.log10(TM81.sig[11]),TM81.L[11]+TM81.C[11],color = 'orange', marker='d')
-ax.scatter(np.log10(M87.sig[25]),M87.L[25]+M87.C[25],color = 'blue', marker='d')
-ax.scatter(np.log10(Hp86.sig[41]),Hp86.L[41]-0.45,color = 'pink', marker='d')
-ax.scatter(Z[6], Y2b[6], marker='d',alpha=0.5,color='green')
-ax.scatter(Z[6], Y1b[6], marker='d',alpha=0.5,color='purple')
-ax.errorbar(Z[6], Y1b[6], yerr=0.25, ls=" ", elinewidth=0.75, alpha=1.0, c="purple")
-ax.scatter(Z[6], 37.96, marker='d',alpha=1.0,color='k')
-ax.errorbar(Z[6], 37.96, yerr=0.14, ls=" ", elinewidth=2.25, alpha=1.0, c='k')
+ax.scatter(np.log10(TM81.sig[11]),TM81.L[11],color = 'orange', marker='D')
+ax.scatter(np.log10(M87.sig[25]),M87.L[25],color = 'orange', marker='o')
+ax.scatter(np.log10(Hp86.sig[41]),Hp86.L[41]-0.45,color = 'orange', marker='s')
+#ax.scatter(Z[6], Y2b[6], marker='d',alpha=0.5,color='green')
+#ax.scatter(Z[6], Y1b[6], marker='d',alpha=0.5,color='purple')
+#ax.errorbar(Z[6], Y1b[6], yerr=0.25, ls=" ", elinewidth=0.75, alpha=1.0, c="purple")
+ax.scatter(np.log10(9.88), 37.5, marker='x',alpha=1.0,color='orange',s=250)
+ax.scatter(np.log10(9.88), 37.96, marker='+',alpha=1.0,color='orange',s=250)
 
+ax.annotate('604', xy=(1.15, 39.2),  xycoords='data',
+            xytext=(0.5, 0.95), textcoords='axes fraction',
+            arrowprops=dict(facecolor='blue', shrink=0.05),
+            horizontalalignment='right', verticalalignment='top',
+            )
 
+ax.annotate('595', xy=(1.15, 38.9),  xycoords='data',
+            xytext=(0.5, 0.725), textcoords='axes fraction',
+            arrowprops=dict(facecolor='red', shrink=0.05),
+            horizontalalignment='right', verticalalignment='top',
+            )
+ax.set(ylabel='Log(L$_{Hβ}$) [erg/s]', xlabel='log $σ_{los}$ [km s$^{-1}$]')
+
+ax.annotate('HX', xy=(1.15, 38.15),  xycoords='data',
+            xytext=(0.5, 0.525), textcoords='axes fraction',
+            arrowprops=dict(facecolor='green', shrink=0.05),
+            horizontalalignment='right', verticalalignment='top',
+            )
+
+ax.annotate('HV', xy=(1.15, 38.45),  xycoords='data',
+            xytext=(0.5, 0.65), textcoords='axes fraction',
+            arrowprops=dict(facecolor='orange', shrink=0.05),
+            horizontalalignment='right', verticalalignment='top',
+            )
 
 ax.set(ylabel='Log(L$_{Hβ}$) [erg/s]', xlabel='log $σ_{los}$ [km s$^{-1}$]')
 
 ax.set(
-    ylim  = [37.5, 40],
-    xlim  = [0.9, 1.5])
+    ylim  = [37.0, 39.5],
+    xlim  = [0.9, 1.4])
 
 plt.legend()
 

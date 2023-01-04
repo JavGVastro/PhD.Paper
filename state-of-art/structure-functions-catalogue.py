@@ -279,26 +279,27 @@ alpha = .4
 fig, ax=plt.subplots(figsize=(8,8))
 
 #plt.loglog(DataH[26].pc*0.363,DataH[26].S**2,marker='o',color='darkorange',alpha=alpha, markersize=7, label='M8')
-plt.loglog(DataH[0].pc,DataH[0].S,marker='o',color='darkorange',alpha=alpha, markersize=5, label= 'von Horner 1')
-plt.loglog(DataH[1].pc,DataH[1].S,marker='s',color='darkorange',alpha=alpha, markersize=5, label=  'von Horner 2')
-plt.loglog(DataH[2].pc,DataH[2].S,marker='o',color='red',alpha=alpha, markersize=5, label=  'Munch O', linestyle=':')
-plt.loglog(DataH[11].pc,DataH[11].S,marker='o',color='maroon',alpha=alpha, markersize=5, label=  'Cast 1a O')
-plt.loglog(DataH[12].pc,DataH[12].S,marker='s',color='maroon',alpha=alpha, markersize=5, label=  'Cast 1b O')
-plt.loglog(DataH[13].pc,DataH[13].S,marker='^',color='maroon',alpha=alpha, markersize=5, label=  'Cast 1c O')
-plt.loglog(DataH[14].pc,DataH[14].S,marker='o',color='purple',alpha=alpha, markersize=5, label= 'Cast 2a O', linestyle=':')
-plt.loglog(DataH[15].pc,DataH[15].S,marker='s',color='purple',alpha=alpha, markersize=5, label=  'Cast 2b O', linestyle=':')
-plt.loglog(DataH[16].pc,DataH[16].S,marker='^',color='purple',alpha=alpha, markersize=5, label=  'Cast 2c O', linestyle=':')
-plt.loglog(DataH[27].pc*0.002,DataH[27].S,marker='^',color='violet',alpha=alpha, markersize=5, label=  'Wen S', linestyle='-.')
+plt.loglog(DataH[0].pc,DataH[0].S,marker='o',color='darkorange',alpha=alpha, markersize=5, label= 'von Hoerner 1')
+plt.loglog(DataH[1].pc,DataH[1].S,marker='s',color='darkorange',alpha=alpha, markersize=5, label=  'von Hoerner 2')
+plt.loglog(DataH[2].pc,DataH[2].S,marker='o',color='red',alpha=alpha, markersize=5, label=  'Munch [OIII]', linestyle=':')
+plt.loglog(DataH[11].pc,DataH[11].S,marker='o',color='maroon',alpha=alpha, markersize=5, label=  'Cast 1a [OIII]', linestyle=':')
+plt.loglog(DataH[12].pc,DataH[12].S,marker='s',color='maroon',alpha=alpha, markersize=5, label=  'Cast 1b [OIII]', linestyle=':')
+plt.loglog(DataH[13].pc,DataH[13].S,marker='^',color='maroon',alpha=alpha, markersize=5, label=  'Cast 1c [OIII]', linestyle=':')
+plt.loglog(DataH[14].pc,DataH[14].S,marker='o',color='purple',alpha=alpha, markersize=5, label= 'Cast 2a [OIII]', linestyle=':')
+plt.loglog(DataH[15].pc,DataH[15].S,marker='s',color='purple',alpha=alpha, markersize=5, label=  'Cast 2b [OIII]', linestyle=':')
+plt.loglog(DataH[16].pc,DataH[16].S,marker='^',color='purple',alpha=alpha, markersize=5, label=  'Cast 2c [OIII]', linestyle=':')
+plt.loglog(DataH[28].pc*0.002,DataH[28].S,marker='o',color='orchid',alpha=alpha, markersize=5, label=  "O'Dell [OI]", linestyle='-.')
+plt.loglog(DataH[27].pc*0.002,DataH[27].S,marker='s',color='violet',alpha=alpha, markersize=5, label=  'Wen [SIII]', linestyle='-.')
 
-plt.loglog(DataH[19].pc,DataH[19].S,marker='o',color='blue',alpha=alpha, markersize=5, label=  'Joncas')
-plt.loglog(DataH[21].pc,DataH[21].S*9.37,marker='o',color='green',alpha=alpha, markersize=5, label=  'Arthur H')
-plt.loglog(DataH[22].pc,DataH[22].S*5.62,marker='s',color='green',alpha=alpha, markersize=5, label=  'Arthur N', linestyle=':')
-plt.loglog(DataH[23].pc,DataH[23].S*10.2,marker='^',color='green',alpha=alpha, markersize=5, label= 'Arthur O', linestyle='--')
-plt.loglog(DataH[24].pc,DataH[24].S*5.27,marker='X',color='green',alpha=alpha, markersize=5, label=  'Arthur S', linestyle='-.')
-plt.loglog(r_EON,B_EON,marker='o',color='k',alpha=0.35, markersize=5, label='Haenel H')
-plt.loglog(r_EON_O,B_EON_O,marker='^',color='k',alpha=0.35, markersize=5,label='Haenel O')
-plt.loglog(r_EON_N,B_EON_N,marker='s',color='k',alpha=0.35, markersize=5, label='Haenel N')
-plt.loglog(r_EON_S,B_EON_S,marker='X',color='k',alpha=0.35, markersize=5,label='Haenel S')
+#plt.loglog(DataH[19].pc,DataH[19].S,marker='o',color='blue',alpha=alpha, markersize=5, label=  'Joncas')
+plt.loglog(DataH[21].pc,DataH[21].S*9.37,marker='o',color='green',alpha=alpha, markersize=5, label=  'Arthur Ha')
+plt.loglog(DataH[22].pc,DataH[22].S*5.62,marker='s',color='green',alpha=alpha, markersize=5, label=  'Arthur [NII]')
+plt.loglog(DataH[23].pc,DataH[23].S*10.2,marker='^',color='green',alpha=alpha, markersize=5, label= 'Arthur [OIII]', linestyle=':')
+plt.loglog(DataH[24].pc,DataH[24].S*5.27,marker='X',color='green',alpha=alpha, markersize=5, label=  'Arthur [SII]', linestyle='-.')
+plt.loglog(r_EON,B_EON,marker='o',color='k',alpha=0.35, markersize=5, label='Haenel Ha')
+plt.loglog(r_EON_O,B_EON_O,marker='^',color='k',alpha=0.35, markersize=5,label='Haenel [OIII]', linestyle=':')
+plt.loglog(r_EON_N,B_EON_N,marker='s',color='k',alpha=0.35, markersize=5, label='Haenel [NII]')
+plt.loglog(r_EON_S,B_EON_S,marker='X',color='k',alpha=0.35, markersize=5,label='Haenel [SII]', linestyle='-.')
     
 ax.set(xlabel='separación [pc]', ylabel='B(r) [km$^{2}$/s$^{2}$]')
 plt.tick_params(which='both', labelright=False, direction='in', right=True,  top=True)
@@ -310,6 +311,9 @@ plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
 fig.savefig('plots/funciones-M42.pdf', 
               bbox_inches='tight')
+
+
+DataH[0].pc
 
 
 fig, ax=plt.subplots(figsize=(6,6))

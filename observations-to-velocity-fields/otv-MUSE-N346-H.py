@@ -84,7 +84,7 @@ good = (~m) & (sb > 0.001)
 trim = (slice(20, 315), slice(10, 330))
 
 
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(12, 12))
 
 
 dataI=sb[trim]
@@ -117,7 +117,7 @@ dffx=pd.DataFrame(sb[trim])
 dffx=dffx.stack().reset_index().rename(columns={'level_0':'X', 'level_1':'Y', 0:'I'})
 
 
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(12, 12))
 
 
 dataRV=vv[trim]
@@ -153,7 +153,7 @@ RV=pd.DataFrame(vv[trim])
 RV=RV.stack().reset_index().rename(columns={'level_0':'X', 'level_1':'Y', 0:'RV'})
 
 
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(12, 12))
 
 
 dataS=ss[trim]
