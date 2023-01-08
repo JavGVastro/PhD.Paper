@@ -90,11 +90,11 @@ r_local_minimum = 4.5
 
 # Move the specification of which points to fit to be before the setting of the parameter limits.
 
-relative_uncertainty = 0.1
+relative_uncertainty = 0.07
 weights = 1.0 / (relative_uncertainty * B)
-large_scale = r > 0.35 * box_size
+large_scale = r > 0.75 * box_size
 #weights[large_scale] /= 3.0
-weights[:20] /= 1.5
+weights[:14] /= 2.5
 
 
 model = lmfit.Model(bfunc.bfunc03s)
@@ -118,7 +118,7 @@ model.set_param_hint(
 )
 
 # Noise cannot be much larger than smallest B(r)
-model.set_param_hint("noise", value=0.5 * B.min(), min=0.0, max=3 * B.min())
+model.set_param_hint("noise", value=0.5 * B.min(), min=0.0, max= 3 * B.min())
 
 # box_size is fixed
 # model.set_param_hint("box_size", value=box_size, vary=False)
@@ -127,7 +127,7 @@ model.set_param_hint("noise", value=0.5 * B.min(), min=0.0, max=3 * B.min())
 pd.DataFrame(model.param_hints)
 
 
-to_fit = r <= 0.6 * box_size
+to_fit = r <= 0.75 * box_size
 #to_fit = ~large_scale
 
 
@@ -169,6 +169,9 @@ ax.set(
     ylabel=r"B(r) [km$^{2}$/s$^{2}$]",
 )
 sns.despine()
+
+
+
 
 
 # emcee
@@ -215,13 +218,14 @@ bplot.corner_plot(
 # data_ranges=[0.95, 0.99, 0.995, 0.995, 0.999]
 
 
-bplot.STYLE["data label element"] = 4
-bplot.STYLE["model label element"] = 0
-bplot.STYLE["model label offset"] = (-60, 40)
-bplot.STYLE["true model label element"] = 7
-bplot.STYLE["true model label offset"] = (30, -60)
+
+#bplot.STYLE["data label element"] = 4
+#bplot.STYLE["model label element"] = 0
+#bplot.STYLE["model label offset"] = (-60, 40)
+#bplot.STYLE["true model label element"] = 7
+#bplot.STYLE["true model label offset"] = (30, -60)
 bplot.strucfunc_plot(
-    result_emcee, result, r, B, to_fit, name, data, box_size, large_scale
+    result_emcee, result_emcee, r, B, to_fit, name, data, box_size, large_scale
 )
 
 

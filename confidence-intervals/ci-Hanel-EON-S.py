@@ -41,13 +41,13 @@ datapath_res= Path(path_res).expanduser()
 
 # Data load and region parameters
 
-data = "EONN"
+data = "EONS"
 
 
-name = "EON [NII]"
+name = "EON [SII]"
 
 
-name_in = 'Hanel-EON-N'
+name_in = 'Hanel-EON-S'
 
 
 data_in = json.load(open(str(datapath_data) + '/sf-' + name_in + ".json"))
@@ -82,7 +82,7 @@ model.set_param_hint("r0", value=0.1 * box_size, min=0.01 * box_size, max=2 * bo
 model.set_param_hint("sig2", value=0.5 * B.max(), min=0.25 * B.max(), max=2 * B.max())
 
 # m pegged at 1.0
-model.set_param_hint("m", value=1.0, vary=False)
+model.set_param_hint("m", value=0.1, vary=False)
 
 
 # Seeing pegged at ZERO
@@ -100,11 +100,11 @@ model.set_param_hint("noise", value=0.5 * B.min(), min=0.0, max=3 * B.min())
 pd.DataFrame(model.param_hints)
 
 
-relative_uncertainty = 0.03
+relative_uncertainty = 0.0175
 weights = 1.0 / (relative_uncertainty * B)
 large_scale = r > 0.5 * box_size
-weights[large_scale] /= 3.0
-weights[:3] /= 2.0
+weights[large_scale] /= 1.5
+weights[:3] /= 1.5
 
 
 to_fit = r <= 0.7 * box_size
@@ -149,10 +149,13 @@ ax.set(
 sns.despine()
 
 
+
+
+
 # emcee
 
 emcee_kws = dict(
-    steps=3000, burn=500, thin=50, is_weighted=True, progress=False, workers=16
+    steps=10000, burn=500, thin=50, is_weighted=True, progress=False, workers=16
 )
 emcee_params = result.params.copy()
 # emcee_params.add('__lnsigma', value=np.log(0.1), min=np.log(0.001), max=np.log(2.0))
@@ -363,5 +366,5 @@ with open(datapath_res/jsonfilename, "w") as f:
 print("--- %s seconds ---" % (time.time() - start_time))
 
 
-get_ipython().system('jupyter nbconvert --to script --no-prompt ci-Hanel-EON-N.ipynb')
+get_ipython().system('jupyter nbconvert --to script --no-prompt ci-Hanel-EON-S.ipynb')
 

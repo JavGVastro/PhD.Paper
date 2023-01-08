@@ -75,7 +75,7 @@ print("Box size, parsec:", box_size)
 # 
 
 # Merge first K + 1 points
-K = 10
+K = 5
 r[K] = np.mean(r[: K + 1])
 B[K] = np.mean(B[: K + 1])
 r = r[K:]
@@ -90,11 +90,11 @@ r_local_minimum = 4.5
 
 # Move the specification of which points to fit to be before the setting of the parameter limits.
 
-relative_uncertainty = 0.035
+relative_uncertainty = 0.05
 weights = 1.0 / (relative_uncertainty * B)
 large_scale = r > 0.35 * box_size
 #weights[large_scale] /= 3.0
-weights[:20] /= 1.75
+weights[:10] /= 2.0
 
 
 model = lmfit.Model(bfunc.bfunc03s)
@@ -127,7 +127,7 @@ model.set_param_hint("noise", value=0.5 * B.min(), min=0.0, max=3 * B.min())
 pd.DataFrame(model.param_hints)
 
 
-to_fit = r <= 0.5 * box_size
+to_fit = r <= 0.6 * box_size
 #to_fit = ~large_scale
 
 
@@ -169,6 +169,9 @@ ax.set(
     ylabel=r"B(r) [km$^{2}$/s$^{2}$]",
 )
 sns.despine()
+
+
+
 
 
 # emcee

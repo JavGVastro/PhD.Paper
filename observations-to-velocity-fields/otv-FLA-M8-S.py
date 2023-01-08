@@ -45,7 +45,7 @@ datapath_res= Path(path_res).expanduser()
 data_file = 'FLA-M8'
 
 
-name_export='FLA-M8-N'
+name_export='FLA-M8-S'
 
 
 # Input data of the region

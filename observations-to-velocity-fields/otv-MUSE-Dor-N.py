@@ -76,7 +76,7 @@ good = (~m) & (sb > 0.001)
 
 
 
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(12, 12))
 
 
 dataI=sb
@@ -109,7 +109,7 @@ dffx=pd.DataFrame(sb)
 dffx=dffx.stack().reset_index().rename(columns={'level_0':'X', 'level_1':'Y', 0:'I'})
 
 
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(12, 12))
 
 
 dataRV=vv
@@ -118,7 +118,7 @@ plt.figure(1)
 plt.imshow(dataRV, cmap='RdBu_r')
 
 cbar = plt.colorbar()
-#plt.clim(225,350)
+plt.clim(200,350)
 cbar.set_label('km/s', rotation=270, labelpad=15)  
 
 ax.set_xlabel('X')
@@ -142,7 +142,7 @@ RV=pd.DataFrame(vv)
 RV=RV.stack().reset_index().rename(columns={'level_0':'X', 'level_1':'Y', 0:'RV'})
 
 
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(12, 12))
 
 
 dataS=ss

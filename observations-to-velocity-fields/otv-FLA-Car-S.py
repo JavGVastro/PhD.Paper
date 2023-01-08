@@ -74,7 +74,7 @@ for ax in axb, axr, axd:
 axd.set(xlabel='Velocity')
 
 
-xxx
+
 
 
 df = df.assign(Ha_dV=df["[SII]2RVr"] - df["[SII]2RVb"])
@@ -203,8 +203,8 @@ def combine_moments(f1, v1, s1, f2, v2, s2, return_skew=False):
 
 
 fHa, vHa, sHa, gHa = combine_moments(
-    df["[SII]2Nr"],df["[NII]RVr"],df["[NII]sigmar"],
-    df["[SII]2Nb"],df["[NII]RVb"],df["[NII]sigmab"],
+    df["[SII]2Nr"],df["[SII]2RVr"],df["[SII]2sigmar"],
+    df["[SII]2Nb"],df["[SII]2RVb"],df["[SII]2sigmab"],
     return_skew=True
 )
 
@@ -247,22 +247,22 @@ def mark_points(ax):
 
 with sns.axes_style("whitegrid"):
     fig, ax = plt.subplots(figsize=(12, 12))
-    scat = ax.scatter(df.RAdeg, df.DEdeg, s=100, c=df['[NII]Nb'], cmap='gray_r', vmin=0.0, vmax=4e5)
+    scat = ax.scatter(df.RAdeg, df.DEdeg, s=100, c=df['[NII]Nb'], cmap='gray_r', vmin=0.0, vmax=4e4)
     fig.colorbar(scat, ax=ax)
     mark_points(ax)
     ax.invert_xaxis()
     ax.set_aspect(2)
-    ax.set_title('H alpha blue layer brightness')
+    ax.set_title('[SII] blue layer brightness')
 
 
 with sns.axes_style("whitegrid"):
     fig, ax = plt.subplots(figsize=(12, 12))
-    scat = ax.scatter(df.RAdeg, df.DEdeg, s=100, c=df['[NII]Nr'], cmap='gray_r', vmin=0.0, vmax=4e5)
+    scat = ax.scatter(df.RAdeg, df.DEdeg, s=100, c=df['[NII]Nr'], cmap='gray_r', vmin=0.0, vmax=4e4)
     fig.colorbar(scat, ax=ax)
     mark_points(ax)
     ax.invert_xaxis()
     ax.set_aspect(2)
-    ax.set_title('H alpha red layer brightness')
+    ax.set_title('[SII] red layer brightness')
 
 
 with sns.axes_style("darkgrid"):
@@ -311,28 +311,26 @@ with sns.axes_style("darkgrid"):
     ax.set_aspect(2)
     ax.set_title("H alpha mean velocity")
     
-    ax.text(0.32, 0.2, '7 pc',
-        verticalalignment='bottom', horizontalalignment='right',
-        transform=ax.transAxes,
-        color='black', fontsize=20)
-    ax.axhline(y=-59.83, xmin=0.14, xmax=0.395, linewidth=2, color = 'k')
+    #ax.text(0.32, 0.2, '7 pc',
+    #    verticalalignment='bottom', horizontalalignment='right',
+    #    transform=ax.transAxes,
+    #    color='black', fontsize=20)
+    #ax.axhline(y=-59.83, xmin=0.14, xmax=0.395, linewidth=2, color = 'k')
 
 
 # Structure Fucntion
 
 # Dr. Will Blue
 
-df2 = df[['RAdeg', 'DEdeg', 'HaRVb']].copy()
-df2.rename(columns = {'RAdeg' : 'X', 'DEdeg' : 'Y', 'HaRVb' : 'RV'}, inplace = True)
-#df2.describe()
-
+# df2 = df[['RAdeg', 'DEdeg', 'HaRVb']].copy()
+# df2.rename(columns = {'RAdeg' : 'X', 'DEdeg' : 'Y', 'HaRVb' : 'RV'}, inplace = True)
+# #df2.describe()
 
 # Red Dr. Will
 
-df3 = df[['RAdeg', 'DEdeg', 'HaRVr']].copy()
-df3.rename(columns = {'RAdeg' : 'X', 'DEdeg' : 'Y', 'HaRVr' : 'RV'}, inplace = True)
-#df3.describe()
-
+# df3 = df[['RAdeg', 'DEdeg', 'HaRVr']].copy()
+# df3.rename(columns = {'RAdeg' : 'X', 'DEdeg' : 'Y', 'HaRVr' : 'RV'}, inplace = True)
+# #df3.describe()
 
 # Combined
 

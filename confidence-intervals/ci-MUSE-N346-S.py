@@ -72,19 +72,19 @@ r = r[K:]
 B = B[K:]
 
 
-relative_uncertainty = 0.02
+relative_uncertainty = 0.05
 weights = 1.0 / (relative_uncertainty * B)
 large_scale = r > 0.5 * box_size
 #weights[large_scale] /= 2.5
-#weights[:1] /= 2.0
+#weights[:20] /= 2.5
 
 
 model = lmfit.Model(bfunc.bfunc03s)
 model.param_names
 
 
-#to_fit = r <= 0.8 * box_size
-to_fit = ~large_scale
+to_fit = r <= 1.1 * box_size
+#to_fit = ~large_scale
 
 
 
@@ -153,10 +153,13 @@ ax.set(
 sns.despine()
 
 
+
+
+
 # emcee
 
 emcee_kws = dict(
-    steps=5000, burn=500, thin=50, is_weighted=True, progress=False, workers=16
+    steps=50000, burn=500, thin=50, is_weighted=True, progress=False, workers=16
 )
 emcee_params = result.params.copy()
 # emcee_params.add('__lnsigma', value=np.log(0.1), min=np.log(0.001), max=np.log(2.0))

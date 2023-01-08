@@ -136,12 +136,12 @@ ax.set_xlabel('X')
 ax.set_ylabel('Y')
 
 
-ax.text(0.9, 0.1, '10 pc',
-        verticalalignment='bottom', horizontalalignment='right',
-        transform=ax.transAxes,
-        color='black', fontsize=20)
+#ax.text(0.9, 0.1, '10 pc',
+#        verticalalignment='bottom', horizontalalignment='right',
+#        transform=ax.transAxes,
+#        color='black', fontsize=20)
     
-plt.axhline(y=50, xmin=0.59, xmax=0.925, linewidth=2, color = 'k')
+#plt.axhline(y=50, xmin=0.59, xmax=0.925, linewidth=2, color = 'k')
 
 
 plt.gca().invert_yaxis()
@@ -267,5 +267,5 @@ with open(datapath_res/jsonfilename, "w") as f:
 print("--- %s seconds ---" % (time.time()-start_time))
 
 
-get_ipython().system('jupyter nbconvert --to script --no-prompt otv-KPech-Orion-H.ipynb')
+get_ipython().system('jupyter nbconvert --to script --no-prompt otv-KPech-Orion-N.ipynb')
 

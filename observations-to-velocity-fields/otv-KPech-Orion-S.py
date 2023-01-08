@@ -84,7 +84,7 @@ sb /= sb.max()
 good = (~m) & (sb > 0.001)
 
 
-trim = (slice(150, 500), slice(0, 300))
+trim = (slice(150, 500), slice(5, 300))
 
 
 fig, ax = plt.subplots(figsize=(12, 12))

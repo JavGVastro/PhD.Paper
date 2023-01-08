@@ -37,10 +37,10 @@ datapath_res= Path(path_res).expanduser()
 
 # files names
 
-data_file = 'KPech-Orion-N-'
+data_file = 'KPech-Orion-O-'
 
 
-name_export='KPech-Orion-N'
+name_export='KPech-Orion-O'
 
 
 flux_in = data_file + 'sum.fits'
@@ -267,5 +267,5 @@ with open(datapath_res/jsonfilename, "w") as f:
 print("--- %s seconds ---" % (time.time()-start_time))
 
 
-get_ipython().system('jupyter nbconvert --to script --no-prompt otv-KPech-Orion-N.ipynb')
+get_ipython().system('jupyter nbconvert --to script --no-prompt otv-KPech-Orion-O.ipynb')
 

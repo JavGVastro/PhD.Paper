@@ -78,13 +78,13 @@ model.param_names
 
 relative_uncertainty = 0.0275
 weights = 1.0 / (relative_uncertainty * B)
-large_scale = r > 0.5 * box_size
+large_scale = r > 0.75 * box_size
 #weights[large_scale] /= 8.0
 # weights[:3] /= 3.0
 
 
-#to_fit = r <= 0.99 * box_size
-to_fit = ~large_scale
+to_fit = r <= 0.7 * box_size
+#to_fit = ~large_scale
 
 
 # Correlation length between 1/10 and 2 x box_size

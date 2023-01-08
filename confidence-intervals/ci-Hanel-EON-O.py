@@ -41,13 +41,13 @@ datapath_res= Path(path_res).expanduser()
 
 # Data load and region parameters
 
-data = "EON"
+data = "EONO"
 
 
-name = "EON"
+name = "EON [OIII]"
 
 
-name_in = 'Hanel-EON-H'
+name_in = 'Hanel-EON-O'
 
 
 data_in = json.load(open(str(datapath_data) + '/sf-' + name_in + ".json"))
@@ -79,7 +79,7 @@ model.param_names
 model.set_param_hint("r0", value=0.1 * box_size, min=0.01 * box_size, max=2 * box_size)
 
 # sig2 between 1/4 and 2 x max value of B(r)
-model.set_param_hint("sig2", value=0.5 * B.max(), min=0.25 * B.max(), max=2 * B.max())
+model.set_param_hint("sig2", value=0.5 * B.max(), min=0.1 * B.max(), max=2 * B.max())
 
 # m pegged at 1.0
 model.set_param_hint("m", value=1.0, vary=False)
@@ -102,12 +102,12 @@ pd.DataFrame(model.param_hints)
 
 relative_uncertainty = 0.03
 weights = 1.0 / (relative_uncertainty * B)
-large_scale = r > 0.5 * box_size
+large_scale = r > 0.6 * box_size
 weights[large_scale] /= 3.0
-weights[:3] /= 2.0
+weights[:4] /= 1.
 
 
-to_fit = r <= 0.7 * box_size
+to_fit = r <= 0.6 * box_size
 #to_fit = ~large_scale
 result = model.fit(B[to_fit], weights=weights[to_fit], r=r[to_fit])
 
@@ -147,6 +147,9 @@ ax.set(
     ylabel=r"B(r) [km$^{2}$/s$^{2}$]",
 )
 sns.despine()
+
+
+
 
 
 # emcee
@@ -363,5 +366,5 @@ with open(datapath_res/jsonfilename, "w") as f:
 print("--- %s seconds ---" % (time.time() - start_time))
 
 
-get_ipython().system('jupyter nbconvert --to script --no-prompt ci-Hanel-EON-H.ipynb')
+get_ipython().system('jupyter nbconvert --to script --no-prompt ci-Hanel-EON-O.ipynb')
 
