@@ -344,5 +344,5 @@ with open(datapath_res/jsonfilename, "w") as f:
 print("--- %s seconds ---" % (time.time()-start_time))
 
 
-#!jupyter nbconvert --to script --no-prompt *.ipynb
+get_ipython().system('jupyter nbconvert --to script --no-prompt otv-TAU-N604-H.ipynb')
 

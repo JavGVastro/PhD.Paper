@@ -166,7 +166,7 @@ sns.pairplot(data,
 # Clean data
 
 #mI=(data.I>data.I.mean()+0.25*data.I.std())#&(data.Sig>data.Sig.mean()+0.5*data.Sig.std())
-mI=(data.I>3)#&(data.Sig>1)
+mI=(data.I>1)#&(data.Sig>1)
 #mI=(data.Sig>5)
 data2=data[mI]
 

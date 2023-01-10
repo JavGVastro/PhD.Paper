@@ -64,7 +64,7 @@ ss = hdulist[3].data[:n, :n].astype(np.float64)
 
 ## Replace spurious values in the arrays
 m = ~np.isfinite(sb*vv*ss) | (sb < 0.0)
-
+#m = m | (sb > 6e4) 
 sb[m] = 0.0
 vv[m] = np.nanmean(vv)
 ss[m] = 0.0
@@ -118,19 +118,19 @@ plt.figure(1)
 plt.imshow(dataRV, cmap='RdBu_r')
 
 cbar = plt.colorbar()
-plt.clim(200,350)
+#plt.clim(200,350)
 cbar.set_label('km/s', rotation=270, labelpad=15)  
 
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
 
 
-ax.text(0.9, 0.1, '10 pc',
-        verticalalignment='bottom', horizontalalignment='right',
-        transform=ax.transAxes,
-        color='black', fontsize=20)
+#ax.text(0.9, 0.1, '10 pc',
+#        verticalalignment='bottom', horizontalalignment='right',
+#        transform=ax.transAxes,
+#        color='black', fontsize=20)
     
-plt.axhline(y=50, xmin=0.59, xmax=0.925, linewidth=2, color = 'k')
+#plt.axhline(y=50, xmin=0.59, xmax=0.925, linewidth=2, color = 'k')
 
 
 plt.gca().invert_yaxis()
@@ -181,16 +181,91 @@ data['Sig']=dsig.Sig
 data.describe()
 
 
-mI=data.I>0
+sns.pairplot(data, 
+             vars=["I","RV","Sig"], 
+             diag_kind='hist',  
+             plot_kws=dict(alpha=0.3, s=10, edgecolor='none'),
+             diag_kws=dict(bins=20),
+            )
+
+
+mI=(data.I>0)&(data.I<0.25)&(data.RV>0)&(data.RV<400)
+
+
+sns.pairplot(data[mI], 
+             vars=["I","RV","Sig"], 
+             diag_kind='hist',  
+             plot_kws=dict(alpha=0.3, s=10, edgecolor='none'),
+             diag_kws=dict(bins=20),
+            )
 
 
 data[mI].describe()
 
 
+plt.style.use([
+    "seaborn-poster",
+])
+
+fig = plt.figure(figsize=(8, 6))
+
+ax = fig.add_subplot()
+
+datal=data[mI].copy()
+#datal.I=np.log10(datal.I)
+
+datal.X=datal.X.astype(int)
+dataH_f=(datal.round(2)).pivot(index='X', columns='Y', values='I')
+sns.heatmap(dataH_f, cmap="inferno",xticklabels='auto',cbar_kws={'label': 'Flux'})
+#plt.title('H$_{α}$ Flux')
+#plt.title('NGC 604')
+plt.gca().invert_yaxis()
+#plt.savefig('Imgs//Flux//N604.pdf', bbox_inches='tight')
+
+
+plt.style.use([
+    "seaborn-poster",
+])
+fig = plt.figure(figsize=(8, 6))
+ax = fig.add_subplot()
+
+#datal=data2.copy()
+
+dataH_rv=(datal.round(2)).pivot(index='X', columns='Y', values='RV')
+sns.heatmap(dataH_rv, cmap="RdBu_r",cbar_kws={'label': 'km/s'})
+#plt.title('NGC 604')
+ax.set_facecolor('xkcd:gray')
+
+#plt.axhline(y=20, xmin=0.05, xmax=0.39, linewidth=2, color = 'k')
+
+#ax.text(0.32, 0.9, '60 pc',
+#        verticalalignment='bottom', horizontalalignment='right',
+#        transform=ax.transAxes,
+#        color='black', fontsize=20)
+
+plt.gca().invert_yaxis()
+
+
+plt.style.use([
+    "seaborn-poster",
+])
+
+fig = plt.figure(figsize=(8, 6))
+ax = fig.add_subplot()
+
+
+
+dataH_s=(datal).pivot(index='X', columns='Y', values='Sig')
+
+sns.heatmap(dataH_s, cmap="magma",cbar_kws={'label': 'km/s'})
+#plt.title('H$_{α}$ σ')
+plt.gca().invert_yaxis()
+
+
 #sns.displot(RV[0]-RV[0].mean(),bins=100)
 sns.displot(data[mI].RV,bins=100)
 
-plt.xlim(200,350)
+#plt.xlim(200,350)
 
 #plt.text(0.75, 1.15,'n ='+str(RV[0].count()), ha='center', va='center', transform=ax.transAxes, color='k')
 #plt.text(0.80, 0.82,'$μ$ ='+str(np.round(RV[0].mean(),2))+' km/s', ha='center', va='center', transform=ax.transAxes, color='k')

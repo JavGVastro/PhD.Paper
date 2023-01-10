@@ -309,7 +309,7 @@ with sns.axes_style("darkgrid"):
     fig.colorbar(scat, ax=ax).set_label("$V$")
     ax.invert_xaxis()
     ax.set_aspect(2)
-    ax.set_title("H alpha mean velocity")
+    ax.set_title("[SII] mean velocity")
     
     #ax.text(0.32, 0.2, '7 pc',
     #    verticalalignment='bottom', horizontalalignment='right',

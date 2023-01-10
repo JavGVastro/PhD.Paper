@@ -44,7 +44,7 @@ datapath_res= Path(path_res).expanduser()
 data_file = 'FLA-Car'
 
 
-name_export='FLA-Car-H'
+name_export='FLA-Car-N'
 
 
 dist = 2130 #parsecs
@@ -261,7 +261,7 @@ with sns.axes_style("whitegrid"):
     mark_points(ax)
     ax.invert_xaxis()
     ax.set_aspect(2)
-    ax.set_title('H alpha blue layer brightness')
+    ax.set_title('[NII]  blue layer brightness')
 
 
 with sns.axes_style("whitegrid"):
@@ -271,7 +271,7 @@ with sns.axes_style("whitegrid"):
     mark_points(ax)
     ax.invert_xaxis()
     ax.set_aspect(2)
-    ax.set_title('H alpha red layer brightness')
+    ax.set_title('[NII] alpha red layer brightness')
 
 
 with sns.axes_style("darkgrid"):
@@ -318,7 +318,7 @@ with sns.axes_style("darkgrid"):
     fig.colorbar(scat, ax=ax).set_label("$V$")
     ax.invert_xaxis()
     ax.set_aspect(2)
-    ax.set_title("H alpha mean velocity")
+    ax.set_title("[NII] alpha mean velocity")
     
     ax.text(0.32, 0.2, '7 pc',
         verticalalignment='bottom', horizontalalignment='right',

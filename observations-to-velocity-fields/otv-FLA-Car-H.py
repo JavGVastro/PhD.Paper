@@ -259,6 +259,16 @@ with sns.axes_style("whitegrid"):
 
 
 with sns.axes_style("darkgrid"):
+    fig, ax = plt.subplots(figsize=(12, 12))
+    scat = ax.scatter(df.RAdeg, df.DEdeg, s=100, c=dfHa.log_F, cmap='inferno')
+    fig.colorbar(scat, ax=ax)
+#    mark_points(ax)
+    ax.invert_xaxis()
+    ax.set_aspect(2)
+    ax.set_title('X')
+
+
+with sns.axes_style("darkgrid"):
     fig, [axr, axb] = plt.subplots(1, 2, figsize=(18, 8))
     scat = axr.scatter(df.RAdeg, df.DEdeg, 
                       s=40*(np.log10(df.HaNr/df.HaNb) + 1.3), 

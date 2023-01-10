@@ -192,7 +192,7 @@ with sns.axes_style("darkgrid"):
     scat = ax.scatter(df.RAdeg, df.DEdeg, s=100, c=np.log10(df['Norm[NII]6584']), cmap='inferno', vmin=3.5, vmax=5.5)
     fig.colorbar(scat, ax=ax).set_label("log10(F)")
     mark_points(ax)
-    ax.set_title('H alpha brightness')
+    ax.set_title('N alpha brightness')
     ax.axis('equal')
     ax.axis([270.5, 271.7, -24.6, -24])
     ax.invert_xaxis()
