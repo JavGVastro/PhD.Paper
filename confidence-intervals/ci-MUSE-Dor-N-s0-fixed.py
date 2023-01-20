@@ -93,7 +93,7 @@ model.set_param_hint("m", value=1, min=0.1, max=2.0)
 #    "s0", value=0.85 * pc_per_arcsec, min=0.5 * pc_per_arcsec, max=1.5 * pc_per_arcsec
 #)
 
-# Seeing pegged at Ha value of 1.5 arcsec
+# Seeing pegged at Ha value of 1.5 pc
 model.set_param_hint(
     "s0", value=0.625 * pc_per_arcsec, vary=False,
 )
@@ -263,6 +263,8 @@ ms2m = result.params['m'].value-ms2[0]
 
 #s0s2p = s0s2[1]-result.params['s0'].value
 #s0s2m = result.params['s0'].value-s0s2[0]
+s0s2p = 0
+s0s2m = 0
 
 b0s2p = b0s2[1]-result.params['noise'].value
 b0s2m = result.params['noise'].value-b0s2[0]
@@ -274,6 +276,7 @@ sig2s1 = np.percentile(result_emcee.flatchain['sig2'],[16, 85])
 r0s1 = np.percentile(result_emcee.flatchain['r0'],[16, 85])
 ms1 = np.percentile(result_emcee.flatchain['m'],[16, 85])
 #s0s1 = np.percentile(result_emcee.flatchain['s0'],[16, 85])
+s0s1 = 0
 b0s1 = np.percentile(result_emcee.flatchain['noise'],[16, 85])
 
 
@@ -288,6 +291,8 @@ ms1m = result.params['m'].value-ms1[0]
 
 #s0s1p = s0s1[1]-result.params['s0'].value
 #s0s1m = result.params['s0'].value-s0s1[0]
+s0s1p = 0
+s0s1m = 0
 
 b0s1p = b0s1[1]-result.params['noise'].value
 b0s1m = result.params['noise'].value-b0s1[0]
@@ -299,7 +304,7 @@ results_2sig = {
     'sig2': [result.params['sig2'].value,sig2s2p,sig2s2m],
     'r0': [result.params['r0'].value,r0s2p,r0s2m],
     'm' : [result.params['m'].value,ms2p,ms2m],
-#    's0': [result.params['s0'].value,s0s2p,s0s2m],
+    's0': [result.params['s0'].value,s0s2p,s0s2m],
     'noise' : [result.params['noise'].value,b0s2p,b0s2m] 
     
 }
@@ -312,7 +317,7 @@ results_1sig = {
     'sig2': [result.params['sig2'].value,sig2s1p,sig2s1m],
     'r0': [result.params['r0'].value,r0s1p,r0s1m],
     'm' : [result.params['m'].value,ms1p,ms1m],
-#    's0': [result.params['s0'].value,s0s1p,s0s1m],
+    's0': [result.params['s0'].value,s0s1p,s0s1m],
     'noise' : [result.params['noise'].value,b0s1p,b0s1m] 
     
 }

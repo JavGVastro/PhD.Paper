@@ -13,6 +13,7 @@ from astropy.io import fits
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+from rebin_utils import downsample, oversample
 
 
 # Input path
@@ -133,12 +134,12 @@ ax.set_xlabel('X')
 ax.set_ylabel('Y')
 
 
-ax.text(0.9, 0.1, '10 pc',
-        verticalalignment='bottom', horizontalalignment='right',
-        transform=ax.transAxes,
-        color='black', fontsize=20)
+#ax.text(0.9, 0.1, '10 pc',
+#        verticalalignment='bottom', horizontalalignment='right',
+#        transform=ax.transAxes,
+#        color='black', fontsize=20)
     
-plt.axhline(y=50, xmin=0.59, xmax=0.925, linewidth=2, color = 'k')
+#plt.axhline(y=50, xmin=0.59, xmax=0.925, linewidth=2, color = 'k')
 
 
 plt.gca().invert_yaxis()
@@ -148,6 +149,49 @@ RV=pd.DataFrame(vv[trim])
 
 
 RV=RV.stack().reset_index().rename(columns={'level_0':'X', 'level_1':'Y', 0:'RV'})
+
+
+# Downsample v_map
+
+mingoods= [2]
+
+RVd=vv[trim]
+m=pd.notna(RVd)
+
+for mingood in zip(mingoods):
+ [RVd], m= downsample([RVd], m, weights=None, mingood=mingood)
+
+
+fig, ax = plt.subplots(figsize=(12, 12))
+
+
+plt.figure(1)
+plt.imshow(RVd, cmap='RdBu_r')
+
+cbar = plt.colorbar()
+#plt.clim(225,350)
+cbar.set_label('km/s', rotation=270, labelpad=15)  
+
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+
+
+#ax.text(0.9, 0.1, '10 pc',
+#        verticalalignment='bottom', horizontalalignment='right',
+#        transform=ax.transAxes,
+#        color='black', fontsize=20)
+    
+#plt.axhline(y=50, xmin=0.59, xmax=0.925, linewidth=2, color = 'k')
+
+
+plt.gca().invert_yaxis()
+
+
+#RV=pd.DataFrame(RVd)
+#RV=RV.stack().reset_index().rename(columns={'level_0':'X', 'level_1':'Y', 0:'RV'})
+
+
+
 
 
 fig, ax = plt.subplots(figsize=(12, 12))
@@ -180,6 +224,9 @@ plt.gca().invert_yaxis()
 dsig=pd.DataFrame(ss[trim])
 
 
+dsig
+
+
 dsig=dsig.stack().reset_index().rename(columns={'level_0':'X', 'level_1':'Y', 0:'Sig'})
 
 
@@ -209,6 +256,9 @@ plt.title('N346')
 plt.rcParams["font.family"]="Times New Roman"
 plt.rcParams["font.size"]="15"
 plt.xlabel('Radial velocity [km/s]')
+
+
+
 
 
 data_export_list = {

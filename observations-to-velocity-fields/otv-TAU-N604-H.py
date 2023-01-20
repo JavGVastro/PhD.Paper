@@ -220,14 +220,18 @@ sns.heatmap(dataH_rv, cmap="RdBu_r",cbar_kws={'label': 'km/s'})
 plt.title('NGC 604')
 ax.set_facecolor('xkcd:gray')
 
-plt.axhline(y=20, xmin=0.05, xmax=0.39, linewidth=2, color = 'k')
+#plt.axhline(y=20, xmin=0.05, xmax=0.39, linewidth=2, color = 'k')
 
-ax.text(0.32, 0.9, '60 pc',
-        verticalalignment='bottom', horizontalalignment='right',
-        transform=ax.transAxes,
-        color='black', fontsize=20)
+#ax.text(0.32, 0.9, '60 pc',
+#        verticalalignment='bottom', horizontalalignment='right',
+#        transform=ax.transAxes,
+#        color='black', fontsize=20)
 
 #plt.savefig('Imgs//VF//N604.pdf', bbox_inches='tight')
+
+
+#hdu = fits.PrimaryHDU(dataH_rv)
+#hdu.writeto(str(datapath_obs)+ '/' +data_file + '.fits')
 
 
 plt.style.use([

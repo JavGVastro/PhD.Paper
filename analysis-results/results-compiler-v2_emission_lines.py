@@ -42,6 +42,11 @@ sig2_O = [[0]*(1) for i in range(len(samples_O))]
 sig2_N = [[0]*(1) for i in range(len(samples_N))]
 sig2_S = [[0]*(1) for i in range(len(samples_S))]
 
+sig2vm_H = [[0]*(1) for i in range(len(samples_H))]
+sig2vm_O = [[0]*(1) for i in range(len(samples_O))]
+sig2vm_N = [[0]*(1) for i in range(len(samples_N))]
+sig2vm_S = [[0]*(1) for i in range(len(samples_S))]
+
 r0_H = [[0]*(1) for i in range(len(samples_H))]
 r0_O = [[0]*(1) for i in range(len(samples_O))]
 r0_N = [[0]*(1) for i in range(len(samples_N))]
@@ -58,9 +63,13 @@ box_size_N = [[0]*(1) for i in range(len(samples_N))]
 box_size_S = [[0]*(1) for i in range(len(samples_S))]
 
 
+data_H[samples_H[0][i]]['preres']['sig2']
+
+
 for i in range(len(samples_H)):
 
         sig2_H[i] = data_H[samples_H[0][i]]['results_2sig']['sig2'][0]
+        sig2vm_H[i] = data_H[samples_H[0][i]]['preres']['sig2']
         r0_H[i]    = data_H[samples_H[0][i]]['results_2sig']['r0'][0]
         m_H[i]    = data_H[samples_H[0][i]]['results_2sig']['m'][0]
         box_size_H[i] = data_H[samples_H[0][i]]['properties']['box_size']
@@ -68,9 +77,11 @@ for i in range(len(samples_H)):
 results_H = pd.DataFrame(
         {
             "sig2" : sig2_H,
+            "sig2_obs" : sig2vm_H,
             "r0" : r0_H,
             "m" : m_H,
             "L" : box_size_H,
+            "L/r0" : np.array(box_size_H)/np.array(r0_H)
             }
         )
 
@@ -80,6 +91,7 @@ results_H.insert(loc=0, column='Region', value=samples_H)
 for i in range(len(samples_O)):
 
         sig2_O[i] = data_O[samples_O[0][i]]['results_2sig']['sig2'][0]
+        sig2vm_O[i] = data_O[samples_O[0][i]]['preres']['sig2']
         r0_O[i]    = data_O[samples_O[0][i]]['results_2sig']['r0'][0]
         m_O[i]    = data_O[samples_O[0][i]]['results_2sig']['m'][0]
         box_size_O[i] = data_O[samples_O[0][i]]['properties']['box_size']
@@ -87,9 +99,11 @@ for i in range(len(samples_O)):
 results_O = pd.DataFrame(
         {
             "sig2" : sig2_O,
+            "sig2_obs" : sig2vm_O,
             "r0" : r0_O,
             "m" : m_O,
             "L" : box_size_O,
+            "L/r0" : np.array(box_size_O)/np.array(r0_O)
             }
         )
 
@@ -99,6 +113,7 @@ results_O.insert(loc=0, column='Region', value=samples_O)
 for i in range(len(samples_N)):
 
         sig2_N[i] = data_N[samples_N[0][i]]['results_2sig']['sig2'][0]
+        sig2vm_N[i] = data_N[samples_N[0][i]]['preres']['sig2']
         r0_N[i]    = data_N[samples_N[0][i]]['results_2sig']['r0'][0]
         m_N[i]    = data_N[samples_N[0][i]]['results_2sig']['m'][0]
         box_size_N[i] = data_N[samples_N[0][i]]['properties']['box_size']
@@ -106,9 +121,12 @@ for i in range(len(samples_N)):
 results_N = pd.DataFrame(
         {
             "sig2" : sig2_N,
+            "sig2_obs" : sig2vm_N,
             "r0" : r0_N,
             "m" : m_N,
             "L" : box_size_N,
+            "L/r0" : np.array(box_size_N)/np.array(r0_N)
+            
             }
         )
 
@@ -118,6 +136,7 @@ results_N.insert(loc=0, column='Region', value=samples_N)
 for i in range(len(samples_S)):
 
         sig2_S[i] = data_S[samples_S[0][i]]['results_2sig']['sig2'][0]
+        sig2vm_S[i] = data_S[samples_S[0][i]]['preres']['sig2']
         r0_S[i]    = data_S[samples_S[0][i]]['results_2sig']['r0'][0]
         m_S[i]    = data_S[samples_S[0][i]]['results_2sig']['m'][0]
         box_size_S[i] = data_S[samples_S[0][i]]['properties']['box_size']
@@ -125,9 +144,11 @@ for i in range(len(samples_S)):
 results_S = pd.DataFrame(
         {
             "sig2" : sig2_S,
+            "sig2_obs" : sig2vm_S,
             "r0" : r0_S,
             "m" : m_S,
             "L" : box_size_S,
+            "L/r0" : np.array(box_size_S)/np.array(r0_S)
             }
         )
 
@@ -140,7 +161,7 @@ results_H, results_O, results_N, results_S
 frames = [results_H, results_O, results_N, results_S]
 result = pd.concat(frames)
 result = result.sort_values('Region')
-result.round(2).to_latex('latex-files/multiple_lines.tex', escape=False, caption='Multiple emission lines',index=False)
+result.round(2).to_latex('latex-files/multiple_lines.tex', escape=False, caption='Multiple emission lines',index=False,label ='tab:preresults')
 
 
 result
@@ -183,6 +204,8 @@ ax.set( xscale = 'log',  yscale = 'log',
 )
 
 plt.legend()
+
+plt.savefig('Imgs//params_multiple.pdf', bbox_inches='tight')
 
 
 get_ipython().system('jupyter nbconvert --to script --no-prompt results-compiler-v2_emission_lines.ipynb')

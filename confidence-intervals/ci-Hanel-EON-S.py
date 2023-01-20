@@ -82,7 +82,7 @@ model.set_param_hint("r0", value=0.1 * box_size, min=0.01 * box_size, max=2 * bo
 model.set_param_hint("sig2", value=0.5 * B.max(), min=0.25 * B.max(), max=2 * B.max())
 
 # m pegged at 1.0
-model.set_param_hint("m", value=0.1, vary=False)
+model.set_param_hint("m", value=1.0, vary=False)
 
 
 # Seeing pegged at ZERO
@@ -100,7 +100,7 @@ model.set_param_hint("noise", value=0.5 * B.min(), min=0.0, max=3 * B.min())
 pd.DataFrame(model.param_hints)
 
 
-relative_uncertainty = 0.0175
+relative_uncertainty = 0.02
 weights = 1.0 / (relative_uncertainty * B)
 large_scale = r > 0.5 * box_size
 weights[large_scale] /= 1.5
@@ -147,9 +147,6 @@ ax.set(
     ylabel=r"B(r) [km$^{2}$/s$^{2}$]",
 )
 sns.despine()
-
-
-
 
 
 # emcee
@@ -207,12 +204,15 @@ bplot.strucfunc_plot(
 #)
 
 
+result.params['m'].value
+
+
 # LM results
 
 LM = {
     'sig2': [result.params['sig2'].value,result.params['sig2'].stderr],
     'r0': [result.params['r0'].value,result.params['r0'].stderr],
-    'm' : [1,0],
+    'm' : [result.params['m'].value,0],
     's0': [0,0],
     'noise' : [result.params['noise'].value,result.params['noise'].stderr]
 }
@@ -226,7 +226,7 @@ LM
 MCMC = {
     'sig2': [result_emcee.params['sig2'].value,result_emcee.params['sig2'].stderr],
     'r0': [result_emcee.params['r0'].value,result_emcee.params['r0'].stderr],
-    'm' : [1,0],
+    'm' : [result.params['m'].value,0],
     's0': [0,0],
     'noise' : [result_emcee.params['noise'].value,result_emcee.params['noise'].stderr]
 }
@@ -290,7 +290,7 @@ b0s1m = result.params['noise'].value-b0s1[0]
 results_2sig = {
     'sig2': [result.params['sig2'].value,sig2s2p,sig2s2m],
     'r0': [result.params['r0'].value,r0s2p,r0s2m],
-    'm' : [1,0,0],
+    'm' : [result.params['m'].value,0,0],
     's0': [0,0,0],
     'noise' : [result.params['noise'].value,b0s2p,b0s2m] 
     
@@ -303,7 +303,7 @@ results_2sig
 results_1sig = {
     'sig2': [result.params['sig2'].value,sig2s1p,sig2s1m],
     'r0': [result.params['r0'].value,r0s1p,r0s1m],
-    'm' : [1,0,0],
+    'm' : [result.params['m'].value,0,0],
     's0': [0,0,0],
     'noise' : [result.params['noise'].value,b0s1p,b0s1m] 
     

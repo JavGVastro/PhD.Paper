@@ -15,9 +15,6 @@ import json
 datapath_names = Path(open("path-name-list.txt", "r").read()).expanduser()
 
 
-
-
-
 samples=pd.read_csv(str(datapath_names) +'//sample-names.csv',header=None)
 samples
 
@@ -133,7 +130,7 @@ td = pd.DataFrame(
        "F": s0,
         "G":  box_size,
         "H": np.array(box_size)/np.array(r0),
-        "I": np.array(r0)/np.array(s0),
+        "I": np.array(s0)/np.array(r0),
     },
 )
 
@@ -149,7 +146,7 @@ SFres.rename(columns={'A':'$\sigma^2$ [km$^2$/s$^2$]',
                       'F':'$s0$ (rms) [pc]',
                       'G':'L$_{box}$ [pc]',
                       'H':'L$_{box} / r_0$',
-                      'I':'$r_0$/s0  ',},
+                      'I':'s0/$r_0$  ',},
                       inplace=True)
 
              

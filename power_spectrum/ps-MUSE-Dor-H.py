@@ -14,15 +14,15 @@ from turbustat.statistics import PowerSpectrum
 from turbustat.io.sim_tools import create_fits_hdu
 
 
-text_file_0 = open("path-results.txt", "r")
-path_data = text_file_0.read()
 
 
-datapath_data = Path(path_data).expanduser()
+
+datapath_data = Path(open("path-results.txt", "r").read()).expanduser()
 
 
 name = 'MUSE-Dor-H'
-distance = 50000 #pc
+distance = 50000 #parsecs
+pix = 0.2 #arcsec
 
 
 data = json.load(open(str(datapath_data) + '/' + name + ".json"))
@@ -76,7 +76,7 @@ plt.gca().invert_yaxis()
 vv.shape
 
 
-img_hdu = create_fits_hdu(vv,0.26*u.arcsec,1 * u.deg,vv.shape,1 * u.GHz,u.K)
+img_hdu = create_fits_hdu(vv,pix*u.arcsec,1 * u.deg,vv.shape,1 * u.GHz,u.K)
 
 
 r0 = data["results_2sig"]['r0'][0] #pc

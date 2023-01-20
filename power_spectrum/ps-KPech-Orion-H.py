@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import time
+start_time=time.time()
+
+
 from pathlib import Path
 import numpy as np
 import json
@@ -14,15 +18,12 @@ from turbustat.statistics import PowerSpectrum
 from turbustat.io.sim_tools import create_fits_hdu
 
 
-text_file_0 = open("path-results.txt", "r")
-path_data = text_file_0.read()
-
-
-datapath_data = Path(path_data).expanduser()
+datapath_data = Path(open("path-results.txt", "r").read()).expanduser()
 
 
 name = 'KPech-Orion-H'
 distance = 440 #pc
+pix = 0.534 #arcsec
 
 
 data = json.load(open(str(datapath_data) + '/' + name + ".json"))
@@ -42,7 +43,7 @@ sb /= sb.max()
 good = (~m) & (sb > 0.001)
 
 
-trim = (slice(0, 550), slice(0, 350))
+trim = (slice(0, 550), slice(50, 300))
 vv = vv[trim]
 
 
@@ -76,7 +77,7 @@ plt.gca().invert_yaxis()
 vv.shape
 
 
-img_hdu = create_fits_hdu(vv,0.26*u.arcsec,1 * u.deg,vv.shape,1 * u.GHz,u.K)
+img_hdu = create_fits_hdu(vv,pix*u.arcsec,1 * u.deg,vv.shape,1 * u.GHz,u.K)
 
 
 r0 = data["results_2sig"]['r0'][0] #pc
@@ -98,38 +99,42 @@ pspec = PowerSpectrum(img_hdu, distance=distance* u.pc)
 pspec.run(verbose=True, xunit=u.pc**-1, low_cut=(r0*u.pc)**-1, high_cut=(s0*u.pc)**-1)
 
 
-# sns.set_context("talk", font_scale=1.1)
-# fig, ax = plt.subplots(figsize=(8, 6))
-# 
-# ax.scatter(pspec.freqs,pspec.ps1D)
-# #ax.scatter(pspec.freqs,pspec.ps1D_stddev)
-# ax.errorbar(np.array(pspec.freqs), pspec.ps1D, yerr=pspec.ps1D_stddev, ls=" ", elinewidth=0.4, alpha=1.0, c="k")
-# 
-# ax.axvline(1/r0, c="k")
-# ax.axvline(1/s0, c="k")
-# 
-# xgrid = np.linspace(1/r0,1/s0, 200)
-# ax.plot(xgrid, (10**4.6)*xgrid**pspec.slope, '-', c="k")
-# 
-# ax.set(xscale='log', yscale='log', 
-#        xlabel='log wavenumber $k$,1/pc',
-#        ylabel=r'log $P(k)_2,\ \mathrm{-}$'
-#       )
-# 
-# ax.text(.1, .20,name, transform=ax.transAxes)
-# ax.text(.1, .10,str(np.round(pspec.slope,2)) + '$\pm$' + str(np.round(pspec.slope_err,2)), transform=ax.transAxes)
-# 
-# ax.annotate('r0', xy=(1/r0, 1e8),  xycoords='data',
-#             xytext=(0.5, 0.9), textcoords='axes fraction',
-#             arrowprops=dict(facecolor='black', shrink=0.02),
-#             horizontalalignment='right', verticalalignment='top',
-#             )
-# 
-# ax.annotate('s0', xy=(1/s0, 1e8),  xycoords='data',
-#             xytext=(0.80, 0.9), textcoords='axes fraction',
-#             arrowprops=dict(facecolor='black', shrink=0.02),
-#             horizontalalignment='right', verticalalignment='top',
-#             )
+sns.set_context("talk", font_scale=1.1)
+fig, ax = plt.subplots(figsize=(8, 6))
 
-get_ipython().system('jupyter nbconvert --to script --no-prompt ps-TAU-HV-H.ipynb')
+ax.scatter(pspec.freqs,pspec.ps1D)
+#ax.scatter(pspec.freqs,pspec.ps1D_stddev)
+ax.errorbar(np.array(pspec.freqs), pspec.ps1D, yerr=pspec.ps1D_stddev, ls=" ", elinewidth=0.4, alpha=1.0, c="k")
+
+#ax.axvline(1/r0, c="k")
+#ax.axvline(1/s0, c="k")
+
+#xgrid = np.linspace(1/r0,1/s0, 200)
+#ax.plot(xgrid, (10**4.6)*xgrid**pspec.slope, '-', c="k")
+
+ax.set(xscale='log', yscale='log', 
+       xlabel='log wavenumber $k$,1/pc',
+       ylabel=r'log $P(k)_2,\ \mathrm{-}$'
+      )
+
+#ax.text(.1, .20,name, transform=ax.transAxes)
+#ax.text(.1, .10,str(np.round(pspec.slope,2)) + '$\pm$' + str(np.round(pspec.slope_err,2)), transform=ax.transAxes)
+
+#ax.annotate('r0', xy=(1/r0, 1e8),  xycoords='data',
+#            xytext=(0.5, 0.9), textcoords='axes fraction',
+#            arrowprops=dict(facecolor='black', shrink=0.02),
+#            horizontalalignment='right', verticalalignment='top',
+#            )
+
+#ax.annotate('s0', xy=(1/s0, 1e8),  xycoords='data',
+#            xytext=(0.80, 0.9), textcoords='axes fraction',
+#            arrowprops=dict(facecolor='black', shrink=0.02),
+#            horizontalalignment='right', verticalalignment='top',
+#            )
+
+
+print("--- %s seconds ---" % (time.time()-start_time))
+
+
+get_ipython().system('jupyter nbconvert --to script --no-prompt ps-KPech-Orion-H.ipynb')
 

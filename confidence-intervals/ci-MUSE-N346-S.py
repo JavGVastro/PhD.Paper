@@ -65,18 +65,18 @@ pc_per_arcsec = pc
 
 
 # Merge first K points
-K = 3
+K = 20
 r[K] = np.mean(r[:K])
 B[K] = np.mean(B[:K])
 r = r[K:]
 B = B[K:]
 
 
-relative_uncertainty = 0.05
+relative_uncertainty = 0.025
 weights = 1.0 / (relative_uncertainty * B)
 large_scale = r > 0.5 * box_size
-#weights[large_scale] /= 2.5
-#weights[:20] /= 2.5
+weights[large_scale] /= 1.5
+weights[:5] /= 2.5
 
 
 model = lmfit.Model(bfunc.bfunc03s)

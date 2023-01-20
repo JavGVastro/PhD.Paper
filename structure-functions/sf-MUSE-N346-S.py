@@ -30,7 +30,7 @@ datapath_data = Path(path_data).expanduser()
 
 # File names
 
-name = 'MUSE-N346-O'
+name = 'MUSE-N346-S'
 
 
 data = json.load(open(str(datapath_data) + '/' + name + "-m.json"))
@@ -146,6 +146,7 @@ results = {
 data_export = {   
         's' : s,
         'b2' : b2,
+        'b2w' : b2w,
         'pc' : data['pc'],
         'pix' : data['pix'],
         'box_size': box_size,
@@ -175,5 +176,5 @@ with open(jsonfilename, "w") as f:
 print("--- %s seconds ---" % (time.time()-start_time))
 
 
-get_ipython().system('jupyter nbconvert --to script --no-prompt sf-MUSE-N346-O.ipynb')
+get_ipython().system('jupyter nbconvert --to script --no-prompt sf-MUSE-N346-S.ipynb')
 

@@ -10,127 +10,153 @@ import astropy.units as u
 from matplotlib import pyplot as plt
 import seaborn as sns
 import sys
+import turbustat.statistics as tss
 from turbustat.statistics import PowerSpectrum
 from turbustat.io.sim_tools import create_fits_hdu
 
 
-text_file_0 = open("path-results.txt", "r")
-path_data = text_file_0.read()
 
 
-datapath_data = Path(path_data).expanduser()
+
+datapath_obs= Path(open("path-observations.txt", "r").read()).expanduser()
+datapath_data = Path(open("path-results.txt", "r").read()).expanduser()
 
 
-name = 'TAU-N595-H'
-distance = 840000 #pc
+name = 'TAU-N604-H'
+name_file = 'TAURUS-604-Ha-RV-mod.fits'
+distance = 840000 #parsecs
+pix = 0.26 #arcsec 
 
 
 data = json.load(open(str(datapath_data) + '/' + name + ".json"))
-sb = np.array(data['observations']["sb"])
-vv = np.array(data['observations']["vv"])
-#ss = np.array(data['observations']["ss"])
+rad_vel =fits.open(datapath_obs / name_file)
 
 
-## Replace spurious values in the arrays
-m = ~np.isfinite(sb*vv) | (sb < 0.0)
-
-sb[m] = 0.0
-vv[m] = np.nanmean(vv)
-#ss[m] = 0.0
-sb /= sb.max()
-
-good = (~m) & (sb > 0.001)
+rad_vel.info()
 
 
-#trim = (slice(10, 600), slice(15, 590))
-#vv = vv[trim]
+hdr = rad_vel[0].header
 
 
-fig, ax = plt.subplots(figsize=(12, 12))
+hdr ['CDELT1'] = (-pix / (60*60), '[deg] Coordinate increment at reference point')
+hdr ['CDELT2'] = (pix / (60*60), '[deg] Coordinate increment at reference point')
+hdr['CUNIT1']  = ('deg' , 'Units of coordinate increment and value' )      
+hdr['CUNIT2']  = ('deg' , 'Units of coordinate increment and value'  )
+hdr['CTYPE1']  = ('RA---CAR', 'Right ascension, plate caree projection  ')
+hdr['CTYPE2']  = ('DEC--CAR', 'Declination, plate caree projection   ')
 
 
-dataRV=vv
+hdr
 
-plt.figure(1)
-plt.imshow(dataRV, cmap='RdBu_r')
 
-cbar = plt.colorbar()
-#plt.clim(200,350)
-cbar.set_label('km/s', rotation=270, labelpad=15)  
+rad_vel.info()
 
+
+##nan values to mean velocity values
+vmed = np.nanmedian(rad_vel[0].data)
+m = np.isfinite(rad_vel[0].data)
+rad_vel[0].data[~m] = vmed
+
+
+vv = rad_vel[0].data.astype(float)
+##load  thecorrelation length and seeing derived from the fit
+r0 = data["results_2sig"]['r0'][0] #pc
+s0 = data["results_2sig"]['s0'][0] #pc
+r0,s0
+
+
+
+
+
+
+fig = plt.figure(figsize=(8, 6))
+ax = fig.add_subplot()
+
+sns.heatmap(vv, cmap="RdBu_r",cbar_kws={'label': 'km/s'})
+ax.set_facecolor('xkcd:gray')
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
 
 
-#ax.text(0.9, 0.1, '10 pc',
-#        verticalalignment='bottom', horizontalalignment='right',
-#        transform=ax.transAxes,
-#        color='black', fontsize=20)
-    
-#plt.axhline(y=50, xmin=0.59, xmax=0.925, linewidth=2, color = 'k')
+##img_hdu = create_fits_hdu(img, pixel_scale, beamfwhm, imshape, restfreq, bunit)
+#img_hdu = create_fits_hdu(vv,pix*u.arcsec,1 * u.arcsec, vv.shape, 1 * u.Hz, u.K)
+#img_hdu.header
 
 
-plt.gca().invert_yaxis()
+#pspec = PowerSpectrum(img_hdu, distance=distance* u.pc) 
 
 
-vv.shape
-
-
-img_hdu = create_fits_hdu(vv,0.26*u.arcsec,1 * u.deg,vv.shape,1 * u.GHz,u.K)
-
-
-r0 = data["results_2sig"]['r0'][0] #pc
-s0 = data["results_2sig"]['s0'][0] #pc
-#k_r0 = (r0/( data['pix'] * data['pc']))**-1 #1/pix
-#k_s0 = (s0/( data['pix'] * data['pc']))**-1 #1/pix
-#k_r0, k_s0
-r0,s0
-
-
-pspec = PowerSpectrum(img_hdu, distance=distance* u.pc) 
-
-
-#pspec.run(verbose=True, xunit=u.pix**-1, low_cut=k_r0 / u.pix, high_cut=k_s0 / u.pix)
-#pspec.run(verbose=True, xunit=u.pix**-1)
-
-
+pspec = PowerSpectrum(vv, header = hdr, distance=distance* u.pc) 
 #pspec.run(verbose=True, xunit=u.pc**-1)
 pspec.run(verbose=True, xunit=u.pc**-1, low_cut=(r0*u.pc)**-1, high_cut=(s0*u.pc)**-1)
 
 
-sns.set_context("talk", font_scale=1.1)
-fig, ax = plt.subplots(figsize=(8, 6))
+pspec.slope
 
+
+(r0*u.pc)**-1,(s0*u.pc)**-1,0.01*(u.pc)**-1
+
+
+np.log10(1/s0)*(u.pc)**-1,-1.75*(u.pc)**-1,-1.0*(u.pc)**-1
+
+
+pspec = PowerSpectrum(vv, header = hdr, distance=distance * u.pc) 
+
+pspec.run(verbose=True, xunit=(u.pc)**-1, low_cut=0.01*(u.pc)**-1, high_cut=(1/s0)*(u.pc)**-1,
+          fit_kwargs={'brk': (1/r0)*(u.pc)**-1, 'log_break': False}, fit_2D=False)  
+
+
+dvar = tss.DeltaVariance(vv, header = hdr, distance=distance* u.pc)
+
+
+plt.figure(figsize=(14, 8))
+dvar.run(verbose=True, boundary="fill",xunit=u.pc, xlow=s0*u.pc, xhigh=r0*u.pc)
+
+
+#sns.set_context("talk", font_scale=1.1)
+#plt.style.use(["seaborn-poster",])
+
+
+
+
+
+fig, (ax, axx) = plt.subplots(
+    1,
+    2,
+    sharey=False,
+    figsize=(15, 4),
+)
+
+##spatial power spectra
 ax.scatter(pspec.freqs,pspec.ps1D)
 #ax.scatter(pspec.freqs,pspec.ps1D_stddev)
-ax.errorbar(np.array(pspec.freqs), pspec.ps1D, yerr=pspec.ps1D_stddev, ls=" ", elinewidth=0.4, alpha=1.0, c="k")
+#ax.errorbar(np.array(pspec.freqs), pspec.ps1D, yerr=(pspec.ps1D_stddev/pspec.ps1D)*0.434, ls="", elinewidth=0.4, alpha=1.0, c="k")
 
-ax.axvline(1/r0, c="k")
+ax.axvline(1/r0, c="b")
 ax.axvline(1/s0, c="k")
 
-xgrid = np.linspace(1/r0,1/s0, 200)
-ax.plot(xgrid, (10**4.6)*xgrid**pspec.slope, '-', c="k")
+#xgrid = np.linspace(1/r0,1/s0, 200)
+#ax.plot(xgrid, (10**4.6)*xgrid**pspec.slope, '-', c="k")
 
 ax.set(xscale='log', yscale='log', 
-       xlabel='log wavenumber $k$,1/pc',
+       xlabel='log spatial frequency $k$,1/pc',
        ylabel=r'log $P(k)_2,\ \mathrm{-}$'
       )
 
-ax.text(.1, .20,name, transform=ax.transAxes)
-ax.text(.1, .10,str(np.round(pspec.slope,2)) + '$\pm$' + str(np.round(pspec.slope_err,2)), transform=ax.transAxes)
+##delta-variance
+axx.scatter(dvar.lags,dvar.delta_var*dvar.data.var())
+axx.scatter(data['r'],data['B'])
+axx.set(xscale='log', yscale='log', 
+       xlabel='log lags,pc',
+       ylabel=r'log $\Delta, \mathrm{-}$'
+      )
 
-ax.annotate('r0', xy=(1/r0, 1e8),  xycoords='data',
-            xytext=(0.5, 0.9), textcoords='axes fraction',
-            arrowprops=dict(facecolor='black', shrink=0.02),
-            horizontalalignment='right', verticalalignment='top',
-            )
-
-ax.annotate('s0', xy=(1/s0, 1e8),  xycoords='data',
-            xytext=(0.80, 0.9), textcoords='axes fraction',
-            arrowprops=dict(facecolor='black', shrink=0.02),
-            horizontalalignment='right', verticalalignment='top',
-            )
+axx.axvline(r0, c="b")
+axx.axvline(s0, c="k")
 
 
-get_ipython().system('jupyter nbconvert --to script --no-prompt ps-TAU-N595-H.ipynb')
+plt.scatter(data['r'],data['B'])
+
+
+get_ipython().system('jupyter nbconvert --to script --no-prompt ps-TAU-N604-H.ipynb')
 

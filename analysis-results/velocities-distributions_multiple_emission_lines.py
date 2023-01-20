@@ -116,35 +116,36 @@ sns.set_context("talk", font_scale=1.2)
 
 fig, axes = plt.subplots(1, 1, figsize=(10, 10), sharex=True)
 
-name = 'Orion core'
+name = 'Orion'
 
 h = 4
 sns.histplot(data=Results_H[samples_H[0][h]],
-                 x="RVhist", binwidth=1, element="step", fill=False, color='b', stat='density', kde=True)
+                 x="RVhist", binwidth=1, element="step", fill=False, color='b', stat='density', kde=False)
 axes.text(.6, .80,'$\sigma_H^2$ = ' + str(np.round(Results_H[samples_H[0][h]].RV.var(),2))+ ' [km/s]$^2$',  color='b', transform=axes.transAxes)
 
 n = 0
 sns.histplot(data=Results_N[samples_N[0][n]],
-                 x="RVhist", binwidth=1, element="step", fill=False, color='g', stat='density', kde=True)
-axes.text(.6, .70,'$\sigma_N^2$ = ' + str(np.round(Results_N[samples_N[0][n]].RV.var(),2))+ ' [km/s]$^2$',  color='g', transform=axes.transAxes)
+                 x="RVhist", binwidth=1, element="step", fill=False, color='g', stat='density', kde=False)
+axes.text(.6, .72,'$\sigma_N^2$ = ' + str(np.round(Results_N[samples_N[0][n]].RV.var(),2))+ ' [km/s]$^2$',  color='g', transform=axes.transAxes)
 
 
 o = 1
-sns.histplot(data=Results_N[samples_N[0][o]],
-                 x="RVhist", binwidth=1, element="step", fill=False, color='r', stat='density', kde=True)
-axes.text(.6, .60,'$\sigma_O^2$ = ' + str(np.round(Results_N[samples_N[0][o]].RV.var(),2))+ ' [km/s]$^2$',  color='r', transform=axes.transAxes)
+sns.histplot(data=Results_O[samples_O[0][o]],
+                 x="RVhist", binwidth=1, element="step", fill=False, color='r', stat='density', kde=False)
+axes.text(.6, .64,'$\sigma_O^2$ = ' + str(np.round(Results_O[samples_O[0][o]].RV.var(),2))+ ' [km/s]$^2$',  color='r', transform=axes.transAxes)
 
 s = 0
 sns.histplot(data=Results_S[samples_S[0][s]],
-                 x="RVhist", binwidth=1, element="step", fill=False, color='orange', stat='density', kde=True)
-axes.text(.6, .50,'$\sigma_S^2$ = ' + str(np.round(Results_S[samples_S[0][s]].RV.var(),2))+ ' [km/s]$^2$',  color='orange', transform=axes.transAxes)
+                 x="RVhist", binwidth=1, element="step", fill=False, color='orange', stat='density', kde=False)
+axes.text(.6, .56,'$\sigma_S^2$ = ' + str(np.round(Results_S[samples_S[0][s]].RV.var(),2))+ ' [km/s]$^2$',  color='orange', transform=axes.transAxes)
 
 
 axes.text(.6, .90,name,  color='k', transform=axes.transAxes)
 
+plt.xlim(-20,20)
+
 plt.savefig('Imgs//hist_' + name + '.pdf', bbox_inches='tight')
 
-#plt.xlim(-100,100)
 
 #plt.legend()
 
@@ -163,18 +164,18 @@ axes.text(.6, .80,'$\sigma_H^2$ = ' + str(np.round(Results_H[samples_H[0][h]].RV
 n = 2
 sns.histplot(data=Results_N[samples_N[0][n]],
                  x="RVhist", binwidth=1, element="step", fill=False, color='g', stat='density', kde=False)
-axes.text(.6, .70,'$\sigma_N^2$ = ' + str(np.round(Results_N[samples_N[0][n]].RV.var(),2))+ ' [km/s]$^2$',  color='g', transform=axes.transAxes)
+axes.text(.6, .72,'$\sigma_N^2$ = ' + str(np.round(Results_N[samples_N[0][n]].RV.var(),2))+ ' [km/s]$^2$',  color='g', transform=axes.transAxes)
 
 
 o = 3
-sns.histplot(data=Results_N[samples_N[0][o]],
+sns.histplot(data=Results_O[samples_O[0][o]],
                  x="RVhist", binwidth=1, element="step", fill=False, color='r', stat='density', kde=False)
-axes.text(.6, .60,'$\sigma_O^2$ = ' + str(np.round(Results_N[samples_N[0][o]].RV.var(),2))+ ' [km/s]$^2$',  color='r', transform=axes.transAxes)
+axes.text(.6, .64,'$\sigma_O^2$ = ' + str(np.round(Results_O[samples_O[0][o]].RV.var(),2))+ ' [km/s]$^2$',  color='r', transform=axes.transAxes)
 
 s = 2
 sns.histplot(data=Results_S[samples_S[0][s]],
                  x="RVhist", binwidth=1, element="step", fill=False, color='orange', stat='density', kde=False)
-axes.text(.6, .50,'$\sigma_S^2$ = ' + str(np.round(Results_S[samples_S[0][s]].RV.var(),2))+ ' [km/s]$^2$',  color='orange', transform=axes.transAxes)
+axes.text(.6, .56,'$\sigma_S^2$ = ' + str(np.round(Results_S[samples_S[0][s]].RV.var(),2))+ ' [km/s]$^2$',  color='orange', transform=axes.transAxes)
 
 
 axes.text(.6, .90,name,  color='k', transform=axes.transAxes)
@@ -200,18 +201,18 @@ axes.text(.6, .80,'$\sigma_H^2$ = ' + str(np.round(Results_H[samples_H[0][h]].RV
 n = 4
 sns.histplot(data=Results_N[samples_N[0][n]],
                  x="RVhist", binwidth=1, element="step", fill=False, color='g', stat='density', kde=False)
-axes.text(.6, .70,'$\sigma_N^2$ = ' + str(np.round(Results_N[samples_N[0][n]].RV.var(),2))+ ' [km/s]$^2$',  color='g', transform=axes.transAxes)
+axes.text(.6, .73,'$\sigma_N^2$ = ' + str(np.round(Results_N[samples_N[0][n]].RV.var(),2))+ ' [km/s]$^2$',  color='g', transform=axes.transAxes)
 
 
 #o = 3
-#sns.histplot(data=Results_N[samples_N[0][o]],
+#sns.histplot(data=Results_O[samples_O[0][o]],
 #                 x="RVhist", binwidth=1, element="step", fill=False, color='r', stat='density', kde=False)
-#axes.text(.55, .60,'$\sigma_O^2$ = ' + str(np.round(Results_N[samples_N[0][o]].RV.var(),2))+ ' [km/s]$^2$',  color='r', transform=axes.transAxes)
+#axes.text(.55, .60,'$\sigma_O^2$ = ' + str(np.round(Results_O[samples_O[0][o]].RV.var(),2))+ ' [km/s]$^2$',  color='r', transform=axes.transAxes)
 
 s = 4
 sns.histplot(data=Results_S[samples_S[0][s]],
                  x="RVhist", binwidth=1, element="step", fill=False, color='orange', stat='density', kde=False)
-axes.text(.6, .60,'$\sigma_S^2$ = ' + str(np.round(Results_S[samples_S[0][s]].RV.var(),2))+ ' [km/s]$^2$',  color='orange', transform=axes.transAxes)
+axes.text(.6, .66,'$\sigma_S^2$ = ' + str(np.round(Results_S[samples_S[0][s]].RV.var(),2))+ ' [km/s]$^2$',  color='orange', transform=axes.transAxes)
 
 
 axes.text(.6, .90,name,  color='k', transform=axes.transAxes)
@@ -241,9 +242,9 @@ axes.text(.6, .70,'$\sigma_N^2$ = ' + str(np.round(Results_N[samples_N[0][n]].RV
 
 
 #o = 3
-#sns.histplot(data=Results_N[samples_N[0][o]],
+#sns.histplot(data=Results_O[samples_O[0][o]],
 #                 x="RVhist", binwidth=1, element="step", fill=False, color='r', stat='density', kde=False)
-#axes.text(.55, .60,'$\sigma_O^2$ = ' + str(np.round(Results_N[samples_N[0][o]].RV.var(),2))+ ' [km/s]$^2$',  color='r', transform=axes.transAxes)
+#axes.text(.55, .60,'$\sigma_O^2$ = ' + str(np.round(Results_O[samples_O[0][o]].RV.var(),2))+ ' [km/s]$^2$',  color='r', transform=axes.transAxes)
 
 s = 3
 sns.histplot(data=Results_S[samples_S[0][s]],
@@ -272,9 +273,9 @@ sns.histplot(data=Results_H[samples_H[0][h]],
 axes.text(.6, .80,'$\sigma_H^2$ = ' + str(np.round(Results_H[samples_H[0][h]].RV.var(),2))+ ' [km/s]$^2$',  color='b', transform=axes.transAxes)
 
 o = 2
-sns.histplot(data=Results_N[samples_N[0][o]],
+sns.histplot(data=Results_O[samples_O[0][o]],
                  x="RVhist", binwidth=1, element="step", fill=False, color='r', stat='density', kde=True)
-axes.text(.6, .70,'$\sigma_O^2$ = ' + str(np.round(Results_N[samples_N[0][o]].RV.var(),2))+ ' [km/s]$^2$',  color='r', transform=axes.transAxes)
+axes.text(.6, .70,'$\sigma_O^2$ = ' + str(np.round(Results_O[samples_O[0][o]].RV.var(),2))+ ' [km/s]$^2$',  color='r', transform=axes.transAxes)
 
 s = 1
 sns.histplot(data=Results_S[samples_S[0][s]],
@@ -307,7 +308,7 @@ axes.text(.6, .80,'$\sigma_H^2$ = ' + str(np.round(Results_H[samples_H[0][h]].RV
 n = 1
 sns.histplot(data=Results_N[samples_N[0][n]],
                  x="RVhist", binwidth=1, element="step", fill=False, color='g', stat='density', kde=True)
-axes.text(.6, .70,'$\sigma_N^2$ = ' + str(np.round(Results_N[samples_N[0][n]].RV.var(),2))+ ' [km/s]$^2$',  color='g', transform=axes.transAxes)
+axes.text(.6, .73,'$\sigma_N^2$ = ' + str(np.round(Results_N[samples_N[0][n]].RV.var(),2))+ ' [km/s]$^2$',  color='g', transform=axes.transAxes)
 
 
 
@@ -330,7 +331,7 @@ axes.text(.55, .80,'$\sigma_H^2$ = ' + str(np.round(Results_H[samples_H[0][0]].R
 
 sns.histplot(data=Results_O[samples_O[0][0]],
                  x="RVhist", binwidth=1, element="step", fill=False, color='r', stat='density', kde=True)
-axes.text(.55, .70,'$\sigma_O^2$ = ' + str(np.round(Results_O[samples_O[0][0]].RV.var(),2))+ ' [km/s]$^2$',  color='r', transform=axes.transAxes)
+axes.text(.55, .73,'$\sigma_O^2$ = ' + str(np.round(Results_O[samples_O[0][0]].RV.var(),2))+ ' [km/s]$^2$',  color='r', transform=axes.transAxes)
 
 axes.text(.55, .90,'NGC 604',  color='k', transform=axes.transAxes)
 
