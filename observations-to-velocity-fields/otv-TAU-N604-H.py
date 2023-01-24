@@ -207,6 +207,10 @@ plt.title('NGC 604')
 #plt.savefig('Imgs//Flux//N604.pdf', bbox_inches='tight')
 
 
+#hdu = fits.ImageHDU(dataH_f)
+#hdu.writeto(str(datapath_obs)+ '/' +data_file + 'Flux-mod.fits')
+
+
 plt.style.use([
     "seaborn-poster",
 ])
@@ -230,8 +234,11 @@ ax.set_facecolor('xkcd:gray')
 #plt.savefig('Imgs//VF//N604.pdf', bbox_inches='tight')
 
 
+data_file
+
+
 #hdu = fits.PrimaryHDU(dataH_rv)
-#hdu.writeto(str(datapath_obs)+ '/' +data_file + '.fits')
+#hdu.writeto(str(datapath_obs)+ '/' +data_file + 'RV-mod.fits')
 
 
 plt.style.use([
@@ -248,6 +255,39 @@ dataH_s=(datal.round(2)).pivot(index='X', columns='Y', values='Sig')
 sns.heatmap(dataH_s, cmap="magma",cbar_kws={'label': 'km/s'})
 plt.title('H$_{α}$ σ')
 #plt.savefig('TAURUS/Imgs/A/'+reg+'SH.png')
+
+
+
+
+
+new_hdul = fits.HDUList()
+new_hdul.append(fits.PrimaryHDU())
+new_hdul.append(fits.ImageHDU(dataH_f))
+new_hdul.append(fits.ImageHDU(dataH_rv))
+new_hdul.append(fits.ImageHDU(dataH_s))
+
+
+hdr = new_hdul[0].header
+
+
+hdr ['CDELT1'] = (-pix / (60*60), '[deg] Coordinate increment at reference point')
+hdr ['CDELT2'] = (pix / (60*60), '[deg] Coordinate increment at reference point')
+hdr['CUNIT1']  = ('deg' , 'Units of coordinate increment and value' )      
+hdr['CUNIT2']  = ('deg' , 'Units of coordinate increment and value'  )
+hdr['CTYPE1']  = ('RA---CAR', 'Right ascension, plate caree projection  ')
+hdr['CTYPE2']  = ('DEC--CAR', 'Declination, plate caree projection   ')
+hdr['targname']  = ('NGC 604', 'Target name   ')
+hdr['distance']  = (distance, 'Distance to target   ')
+hdr['pix'] = (pix, 'arcsec.pixel^{-1}')
+
+
+hdr
+
+
+new_hdul.info()
+
+
+#new_hdul.writeto(str(datapath_obs)+ '/' +name_export + '-mod.fits')
 
 
 # Sigma disp - deconvolution

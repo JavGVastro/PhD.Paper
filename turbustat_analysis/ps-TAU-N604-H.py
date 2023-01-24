@@ -13,6 +13,7 @@ import sys
 import turbustat.statistics as tss
 from turbustat.statistics import PowerSpectrum
 from turbustat.io.sim_tools import create_fits_hdu
+import bfunc
 
 
 
@@ -62,10 +63,14 @@ vv = rad_vel[0].data.astype(float)
 ##load  thecorrelation length and seeing derived from the fit
 r0 = data["results_2sig"]['r0'][0] #pc
 s0 = data["results_2sig"]['s0'][0] #pc
-r0,s0
+m = data["results_2sig"]['m'][0] #-
+sig2 = data["results_2sig"]['sig2'][0] #km^2/s^2
+noise = data["results_2sig"]['noise'][0] #km^2/s^2
+box_size = data["properties"]['box_size']
+r0,s0,m,sig2,box_size
 
 
-
+data["properties"]['box_size']
 
 
 
@@ -82,6 +87,8 @@ ax.set_ylabel('Y')
 #img_hdu = create_fits_hdu(vv,pix*u.arcsec,1 * u.arcsec, vv.shape, 1 * u.Hz, u.K)
 #img_hdu.header
 
+
+# Spatial Power Spectrum
 
 #pspec = PowerSpectrum(img_hdu, distance=distance* u.pc) 
 
@@ -106,7 +113,9 @@ pspec.run(verbose=True, xunit=(u.pc)**-1, low_cut=0.01*(u.pc)**-1, high_cut=(1/s
           fit_kwargs={'brk': (1/r0)*(u.pc)**-1, 'log_break': False}, fit_2D=False)  
 
 
-dvar = tss.DeltaVariance(vv, header = hdr, distance=distance* u.pc)
+# Delta-Variance
+
+dvar = tss.DeltaVariance(vv, header = hdr, distance=distance* u.pc,nlags=50)
 
 
 plt.figure(figsize=(14, 8))
@@ -117,20 +126,19 @@ dvar.run(verbose=True, boundary="fill",xunit=u.pc, xlow=s0*u.pc, xhigh=r0*u.pc)
 #plt.style.use(["seaborn-poster",])
 
 
-
-
-
-fig, (ax, axx) = plt.subplots(
+fig, (ax) = plt.subplots(
     1,
-    2,
+    1,
     sharey=False,
-    figsize=(15, 4),
+    figsize=(10, 10),
 )
 
 ##spatial power spectra
 ax.scatter(pspec.freqs,pspec.ps1D)
-#ax.scatter(pspec.freqs,pspec.ps1D_stddev)
-#ax.errorbar(np.array(pspec.freqs), pspec.ps1D, yerr=(pspec.ps1D_stddev/pspec.ps1D)*0.434, ls="", elinewidth=0.4, alpha=1.0, c="k")
+
+#yy1 = pspec.ps1D+pspec.ps1D_stddev
+#yy2 = pspec.ps1D-pspec.ps1D_stddev
+#ax.fill_between(pspec.freqs, yy1, yy2, alpha = 0.15, zorder = 0, color = 'b')
 
 ax.axvline(1/r0, c="b")
 ax.axvline(1/s0, c="k")
@@ -143,19 +151,49 @@ ax.set(xscale='log', yscale='log',
        ylabel=r'log $P(k)_2,\ \mathrm{-}$'
       )
 
+
+fig, (axx) = plt.subplots(
+    1,
+    1,
+    sharey=False,
+    figsize=(10, 10),
+)
+
 ##delta-variance
-axx.scatter(dvar.lags,dvar.delta_var*dvar.data.var())
-axx.scatter(data['r'],data['B'])
+axx.scatter(dvar.lags,dvar.delta_var,alpha = 0.75, color = 'k', zorder = 0)
+axx.plot(dvar.lags,dvar.delta_var,alpha = 0.75, color = 'k', zorder = 0)
+yy1 = dvar.delta_var+dvar.delta_var_error
+yy2 = dvar.delta_var-dvar.delta_var_error
+axx.fill_between(dvar.lags, yy1, yy2, alpha = 0.15, zorder = 0, color = 'k')
+
+##detlta-fit
+xgrid = np.linspace(s0,r0,100)
+axx.plot(xgrid,(10**(-0.86))*(xgrid**dvar.slope), color = 'r', alpha = 0.75, linewidth = 2.5)
+
+
+##observational structure function
+b_sigo = np.array(data['B'])/data['preres']['sig2']
+b_sigd = np.array(data['B'])/sig2
+b_m = ( b_sigo + b_sigd ) / 2
+axx.scatter(data['r'],b_m, color = 'b', alpha = 0.75)
+axx.fill_between(data['r'], b_sigo , b_sigd, alpha = 0.15, zorder = 0, color = 'b')
+
+
+##model structure function
+rgrid = np.linspace(np.array(data['r']).min(),np.array(data['r']).max(),100)
+axx.plot(rgrid, bfunc.bfunc04s(rgrid, r0, sig2, m, s0, noise, box_size)/sig2, color="orange",  linewidth = 2.5)
+
+
 axx.set(xscale='log', yscale='log', 
        xlabel='log lags,pc',
        ylabel=r'log $\Delta, \mathrm{-}$'
       )
 
-axx.axvline(r0, c="b")
-axx.axvline(s0, c="k")
+axx.axvline(r0, c="k", linestyle = '--')
+axx.axvline(s0, c="k", linestyle = ':')
 
 
-plt.scatter(data['r'],data['B'])
+dvar
 
 
 get_ipython().system('jupyter nbconvert --to script --no-prompt ps-TAU-N604-H.ipynb')

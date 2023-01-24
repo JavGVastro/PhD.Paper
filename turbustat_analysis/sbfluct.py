@@ -59,17 +59,17 @@ def sbfluct(s, min, kmax, name):
             name
             + "\n"
             + f"${Sfluct_label} = {sigS:.2f}$"
-            # + f", ${eps_rms:.2f}$"
+             + f", ${eps_rms:.2f}$"
             )
         #plt.text(
         #    0.10,
         #    0.10,
         #    biglabel,
-        #    ha="right",
-            #transform=ax.transAxes,
-        #    va="top",
+         #  ha="right",
+        #    transform=ax.transAxes,
+          # va="top",
             #bbox=whitebox,
-        #    fontsize="small",
-        #)
+            #fontsize="small",
+    #    )
 
         print(eps_rms)
