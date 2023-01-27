@@ -64,7 +64,7 @@ ss = hdulist[3].data[:n, :n].astype(np.float64)
 
 ## Replace spurious values in the arrays
 m = ~np.isfinite(sb*vv*ss) | (sb < 0.0)
-#m = m | (sb > 6e4) 
+m = m | (sb > 6e4) 
 sb[m] = 0.0
 vv[m] = np.nanmean(vv)
 ss[m] = 0.0
@@ -283,7 +283,8 @@ data_export_list = {
         'pc' : pc,
         's0' : s0,
         'pix' : pix,
-         name_export : np.array(data[mI]),
+#         name_export : np.array(data[mI]),
+        name_export : np.array(datal),
       }
 data_export_list
 
@@ -324,6 +325,9 @@ with open(datapath_res/jsonfilename, "w") as f:
 jsonfilename =name_export +"-l.json"
 with open(datapath_res/jsonfilename, "w") as f:
     json.dump(data_export_list, fp=f, indent=3, cls=MyEncoder)
+
+
+datapath_res
 
 
 print("--- %s seconds ---" % (time.time()-start_time))

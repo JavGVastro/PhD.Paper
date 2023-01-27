@@ -21,59 +21,87 @@ import bfunc
 import pandas as pd
 from rebin_utils import downsample, oversample
 from astropy.modeling import models, fitting
+import statsmodels.api as sm
+from scipy.stats import linregress
 fitter = fitting.LevMarLSQFitter()
 
 
-distance = 840000 #parsecs
-pix = 0.26 #arcsec 
-
-
-name = 'N604'
+#Info for images and exports
+name_plt = '30 Doradus'
+name_exp = 'Dor'
 element = 'H'
 em_line = 'H$α$'
 
 
-name_file = 'TAU-N604-H-mod.fits'
-name_res = 'TAU-N604-H'
-flux_map = 'TAURUS-604-Ha-Flux.fits'
+datapath_res = Path(open("path-results.txt", "r").read()).expanduser()
 
 
-##Open observations.fits
-##Path and name
-datapath_obs= Path(open("path-observations.txt", "r").read()).expanduser()
-#name_file = 'TAU-N604-H-mod.fits'
-##load obs
-obs =fits.open(datapath_obs / name_file)
-##Obs data to matrix array
-sb = obs[1].data.astype(float)
-vv = obs[2].data.astype(float)
-##load header data
-hdr = obs[0].header
-#distance = hdr['distance']
+name_data = 'MUSE-Dor-H'
+distance = 50000#pc
+pix = 0.2#arcsec/pix
 
 
-fig = plt.figure(figsize=(8, 6))
-ax = fig.add_subplot()
-sns.heatmap(sb, cmap="magma",cbar_kws={'label': 'A.D.U.'})
-ax.set_facecolor('xkcd:gray')
+pc = distance*(2*np.pi) / (360 * 60 * 60) #arcsec to parsecs
+corr = pix*pc 
+corr
+
+
+data = json.load(open(str(datapath_res) + '/' + name_data + ".json"))
+sb = np.array(data['observations']["sb"])
+vv = np.array(data['observations']["vv"])
+#ss = np.array(data['observations']["ss"])
+
+
+## Replace spurious values in the arrays
+mm = ~np.isfinite(sb*vv) | (sb < 0.0)
+
+sb[mm] = 0.0
+vv[mm] = np.nanmean(vv)
+#ss[m] = 0.0
+sb /= sb.max()
+
+good = (~mm) & (sb > 0.001)
+
+
+trim = (slice(10, 600), slice(15, 590))
+vv = vv[trim]
+sb = sb[trim]
+
+
+fig, ax = plt.subplots(figsize=(12, 12))
+
+
+
+plt.imshow(sb, cmap='magma')
+
+cbar = plt.colorbar()
+#cbar.set_label('km/s', rotation=270, labelpad=15)  
+
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
 
 
-fig = plt.figure(figsize=(8, 6))
-ax = fig.add_subplot()
-sns.heatmap(vv, cmap="RdBu_r",cbar_kws={'label': 'km/s'})
-ax.set_facecolor('xkcd:gray')
+plt.gca().invert_yaxis()
+
+
+fig, ax = plt.subplots(figsize=(12, 12))
+
+plt.imshow(vv, cmap='RdBu_r')
+
+cbar = plt.colorbar()
+cbar.set_label('km/s', rotation=270, labelpad=15)  
+
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
+
+
+plt.gca().invert_yaxis()
 
 
 ##Open results.json file
 ##Path and name
-datapath_data = Path(open("path-results.txt", "r").read()).expanduser()
-#name_res = 'TAU-N604-H' ##change place to the first lines
 ##Load results
-data = json.load(open(str(datapath_data) + '/' + name_res + ".json"))
+data = json.load(open(str(datapath_res) + '/' + name_data + ".json"))
 ##load  parameters derived from the fit
 r0 = data["results_2sig"]['r0'][0] #pc
 s0 = data["results_2sig"]['s0'][0] #pc
@@ -90,26 +118,39 @@ r0,s0,m,mer,sig2,box_size
 # sb /= sb.max()
 # sb /= np.nanmean(sb)
 
-fig = plt.figure(figsize=(8, 6))
-ax = fig.add_subplot()
-sns.heatmap(sb, cmap="magma",cbar_kws={'label': 'A.D.U.'})
-ax.set_facecolor('xkcd:gray')
-ax.set_xlabel('X')
-ax.set_ylabel('Y')
+# ##nan values to mean velocity values
+# vmed = np.nanmedian(vv)
+# mv = np.isfinite(vv)
+# vv[~mv] = vmed
+
+new_hdul = fits.HDUList()
+new_hdul.append(fits.PrimaryHDU())
+new_hdul.append(fits.ImageHDU(sb))
+new_hdul.append(fits.ImageHDU(vv))
 
 
-##nan values to mean velocity values
-vmed = np.nanmedian(vv)
-mv = np.isfinite(vv)
-vv[~mv] = vmed
+hdr = new_hdul[0].header
 
 
-fig = plt.figure(figsize=(8, 6))
-ax = fig.add_subplot()
-sns.heatmap(vv, cmap="RdBu_r",cbar_kws={'label': 'km/s'})
-ax.set_facecolor('xkcd:gray')
-ax.set_xlabel('X')
-ax.set_ylabel('Y')
+hdr ['CDELT1'] = (-pix / (60*60), '[deg] Coordinate increment at reference point')
+hdr ['CDELT2'] = (pix / (60*60), '[deg] Coordinate increment at reference point')
+hdr['CUNIT1']  = ('deg' , 'Units of coordinate increment and value' )      
+hdr['CUNIT2']  = ('deg' , 'Units of coordinate increment and value'  )
+hdr['CTYPE1']  = ('RA---CAR', 'Right ascension, plate caree projection  ')
+hdr['CTYPE2']  = ('DEC--CAR', 'Declination, plate caree projection   ')
+hdr['targname']  = ('Orion', 'Target name   ')
+hdr['distance']  = (distance, 'Distance to target   ')
+hdr['pix'] = (pix, 'arcsec.pixel^{-1}')
+
+
+sb = new_hdul[1].data.astype(float)
+vv = new_hdul[2].data.astype(float)
+
+
+new_hdul.info()
+
+
+distance
 
 
 ##Tutorial data
@@ -122,40 +163,114 @@ ax.set_ylabel('Y')
 # Spatial Power Spectrum
 
 plt.figure(figsize=(14, 8))
-pspec = PowerSpectrum(vv, header = hdr, distance=distance* u.pc) 
-pspec.run(verbose=True, xunit=u.pc**-1, low_cut=(r0*u.pc)**-1, high_cut=(s0*u.pc)**-1)
+pspec = PowerSpectrum(vv, header = hdr, distance = distance* u.pc) 
+pspec.run(verbose=True, xunit = u.pc**-1, low_cut=(r0*u.pc)**-1, high_cut=(s0*u.pc)**-1)
 
 
-pspec.slope
+from turbustat.statistics.apodizing_kernels import    (CosineBellWindow, TukeyWindow, HanningWindow, SplitCosineBellWindow)
+
+taper = HanningWindow()
+taper3 = SplitCosineBellWindow(alpha=0.85, beta=0.55)
+shape = (550, 350)
+tap = taper3(shape)
+plt.imshow(tap, cmap='viridis', origin='lower')  
 
 
-(r0*u.pc)**-1,(s0*u.pc)**-1,0.01*(u.pc)**-1
+##NOTE 1: IDK why but the fit is done in pixel units despite introducing xunit as parsec. To compensate for this I need 
+##to introduce a corr factor. To kinda avoid this I repeat the the WLS using the correct 'x' units and using 
+##the derived new fit parameters in the comparison plots. 
+##NOTE 2: this is no problem for NGC 604 since the correction factor is similar to 1 since 
+## 0.26 (arcsec/pix) * 4.07 (pc/arsec)= 1.05
+
+plt.figure(figsize=(14, 8))
+pspec = PowerSpectrum(vv, header = hdr, distance = distance* u.pc) 
+pspec.run(verbose=True, xunit = u.pc**-1, low_cut=(0.5*r0*u.pc)**-1, high_cut=(1.25*s0*u.pc)**-1,
+           apodize_kernel='splitcosinebell', alpha=0.85, beta=0.55)
 
 
-np.log10(1/s0)*(u.pc)**-1,-1.75*(u.pc)**-1,-1.0*(u.pc)**-1
-
+##NOTE 1: IDK why but the fit is done in pixel units despite introducing xunit as parsec. To compensate for this I need 
+##to introduce a corr factor. To kinda avoid this I repeat the the WLS using the correct 'x' units and using 
+##the derived new fit parameters in the comparison plots. 
+##NOTE 2: this is no problem for NGC 604 since the correction factor is similar to 1 since 
+## 0.26 (arcsec/pix) * 4.07 (pc/arsec)= 1.05
 
 plt.figure(figsize=(14, 8))
 pspec1 = PowerSpectrum(vv, header = hdr, distance=distance * u.pc) 
-pspec1.run(verbose=True, xunit=(u.pc)**-1, low_cut=0.01*(u.pc)**-1, high_cut=(1/s0)*(u.pc)**-1,
+pspec1.run(verbose=True, xunit=(u.pc)**-1, low_cut=0.1*(u.pc)**-1, high_cut=(1/s0)*(u.pc)**-1,
           fit_kwargs={'brk': (1/r0)*(u.pc)**-1, 'log_break': False}, fit_2D=False)  
 
 
 # Delta-Variance
 
+##NOTE 1: IDK why but the fit is done in pixel units despite introducing xunit as parsec. To compensate for this I need 
+##to introduce a corr factor. To kinda avoid this I repeat the the WLS using the correct 'x' units and using 
+##the derived new fit parameters in the comparison plots. 
+##NOTE 2: this is no problem for NGC 604 since the correction factor is similar to 1 since 
+## 0.26 (arcsec/pix) * 4.07 (pc/arsec)
+
 dvar = tss.DeltaVariance(vv, header = hdr, distance=distance* u.pc,nlags=50)
-
-
 plt.figure(figsize=(8, 8))
 dvar.run(verbose=True, boundary="fill",xunit=u.pc, xlow=s0*u.pc, xhigh=r0*u.pc)
 
 
-pc = distance*(2*np.pi) / (360 * 60 * 60) #arcsec to parsecs
-corr = pix*pc 
-
-
+##Plots
 sns.set_context("talk", font_scale=1.1)
 #plt.style.use(["seaborn-poster",])
+
+
+x = np.array(pspec.freqs*(corr**-1))
+y = np.array(pspec.ps1D)
+y_er = np.array(pspec.ps1D_stddev)
+
+log_x = np.log10(x)
+log_y = np.log10(y)
+log_y_er = np.log10(y_er)
+
+
+i = 10
+f = len(pspec.ps1D)-1
+#f = 36
+
+
+intr=linregress(x[i:f], y[i:f])
+intr.slope,intr.stderr,intr.intercept,intr.rvalue
+
+
+intrl=linregress(log_x[i:f], log_y[i:f])
+intrl.slope,intrl.stderr,intrl.intercept,intrl.rvalue
+
+
+fig, ax = plt.subplots(figsize=(10,10))
+
+ax.scatter(x,y)
+#ax.plot(x,y)
+
+xgrid = np.linspace(x[i],x[f])
+#ax.plot(xgrid, xgrid*intr.slope + intr.intercept, color = 'k')
+ax.plot(xgrid, 10**(intrl.intercept)*(xgrid**intrl.slope), color ='r', marker = '.')
+
+
+ax.set(xscale = 'log', yscale = 'log')
+
+
+x,y,z=log_x[i:f],log_y[i:f],log_y_er[i:f]
+X = sm.add_constant(x)
+model = sm.OLS(y, X)
+results = model.fit()
+print(results.summary())
+
+
+x,y,z=log_x[i:f],log_y[i:f],log_y_er[i:f]
+X = sm.add_constant(x)
+model = sm.WLS(y, X,weights=z)
+resultsw = model.fit()
+print(resultsw.summary())
+
+
+
+
+
+
 
 
 fig, (ax) = plt.subplots(
@@ -174,29 +289,29 @@ yy2 = np.sqrt((pspec.ps1D-pspec.ps1D_stddev)**2)
 ax.fill_between(pspec.freqs*(corr**-1), yy1, yy2, alpha = 0.15, zorder = 0, color = 'k')
 
 ##ps-fit
-xgrid = np.linspace(1/s0,1/r0,100)
-ax.plot(xgrid,(10**(4.49))*(xgrid**pspec.slope), color = 'r', alpha = 0.85, linewidth = 2.5)
+xgrid = np.logspace(np.log10(1/r0),np.log10(1/s0),100)
+ax.plot(xgrid,(10**(results.params[0]))*(xgrid**results.params[1]), color = 'r', alpha = 0.85, linewidth = 2.5)
 
 ##seeing and corelation length
 ax.axvline(1/r0, c="k", linestyle = '--')
 ax.axvline(1/s0, c="k", linestyle = ':')
 
 ##annotations
-ax.text(.1, .10,'m$_{ps}$ =' + str(np.round(pspec.slope,2)) + '$\pm$' + str(np.round(pspec.slope_err,2)), transform=ax.transAxes)
+ax.text(.1, .10,'m$_{ps}$ =' + str(np.round(results.params[1],2)) + '$\pm$' + str(np.round(results.bse[1],2)), transform=ax.transAxes)
 
-ax.annotate('r$_0$', xy=(1/r0, 1e8),  xycoords='data',
+ax.annotate('r$_0$', xy=(1/r0, 1e12),  xycoords='data',
            xytext=(0.5, 0.9), textcoords='axes fraction',
             arrowprops=dict(facecolor='black', shrink=0.02),
             horizontalalignment='right', verticalalignment='top',
             )
 
-ax.annotate('s$_0$', xy=(1/s0, 1e8),  xycoords='data',
-            xytext=(0.90, 0.9), textcoords='axes fraction',
+ax.annotate('s$_0$', xy=(1/s0, 1e12),  xycoords='data',
+            xytext=(0.80, 0.9), textcoords='axes fraction',
             arrowprops=dict(facecolor='black', shrink=0.02),
             horizontalalignment='right', verticalalignment='top',
             )
 
-plt.title(name + ' '+ em_line)
+plt.title(name_plt + ' '+ em_line)
 plt.legend(loc = 0)
 
 ##config
@@ -205,7 +320,62 @@ ax.set(xscale='log', yscale='log',
        ylabel=r'log $P(k)_2,\ \mathrm{-}$'
       )
 
-plt.savefig('Imgs//'+ 'ps_'+ name + element +  '.pdf', bbox_inches='tight')
+plt.savefig('Imgs//'+ 'ps_'+ name_exp + element +  '.pdf', bbox_inches='tight')
+
+
+
+
+x = np.array(dvar.lags*corr)
+#x = np.array(dvar.lags)
+y = np.array(dvar.delta_var)
+y_er = np.array(dvar.delta_var_error)
+
+log_x = np.log10(x)
+log_y = np.log10(y)
+log_y_er = np.log10(y_er)
+
+
+i = 0
+#f = len(dvar.lags)-1
+f = 36
+
+
+intr=linregress(x[i:f], y[i:f])
+intr.slope,intr.stderr,intr.intercept,intr.rvalue
+
+
+intrl=linregress(log_x[i:f], log_y[i:f])
+intrl.slope,intrl.stderr,intrl.intercept,intrl.rvalue
+
+
+fig, ax = plt.subplots(figsize=(10,10))
+
+ax.scatter(x,y)
+#ax.plot(x,y)
+
+xgrid = np.linspace(x[i],x[f])
+ax.plot(xgrid, xgrid*intr.slope + intr.intercept, color = 'k')
+ax.plot(xgrid, 10**(intrl.intercept)*(xgrid**intrl.slope), color ='r')
+
+
+ax.set(xscale = 'log', yscale = 'log')
+
+
+x,y,z=log_x[i:f],log_y[i:f],log_y_er[i:f]
+X = sm.add_constant(x)
+model = sm.OLS(y, X)
+results = model.fit()
+print(results.summary())
+
+
+x,y,z=log_x[i:f],log_y[i:f],log_y_er[i:f]
+X = sm.add_constant(x)
+model = sm.WLS(y, X,weights=1/z)
+resultsw = model.fit()
+print(resultsw.summary())
+
+
+
 
 
 fig, (axx) = plt.subplots(
@@ -216,15 +386,18 @@ fig, (axx) = plt.subplots(
 )
 
 ##delta-variance
-axx.scatter(dvar.lags*(corr),dvar.delta_var,alpha = 0.75, color = 'k', zorder = 0, label = 'turbustat')
-axx.plot(dvar.lags*(corr),dvar.delta_var,alpha = 0.75, color = 'k', zorder = 0)
+axx.scatter(dvar.lags*corr,dvar.delta_var,alpha = 0.75, color = 'k', zorder = 0, label = 'turbustat')
+axx.plot(dvar.lags*corr,dvar.delta_var,alpha = 0.75, color = 'k', zorder = 0)
 yy1 = dvar.delta_var+dvar.delta_var_error
 yy2 = dvar.delta_var-dvar.delta_var_error
-axx.fill_between(dvar.lags*(corr), yy1, yy2, alpha = 0.15, zorder = 0, color = 'k')
+axx.fill_between(dvar.lags*corr, yy1, yy2, alpha = 0.15, zorder = 0, color = 'k')
 
 ##delta-fit
 xgrid = np.linspace(s0,r0,100)
-axx.plot(xgrid,(10**(-0.86)*(xgrid**dvar.slope)), color = 'r', alpha = 0.75, linewidth = 2.5)
+#axx.plot(xgrid,10**(-1.54)*(xgrid**dvar.slope), color = 'r', alpha = 0.75, linewidth = 2.5)
+axx.plot(xgrid, 10**(results.params[0])*(xgrid**results.params[1]), color ='r')
+
+
 #xgrid = np.logspace(np.log10(s0),np.log10(r0),100)
 #axx.plot(xgrid,-1.54+(xgrid*dvar.slope), color = 'r', alpha = 0.75, linewidth = 2.5)
 
@@ -243,34 +416,45 @@ axx.plot(rgrid, bfunc.bfunc00s(rgrid, r0, sig2, m)/sig2, color="green",  linewid
 axx.plot(rgrid, bfunc.bfunc04s(rgrid, r0, sig2, m, s0, noise, box_size)/sig2, color="orange",  linewidth = 2.5)
 
 ##annotations
-axx.text(.65, .10,'m$_{Δv}$ =' + str(np.round(dvar.slope,2)) + '$\pm$' + str(np.round(dvar.slope_err,2)), transform=ax.transAxes)
+axx.text(.65, .10,'m$_{Δv}$ =' + str(np.round(results.params[1],2)) + '$\pm$' + str(np.round(results.bse[1],2)), transform=ax.transAxes)
 axx.text(.65, .15,'m =' + str(np.round(m,2)) + '$\pm$' + str(np.round(mer,2)), transform=ax.transAxes)
 
 axx.annotate('r$_0$', xy=(r0, 3),  xycoords='data',
-           xytext=(0.40, 0.95), textcoords='axes fraction',
+           xytext=(0.55, 0.95), textcoords='axes fraction',
             arrowprops=dict(facecolor='black', shrink=0.02),
             horizontalalignment='right', verticalalignment='top',
             )
 
 axx.annotate('s$_0$', xy=(s0, 3),  xycoords='data',
-            xytext=(0.10, 0.95), textcoords='axes fraction',
+            xytext=(0.25, 0.95), textcoords='axes fraction',
             arrowprops=dict(facecolor='black', shrink=0.02),
             horizontalalignment='right', verticalalignment='top',
             )
 
 ##config
 axx.set(xscale='log', yscale='log', 
-       xlabel='log lag, pc',
-       ylabel=r'log $σ, \mathrm{-}$'
-      )
+        xlabel='log lag, pc', 
+        ylabel=r'log $σ, \mathrm{-}$')
 
 axx.axvline(r0, c="k", linestyle = '--')
 axx.axvline(s0, c="k", linestyle = ':')
 
-plt.title(name + ' '+ em_line)
+plt.title(name_plt + ' '+ em_line)
 plt.legend(loc = 4)
 
-plt.savefig('Imgs//'+ 'sf_'+ name + element +  '.pdf', bbox_inches='tight')
+plt.savefig('Imgs//'+ 'sf_'+ name_exp + element +  '.pdf', bbox_inches='tight')
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #sb = fits.open(datapath_obs / 'TAURUS-604-Ha-Flux.fits')[0].data.astype(float)
@@ -414,9 +598,9 @@ ax.set(
 
 
 
-sb = fits.open(datapath_obs / flux_map)[0].data.astype(float)
+#sb = fits.open(datapath_obs / flux_map)[0].data.astype(float)
 fmin = 1e-8
-kmax = 2
+kmax = 4
 
 
 resamples = [2, 4, 8, 16, 32, 64]
@@ -500,7 +684,7 @@ ax.plot(np.log(x), x*LN.pdf(x), color = 'r')
 ax.text(.6, 0.9,r"$\langle \delta S^2 \rangle^{1/2} / S_0$ = " + str(np.round(eps_rms ,2)), transform=ax.transAxes, color = 'orange')
 ax.text(.6, 0.8,r"$\langle \delta S^2 \rangle^{1/2} / S_0$ = " + str(np.round(eps_rms_t ,2)), transform=ax.transAxes, color = 'r')
 
-plt.title(name + ' '+ em_line)
+plt.title(name_plt + ' '+ em_line)
 ax.legend(loc = 2)
 
 ax.set(
@@ -508,10 +692,10 @@ ax.set(
 
 )
 
-plt.savefig('Imgs//'+ 'bf_'+ name + element +  '.pdf', bbox_inches='tight')
+plt.savefig('Imgs//'+ 'bf_'+ name_exp + element +  '.pdf', bbox_inches='tight')
 
 
-get_ipython().system('jupyter nbconvert --to script --no-prompt ts-TAU-N604-H.ipynb')
+get_ipython().system('jupyter nbconvert --to script --no-prompt ts-MUSE-Dor-H.ipynb')
 
 
 print("--- %s seconds ---" % (time.time()-start_time))
