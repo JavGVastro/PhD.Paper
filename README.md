@@ -45,4 +45,4 @@ datos utiles y la aplicación de diferentes análisis estadísticos a las observ
 In this repository is the methodology used in the doctoral dissertation **'Turbulence in the interstellar medium'** 
 of the ESFM, IPN (CDMX, Mexico). This methodology consists of the processing of astronomical observations 
 previously reduced to obtain viable data samples and the application of different
-statistical analyzes to the observations.
+statistical analysis to the observations.
