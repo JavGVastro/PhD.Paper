@@ -168,7 +168,7 @@ data = 'k_4'
 
 
 bplot_mod.corner_plot(
-    result_emcee, result_emcee, name, data, data_ranges=[0.95, 0.99, 0.995, 0.995]
+    result_emcee, result, name, data, data_ranges=[0.95, 0.99, 0.995, 0.995]
 )
 # data_ranges=[0.95, 0.99, 0.995, 0.995, 0.999]
 
