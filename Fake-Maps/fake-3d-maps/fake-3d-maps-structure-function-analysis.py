@@ -13,26 +13,25 @@ start_time=time.time()
 from pathlib import Path
 import numpy as np
 import json
+import cmasher as cmr
+from matplotlib import pyplot as plt
+import seaborn as sns
+import sys
+
+import turbustat.statistics as tss
+import turbustat.simulator
+from turbustat.simulator import make_ppv
+from spectral_cube import SpectralCube  
+
 from astropy.io import fits
 from astropy.utils.misc import JsonCustomEncoder
 import astropy.units as u
-import cmasher as cmr
-from matplotlib import pyplot as plt
-import turbustat.statistics as tss
-import turbustat.simulator
-#from turbustat.simulator import make_3dfield
-from turb_utils import make_extended
-import seaborn as sns
-import sys
-from turbustat.simulator import make_ppv
-from turb_utils import make_extended, make_3dfield
-from spectral_cube import SpectralCube  
-
 from astropy.convolution import Gaussian2DKernel, convolve_fft
 
-sys.path.append("../structure-functions")
-
+sys.path.insert(1, 'C:/Users/ZAINTEL2/Documents/Aeon/GitHub/PhD.Paper/py-modules')  
+from turb_utils import make_extended, make_3dfield
 import strucfunc
+import bfunc
 
 sns.set_color_codes()
 sns.set_context("talk")
@@ -226,11 +225,12 @@ def bfac(x):
 
     Where s0 is RMS seeing width and r0 is correlation length
     """
-    return 1 / (1 + 4 * x ** 2)
+    #return 1 / (1 + 4 * x ** 2)
+    return np.exp(-x)
 
 
 def seeing_empirical(r, s0, r0, a=0.75):
-    return bfac(s0 / r0) * ratio_empirical(r, s0, a)
+    return bfac(s0**0.85 / r0) * ratio_empirical(r, s0, a)*0.95
 
 
 sns.set_context("talk", font_scale=0.65)
@@ -337,7 +337,7 @@ ax.set(
 )
 sns.despine()
 fig.tight_layout()
-fig.savefig("fake-seeing-nonp-nn-3d-reduction.pdf")
+fig.savefig("fake-seeing-nonp-3d-reduction.pdf")
 
 
 fig, ax = plt.subplots()
