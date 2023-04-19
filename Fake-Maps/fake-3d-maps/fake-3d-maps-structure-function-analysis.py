@@ -207,16 +207,28 @@ ax.set(xscale="log", yscale="log",
       )
 
 
-def ratio_empirical(rad, s0, a=1.0):
+N_NORM = 2.6
+
+
+def ratio_empirical(rad, s0, a = 1):
     """
     Simple tanh law in semi-log space to fit the seeing
 
-    Reduction in B(r) is always 0.5 when r = 2 * s0
+    Reduction in B(r) is always 0.5 when r = 2.6 * s0
     Parameter `a` controls the slope of the transition.
     """
-    x = np.log(rad / (2 * s0))
-    y = np.tanh(a * x)
-    return 0.5 * (1.0 + y)
+    
+    ##seeing model v1
+    #x = np.log(rad / (2 * s0))                        
+    #y = np.tanh(a * x)
+    #return 0.5 * (1.0 + y)
+    
+    ##seeing model v1
+    #x = ((2 * s0) / rad)**(2*a)
+    #return  (1.0 + x)**-1
+    
+    ##seeing model v2
+    return (1 + (N_NORM*s0/rad)**(2*a))**-1
 
 
 def bfac(x):
@@ -225,16 +237,29 @@ def bfac(x):
 
     Where s0 is RMS seeing width and r0 is correlation length
     """
+    
+    ##seeing model v0
     #return 1 / (1 + 4 * x ** 2)
-    return np.exp(-x)
+    
+    ##seeing model v1
+    #return np.exp(-x)
+    
+    ##seeing model v2
+    #return (1 + 0.475*x)**-2
+    return (1 + 1.25*x)**-1
 
 
-def seeing_empirical(r, s0, r0, a=0.75):
-    return bfac(s0**0.85 / r0) * ratio_empirical(r, s0, a)*0.95
+def seeing_empirical(r, s0, r0, a = 1):
+    #return bfac(s0 / r0) * ratio_empirical(r, s0, a)                           ##seeing model v1
+    return (bfac(s0 / r0) * ratio_empirical(r, s0, a))                      ##seeing model v2
+
 
 
 sns.set_context("talk", font_scale=0.65)
 #plt.style.use(["seaborn-poster",])
+export = {}
+b_norms = []
+
 
 fig, ax = plt.subplots(figsize=(8, 5))
 rat_maxes = []
@@ -268,17 +293,29 @@ for width, c in zip(widths, colors):
     )
     # for _rat in rat_individs:
     #    ax.plot(r, _rat, color=c, alpha=0.2)
-    rat0 = np.interp(2 * width, r, rat)
+    rat0 = np.interp(N_NORM * width, r, rat)
     # c = line[0].get_color()
-    ax.plot(2 * width, rat0, marker="o", ms=15, color=c)
+    ax.plot(N_NORM * width, rat0, marker="o", ms=15, color=c)
+    
     # Functional fit
-    ax.plot(r, seeing_empirical(r, width, true_r0, 0.75), color=c, linestyle="dashed")
+    ax.plot(r, seeing_empirical(r, width, true_r0, a = 0.65), color=c, linestyle="dashed")
+    
     # Plot apparent correlation lengths
     apparent_r0 = np.mean([_["Apparent r0"] for _ in sfs_npt_s[width]])
+    
+        ##
+    ##
+    ##
+    export[str(width)] = [rat,r,rat0,apparent_r0,true_r0]
+    ##
+    ##
+    ##
+    
+    
     ax.plot(apparent_r0, rat0, marker="+", ms=15, mew=5, color="w")
     ax.plot(apparent_r0, rat0, marker="+", ms=15, mew=3, color=c)
     ax.plot(
-        [2 * width, apparent_r0],
+        [N_NORM * width, apparent_r0],
         [rat0] * 2,
         linestyle="dotted",
         color=c,
@@ -307,8 +344,8 @@ for width, c in zip(widths, colors):
         )
     if width in callout_s0_widths:
         ax.annotate(
-            r"$2 \times s_0$",
-            xy=(2 * width, rat0),
+            str(N_NORM) + r"$\times s_0$",
+            xy=(N_NORM * width, rat0),
             xytext=(-40, 40),
             ha="left",
             va="bottom",
@@ -351,6 +388,23 @@ ax.set(
  #   ylim=[0.0, 1.0],
     xscale="log",
 )
+
+
+class MyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        else:
+            return super(MyEncoder, self).default(obj)
+
+
+jsonfilename = "ratios_seeing_dens_cte.json"
+with open(jsonfilename, "w") as f:
+    json.dump(export, fp=f, indent=3, cls=MyEncoder)
 
 
 get_ipython().system('jupyter nbconvert --to script --no-prompt fake-3d-maps-structure-function-analysis.ipynb')

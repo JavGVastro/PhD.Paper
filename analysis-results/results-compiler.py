@@ -28,6 +28,9 @@ Names
 datapath_res = Path(open("path-results.txt", "r").read()).expanduser()
 
 
+datapath_res
+
+
 data = {}
 Results = {}
 
